@@ -1,0 +1,12 @@
+import { Module } from '@nestjs/common';
+import { SystemSubscriptionUserController } from './system_subscription_user.controller';
+import { PrismaService } from 'src/prisma.service';
+import { SystemSubscriptionUserService } from './system_subscription_user.service';
+import { EntityModule } from '../entity/entity.module';
+
+@Module({
+    controllers: [SystemSubscriptionUserController],
+    providers: [PrismaService, SystemSubscriptionUserService],
+    imports: [EntityModule]
+})
+export class SystemSubscriptionUserModule {}
