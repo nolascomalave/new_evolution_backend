@@ -2,18 +2,20 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Prisma, PrismaClient } from '@prisma/client';
 import EventEmitter from 'events';
 
-export interface TransactionPrisma extends Prisma.TransactionClient {
-    rollback: () => void;
-    commit:  () => void
-};
-
 type QueryUnsafeParams = string | {
     query: string;
     values?: any[];
     prismaTransactionInstance?: TransactionPrisma
 }
 
-export type PrismaTransactionOrService = PrismaClient | Prisma.TransactionClient;
+export type TransactionPrisma  = Prisma.TransactionClient & {
+    rollback: () => void;
+    commit:  () => void,
+    queryUnsafe: (params: QueryUnsafeParams) => Promise<any[]>;
+    findOneUnsafe: (params: QueryUnsafeParams) => Promise<null | any>;
+};
+
+export type PrismaTransactionOrService = PrismaService | TransactionPrisma;
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
@@ -33,7 +35,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
                     isPrismaError = false;
                     transaction = Object.assign(tx, {
                         rollback: () => emmiter.emit('rollback'),
-                        commit: () => emmiter.emit('commit')
+                        commit: () => emmiter.emit('commit'),
+                        queryUnsafe: async (params: QueryUnsafeParams) => await this.queryUnsafe(params),
+                        findOneUnsafe: async (params: QueryUnsafeParams) => await this.findOneUnsafe(params)
                     });
 
                     resolve(transaction);

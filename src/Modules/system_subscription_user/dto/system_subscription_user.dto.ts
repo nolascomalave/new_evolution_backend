@@ -2,8 +2,8 @@ import { Transform, Type } from "class-transformer";
 import { IsArray, IsString, MaxLength, MinLength, ValidateNested, IsNumber, IsInt, Min, IsEnum, IsOptional } from "class-validator";
 
 enum GenderEnum {
-    M,
-    F
+    Male,
+    Female
 };
 
 class NameDto {
@@ -85,17 +85,13 @@ export class AddDto {
 
     @Transform(transformJSON)
     @IsArray()
-    @ValidateNested({ each: true })
-    @Type(() => PhoneDto)
-    phones: PhoneDto[];
+    phones: string[];
 
     @Transform(transformJSON)
     @IsArray()
-    @ValidateNested({ each: true })
-    @Type(() => EmailDto)
-    emails: EmailDto[];
+    emails: string[];
 
-    @IsEnum(['M', 'F'])
+    @IsEnum(['Male', 'Female'])
     gender: GenderEnum;
 
     @IsOptional()

@@ -73,7 +73,7 @@ type GetBelongingSystemType = {
     id_system_subscription?: number;
 }
 
-export class EntityDocument {
+export class EntityDocumentService {
     constructor(private prisma: PrismaService) {}
 
     async processDocument(params: ValidateEntityDocumentType, prisma?: Prisma.TransactionClient | PrismaClient | TransactionPrisma) {

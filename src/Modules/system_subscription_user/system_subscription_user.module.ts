@@ -3,10 +3,11 @@ import { SystemSubscriptionUserController } from './system_subscription_user.con
 import { PrismaService } from 'src/prisma.service';
 import { SystemSubscriptionUserService } from './system_subscription_user.service';
 import { EntityModule } from '../entity/entity.module';
+import { EntityDocumentModule } from '../entity_document/entity_document.module';
 
 @Module({
     controllers: [SystemSubscriptionUserController],
     providers: [PrismaService, SystemSubscriptionUserService],
-    imports: [EntityModule]
+    imports: [EntityModule/* , EntityDocumentModule */]
 })
 export class SystemSubscriptionUserModule {}

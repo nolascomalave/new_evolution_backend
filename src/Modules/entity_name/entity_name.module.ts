@@ -5,6 +5,7 @@ import { PrismaService } from 'src/prisma.service';
 
 @Module({
     controllers: [EntityNameController],
-    providers: [EntityNameService, PrismaService]
+    providers: [EntityNameService, PrismaService],
+    exports: [EntityNameService]
 })
 export class EntityNameModule {}

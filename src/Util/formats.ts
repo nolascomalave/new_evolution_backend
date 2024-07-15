@@ -237,7 +237,7 @@ export function getRandomString(numDigits: number): string {
     return randomPassword;
 }
 
-function username(name: string, fname: string, array: [string]): string {
+export function username(name: string, fname: string, array: string[]): string {
     let abc:string = 'abcdefghijklmnñopqrstuvwxyz',
         username:string|string[] = destilde(fname+name.charAt(0)).toLowerCase(),
         initialUserName:string = username,

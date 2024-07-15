@@ -37,7 +37,7 @@ type GetBelongingSystemType = {
     id_system_subscription?: number;
 }
 
-export class EntityEmailService {
+export class EntityPhoneService {
     constructor(private prisma: PrismaService) {}
 
     async processPhone(params: ProcessPhoneType, prisma?: Prisma.TransactionClient | PrismaClient | TransactionPrisma) {

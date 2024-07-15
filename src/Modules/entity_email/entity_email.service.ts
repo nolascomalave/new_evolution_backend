@@ -23,7 +23,7 @@ type ProcessMultipleEmailsType = {
     emails: string[];
     order: number;
     created_by: number
-};
+} | any;
 
 export type ChangeEmailOrderType = {
     id_entity_email: number;
