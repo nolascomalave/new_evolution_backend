@@ -63,7 +63,7 @@ export class EntityEmailService {
             errors.set('id_entity', validateId(params.id_entity, 'Entity ID'));
             errors.set('created_by', validateId(params.created_by, 'Processing user ID', true));
             errors.set('id_entity_email', validateId(params.id_entity_email, 'Email ID'));
-            errors.set('email', validateEmail(params.id_entity_email, true));
+            errors.set('email', validateEmail(params.email, true));
 
             if(!errors.exists('id_entity') && (params.id_entity ?? null) !== null) {
                 errors.set('order', validateCuantity({
@@ -115,7 +115,7 @@ export class EntityEmailService {
                         id_system_subscription: user.id_system_subscription,
                         id_entity_email: email.id,
                         NotEqualEntityID: true
-                    });
+                    }, prisma);
 
                     if(exisingEmailByEntity) {
                         errors.set('id_entity_email', 'Email already exists!');
@@ -342,7 +342,7 @@ export class EntityEmailService {
                             email: params.emails[i],
                             created_by: params.created_by,
                             order: i + 1
-                        });
+                        }, prisma);
 
                         if(emailResult.errors.existsErrors()) {
                             errors.pushErrorInArray('emails', emailResult.errors.getErrors());

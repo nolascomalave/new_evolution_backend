@@ -5,14 +5,13 @@ import EventEmitter from 'events';
 type QueryUnsafeParams = string | {
     query: string;
     values?: any[];
-    prismaTransactionInstance?: TransactionPrisma
 }
 
 export type TransactionPrisma  = Prisma.TransactionClient & {
     rollback: () => void;
-    commit:  () => void,
-    queryUnsafe: (params: QueryUnsafeParams) => Promise<any[]>;
-    findOneUnsafe: (params: QueryUnsafeParams) => Promise<null | any>;
+    commit:  () => void;
+    /* queryUnsafe: <type>(params: QueryUnsafeParams) => Promise<type[]>;
+    findOneUnsafe: <type>(params: QueryUnsafeParams) => Promise<null | type>; */
 };
 
 export type PrismaTransactionOrService = PrismaService | TransactionPrisma;
@@ -32,27 +31,41 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
             try {
                 await this.$transaction(async (tx) => {
+                    /* const execTransactionInstanceFunction = async <Type>(fn: (...params: any) => Promise<Type>, ...params) => {
+                        isPrismaError = true;
+                        const returnData = await fn(...params);
+                        isPrismaError = false;
+
+                        return returnData;
+                    }; */
+
                     isPrismaError = false;
                     transaction = Object.assign(tx, {
                         rollback: () => emmiter.emit('rollback'),
                         commit: () => emmiter.emit('commit'),
-                        queryUnsafe: async (params: QueryUnsafeParams) => await this.queryUnsafe(params),
-                        findOneUnsafe: async (params: QueryUnsafeParams) => await this.findOneUnsafe(params)
+                        /* queryUnsafe: async <T>(params: QueryUnsafeParams): Promise<T[]> => await execTransactionInstanceFunction<T[]>(this.queryUnsafe, params, tx),
+                        findOneUnsafe: async <T>(params: QueryUnsafeParams): Promise<T> => await execTransactionInstanceFunction<T>(this.findOneUnsafe, params, tx) */
                     });
 
                     resolve(transaction);
 
                     await (new Promise((res, rej) => {
                         emmiter.on('commit', () => {
+                            console.log('Removed');
                             emmiter.removeAllListeners();
                             res(true);
                         });
 
                         emmiter.on('rollback', () => {
+                            console.log('rejected');
                             emmiter.removeAllListeners();
                             rej('Error');
                         });
                     }));
+                }, {
+                    isolationLevel: Prisma.TransactionIsolationLevel.Serializable, // optional, default defined by database configuration
+                    maxWait: 10000, // default: 2000
+                    timeout: 5000, // default: 5000
                 });
             } catch(e: any) {
                 if(isPrismaError) {
@@ -65,25 +78,22 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     private getQueryUnsafeParams(params: QueryUnsafeParams) {
         return {
             values: (typeof params === 'string') ? [] : params.values,
-            prismaTransactionInstance: (typeof params === 'string') ? undefined : params.prismaTransactionInstance,
             query: (typeof params === 'string') ? params : params.query
         };
     }
 
-    // recive unsafe query and return array records or empty array
-    public async queryUnsafe(params: QueryUnsafeParams) {
-        const { values, prismaTransactionInstance, query } = this.getQueryUnsafeParams(params);
+    // recive unsafe query and return array records or empty array, but this function unlike "queryUnsafe", has an optional parameter which must be a transaction instance:
+    public async queryUnsafe<T>(params: QueryUnsafeParams, instance?: PrismaTransactionOrService): Promise<T[]> {
+        const { values, query } = this.getQueryUnsafeParams(params);
 
-        const data: any[] = await (prismaTransactionInstance ?? this).$queryRawUnsafe(query, ...values) ?? [];
+        const data: any[] = await (instance ?? this).$queryRawUnsafe(query, ...values) ?? [];
 
         return data;
     }
 
-    // recive unsafe query and return one record or null:
-    public async findOneUnsafe(params: QueryUnsafeParams) {
-        const { values, prismaTransactionInstance, query } = this.getQueryUnsafeParams(params);
-
-        const data: any[] = await (prismaTransactionInstance ?? this).$queryRawUnsafe(query, ...values) ?? [];
+    // recive unsafe query and return array records or empty array, but this function unlike "queryUnsafe", has an optional parameter which must be a transaction instance:
+    public async findOneUnsafe<T>(params: QueryUnsafeParams, instance?: PrismaTransactionOrService) : Promise<T | null> {
+        const data = await this.queryUnsafe<T>(params, instance);
 
         return data.length > 0 ? data[0] : null;
     }

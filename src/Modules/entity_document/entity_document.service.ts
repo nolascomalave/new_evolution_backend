@@ -184,7 +184,7 @@ export class EntityDocumentService {
                         id_system_subscription: user.id_system_subscription,
                         document: params.document.trim().toUpperCase(),
                         id_entity_document_category: document_category.id
-                    });
+                    }, prisma);
 
                     if(existingEntityWithDocument) {
                         if(existingEntityWithDocument.id_entity === entity.id) {
@@ -572,23 +572,23 @@ export class EntityDocumentService {
     async getBelongingSystem(params: GetBelongingSystemType, prisma: Prisma.TransactionClient | PrismaClient | TransactionPrisma = this.prisma) {
         let AND: string[] | string = [];
 
-        if('id_entity' in params) {
+        if(('id_entity' in params) && (params.id_entity ?? null) !== null) {
             AND.push(`doc.id_entity = ${params.id_entity}`);
         }
 
-        if('id_entity_document' in params) {
+        if(('id_entity_document' in params) && (params.id_entity_document ?? null) !== null) {
             AND.push(`doc.id ${params.NotEqualDocumentID === true ? '<>' : '='} ${params.id_entity_document}`);
         }
 
-        if('document' in params) {
+        if(('document' in params) && (params.document ?? null) !== null) {
             AND.push(`UPPER(doc.document) = UPPER(${escape(params.document ?? '')})`);
         }
 
-        if('id_entity_document_category' in params) {
+        if(('id_entity_document_category' in params) && (params.id_entity_document_category ?? null) !== null) {
             AND.push(`doc.id_entity_document_category = ${params.id_entity_document_category}`);
         }
 
-        if('id_system_subscription' in params) {
+        if(('id_system_subscription' in params) && (params.id_system_subscription ?? null) !== null) {
             AND.push(`ssu.id_system_subscription = ${params.id_system_subscription}`);
         }
 

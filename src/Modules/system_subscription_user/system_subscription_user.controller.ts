@@ -2,11 +2,12 @@ import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Inter
 import { AddDto } from './dto/system_subscription_user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AddPipe } from './pipes/system_subscription_user.pipe';
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService, TransactionPrisma } from 'src/prisma.service';
 import { SystemSubscriptionUserService } from './system_subscription_user.service';
 import { diskStorage } from 'multer';
 import Files from 'src/Util/Files';
 import { RequestSession } from '../auth/middlewares/auth.middleware';
+import { Prisma } from '@prisma/client';
 
 @Controller('system-subscription-users')
 export class SystemSubscriptionUserController {
@@ -41,6 +42,52 @@ export class SystemSubscriptionUserController {
     //      401 Unauthorized.
     //      500 Error in server.
     async add(@Req() req: RequestSession, @Body(AddPipe) data: AddDto, @UploadedFile() photo: Express.Multer.File) {
+        let errorsInProcess: string[] = null,
+            dataProcess: any = null;
+
+        /* try {
+            await this.prisma.$transaction(async (prisma: TransactionPrisma) => {
+                const {
+                    data: userData,
+                    errors
+                } = await this.service.add({
+                    ...data,
+                    photo,
+                    id_system_subscription_user_moderator: req.user.id,
+                    is_natural: true
+                }, prisma);
+
+                if(!!errors) {
+                    errorsInProcess = errors;
+                    throw 'error';
+                }
+
+                dataProcess = userData;
+
+                return console.log('finalizado');
+            }, {
+                timeout: 10000, // default: 5000
+            });
+        } catch(e: any) {
+            console.log(e);
+            if(!!photo) {
+                Files.deleteFile(photo.path);
+            }
+
+            if(e === 'error') {
+                throw new BadRequestException(errorsInProcess);
+            }
+
+            throw new InternalServerErrorException(e);
+        }
+
+        return {
+            data: dataProcess,
+            message: 'User created!'
+        }; */
+
+        const prisma = await this.prisma.beginTransaction();
+
         try {
             const {
                 data: userData,
@@ -50,26 +97,35 @@ export class SystemSubscriptionUserController {
                 photo,
                 id_system_subscription_user_moderator: req.user.id,
                 is_natural: true
-            });
+            }, prisma);
+
+            if(!!errors) {
+                errorsInProcess = errors;
+                throw 'error';
+            }
+
+            console.log('controller');
+            await prisma.rollback();
+            console.log('controller 1');
+
+            return {
+                data: userData,
+                message: 'User created!'
+            };
         } catch(e: any) {
+            console.log(e);
+            await prisma.rollback();
+            console.log('controller 3');
+
             if(!!photo) {
                 Files.deleteFile(photo.path);
             }
 
-            if(e !== 'error') {
-                throw new InternalServerErrorException(e);
+            if(e === 'error') {
+                throw new BadRequestException(errorsInProcess);
             }
+
+            throw new InternalServerErrorException(e);
         }
-
-        // throw new BadRequestException(['names.0 Error']);
-
-        /* if(result.errors) {
-            return {
-                message: result.errors.arrayErrors(),
-
-            }
-        } */
-
-        return {data};
     }
 }

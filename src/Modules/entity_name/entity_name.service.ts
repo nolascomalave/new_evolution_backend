@@ -69,7 +69,7 @@ export class EntityNameService {
         } else {
             errors.set('id_entity', validateId(params.id_entity, 'Entity ID'));
             errors.set('created_by', validateId(params.created_by, 'Processing user ID', true));
-            errors.set('id_entity_name_type', validateId(params.id_entity_name_tipe, 'Type Name ID', true));
+            errors.set('id_entity_name_type', validateId(params.id_entity_name_type, 'Type Name ID', true));
             errors.set('id_entity_name', validateId(params.id_entity_name, 'Name ID'));
             // errors.set('name', validateName(params.id_entity_name, true));
 
@@ -97,7 +97,7 @@ export class EntityNameService {
             try {
                 const entity = (params.id_entity ?? null) === null ? null : await prisma.entity.findUnique({ where: { id: params.id_entity } }),
                     user = (params.created_by ?? null) === null ? null : await prisma.system_subscription_user.findUnique({ where: { id: params.created_by } }),
-                    ent_name_type = await prisma.entity_name_type.findUnique(params.entity_name_type);
+                    ent_name_type = await prisma.entity_name_type.findUnique({where: {id: params.id_entity_name_type}});
                 let name_by_entity: entity_name_by_entity | null = null;
 
                 if(!ent_name_type) {
@@ -126,19 +126,20 @@ export class EntityNameService {
                     errors.set('created_by', 'Processing user not found!');
                 }
 
-                if(user && ent_name_type && entity && name && (params.order ?? null) !== null && params.order == 1) {
+                // Vefifying if the name is used by another entity:
+                /* if(user && ent_name_type && entity && name && (params.order ?? null) !== null && params.order == 1) {
                     const exisingNameByEntity = await this.getBelongingSystem({
                         id_entity: entity.id,
                         id_system_subscription: user.id_system_subscription,
                         id_entity_name: name.id,
                         id_entity_name_type: ent_name_type.id,
                         NotEqualEntityID: true
-                    });
+                    }, prisma);
 
                     if(exisingNameByEntity) {
                         errors.set('id_entity_email', 'Name already exists!');
                     }
-                }
+                } */
 
                 if(errors.existsErrors()) {
                     throw errors;
@@ -328,7 +329,7 @@ export class EntityNameService {
             };
         } else {
             errors.set('id_entity', validateId(params.id_entity, 'Entity ID'));
-            errors.set('id_entity_name_type', validateId(params.id_entity_name_tipe, 'Type Name ID', true));
+            errors.set('id_entity_name_type', validateId(params.id_entity_name_type, 'Type Name ID', true));
             errors.set('created_by', validateId(params.created_by, 'Processing user ID', true));
 
             if(!Array.isArray(params.names)) {
@@ -351,7 +352,7 @@ export class EntityNameService {
             try {
                 const entity = (params.id_entity ?? null) === null ? null : await prisma.entity.findUnique({ where: { id: params.id_entity } }),
                     user = (params.created_by ?? null) === null ? null : await prisma.system_subscription_user.findUnique({ where: { id: params.created_by } }),
-                    ent_name_type = await prisma.entity_name_type.findUnique(params.entity_name_type);
+                    ent_name_type = await prisma.entity_name_type.findUnique({where: {id: params.id_entity_name_type}});
 
                 if(!ent_name_type) {
                     errors.set('name_by_entity', 'Type Name not found!');
@@ -369,10 +370,11 @@ export class EntityNameService {
                     for(let i = 0; i < params.names.length; i++) {
                         const nameResult = await this.processName({
                             id_entity: params.id_entity,
+                            id_entity_name_type: params.id_entity_name_type,
                             name: params.names[i],
                             created_by: params.created_by,
                             order: i + 1
-                        });
+                        }, prisma);
 
                         if(nameResult.errors.existsErrors()) {
                             errors.pushErrorInArray('names', nameResult.errors.getErrors());
@@ -502,7 +504,7 @@ export class EntityNameService {
                         ne.id_entity,
                         ne.id_entity_name,
                         -- ent.type,
-                        ent.id_entity_name_type,
+                        ne.id_entity_name_type,
                         ROW_NUMBER() OVER(PARTITION BY ne.id_entity, ent.type ORDER BY CONVERT(CONCAT(IF(ne.id_entity = ${ent.id} AND ne.id_entity_name = ${name.id}, ${params.order}, ne.order), '.', CONCAT(IF(ne.id_entity = ${ent.id} AND ne.id_entity_name = ${name.id}, 0, 1))), DECIMAL(18, 1)) ASC) AS real_order
                     FROM entity_name_by_entity ne
                     INNER JOIN entity_name_type ent
@@ -539,7 +541,7 @@ export class EntityNameService {
                         ne.id_entity,
                         ne.id_entity_name,
                         -- ent.type,
-                        ent.id_entity_name_type,
+                        ne.id_entity_name_type,
                         ROW_NUMBER() OVER(PARTITION BY ne.id_entity, ent.type ORDER BY CONVERT(CONCAT(IF(ne.id_entity = ${ent.id} AND ne.id_entity_name = ${name.id}, ${params.order}, ne.order), '.', CONCAT(IF(ne.id_entity = ${ent.id} AND ne.id_entity_name = ${name.id}, 0, 1))), DECIMAL(18, 1)) ASC) AS real_order
                     FROM entity_name_by_entity ne
                     INNER JOIN entity_name_type ent

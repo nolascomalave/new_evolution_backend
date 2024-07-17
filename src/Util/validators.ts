@@ -191,7 +191,7 @@ export function validatePhoneNumber(phone: any, required?: boolean): ReturnValid
 
 	phone = cleanSpaces((typeof phone === 'string') ? phone : phone.toString());
 
-	if(!/^(\+\d{1,3} ?)?\(?0?\d{3}\)?[- ]?\d{3}-?\d{4}$/.test(phone)) return 'Invalid phone number!';
+	if(!/^(\+?\d{1,3} ?)?\(?0?\d{3}\)?[- ]?\d{3}-?\d{4}$/.test(phone)) return 'Invalid phone number!';
 
 	return null;
 }

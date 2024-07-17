@@ -8,6 +8,7 @@ import { EntityEmailService } from '../entity_email/entity_email.service';
 import { EntityPhoneService } from '../entity_phone/entity_phone.service';
 import HandlerErrors from 'src/util/HandlerErrors';
 import fs from 'fs';
+import path from 'path';
 
 export type AddParams = AddDto & {
     is_natural: boolean;
@@ -62,7 +63,9 @@ export class EntityService {
         let entity: entity,
             fullEntity: CompleteEntity | null,
             photoname: null | string = null,
-            photopath: null | string = photoname;
+            entity_folder: string,
+            photopath: null | string = photoname,
+            rootProjectPath: string;
 
         if(isPosibleTransaction) {
             prisma = await this.prisma.beginTransaction();
@@ -72,6 +75,7 @@ export class EntityService {
             // --------------------------------------------------------------------------------------------------------------------------------------------
             // - Creating Entity: -------------------------------------------------------------------------------------------------------------------------
             // --------------------------------------------------------------------------------------------------------------------------------------------
+            console.log('Crea entidad.');
             entity = await this.prisma.entity.create({
                 data: {
                     is_natural: addData.is_natural,
@@ -92,7 +96,7 @@ export class EntityService {
                     },
                     orderBy: {
                         created_at: 'asc',
-                        id: 'asc'
+                        // id: 'asc'
                     }
                 }) ?? [],
                 natural_entity_name_types = await prisma.entity_name_type.findMany({
@@ -102,7 +106,7 @@ export class EntityService {
                     },
                     orderBy: {
                         created_at: 'asc',
-                        id: 'asc'
+                        // id: 'asc'
                     }
                 }) ?? [];
             let names: any = {};
@@ -136,13 +140,14 @@ export class EntityService {
 
             const names_types = Object.keys(names);
 
+            console.log('Crea nombres.');
             for(let i = 0; i < names_types.length; i++) {
                 const namesResult = await this.nameService.processMultipleNames({
                     names: names[names_types[i]],
                     id_entity: entity.id,
                     id_entity_name_type: Number(names_types[i]),
                     created_by: Number(addData.id_system_subscription_user_moderator)
-                });
+                }, prisma);
 
                 if(namesResult.errors.existsErrors()) {
                     errors.set('names', namesResult.errors.getErrors());
@@ -155,6 +160,7 @@ export class EntityService {
             // - Processing Emails: -----------------------------------------------------------------------------------------------------------------------
             // --------------------------------------------------------------------------------------------------------------------------------------------
             let emails = [];
+            console.log('Crea correos.');
             const emailsResult = await this.emailService.processMultipleEmails({
                 emails: addData.emails,
                 id_entity: entity.id,
@@ -172,6 +178,7 @@ export class EntityService {
             // - Processing Phones: -----------------------------------------------------------------------------------------------------------------------
             // --------------------------------------------------------------------------------------------------------------------------------------------
             let phones = [];
+            console.log('Crea teléfonos.');
             const phonesResult = await this.phoneService.processMultiplePhones({
                 phones: addData.phones,
                 id_entity: entity.id,
@@ -214,6 +221,7 @@ export class EntityService {
                 }
             }
 
+            console.log('Crea documentos.');
             if(!errors.exists('documents')) {
                 for(let docs in documentsByType) {
                     const documentsResult = await this.documentService.processMultipleDocuments({
@@ -225,8 +233,8 @@ export class EntityService {
 
                     if(documentsResult.errors.existsErrors()) {
                         errors.merege(documentsResult.errors);
-                    } else if(Array.isArray(documentsResult.data)) {
-                        documents.push(...documentsResult.data);
+                    } else if(Array.isArray(documentsResult.documents)) {
+                        documents.push(...documentsResult.documents);
                     }
                 }
             }
@@ -237,21 +245,33 @@ export class EntityService {
 
             if(!!addData.photo) {
                 photoname = `profile-photo.${addData.photo.mimetype.replace(/^image\//i, '')}`;
-                photopath = `./public/entity/entity-${entity.id}/${photoname}`;
-                fs.renameSync(addData.photo.path, photopath);
+                entity_folder = path.join(__dirname, `../../../public/storage/entity/entity-${entity.id}`);
+                photopath = `${entity_folder}/${photoname}`;
+                rootProjectPath = path.join(__dirname, '../../../' + addData.photo.path);
+
+                if(!fs.existsSync(entity_folder)) {
+                    fs.mkdirSync(entity_folder, { recursive: true });
+                }
+
+                fs.renameSync(rootProjectPath, photopath);
                 // fs.mkdirSync(dirName, { recursive: true });
             }
 
-            fullEntity = await prisma.findOneUnsafe(`SELECT
+            console.log('Ya procesó la foto.');
+            fullEntity = await this.prisma.findOneUnsafe(`SELECT
                 *
             FROM entity_complete_info eci
-            WHERE id = ${entity.id}`);
+            WHERE id = ${entity.id}`, prisma);
+
+            console.log('Hay una consulta');
 
             if(!fullEntity) {
                 throw 'Entity not found.';
             }
 
-            entity = await this.prisma.entity.update({
+            console.log('Actualiza la entidad');
+
+            entity = await prisma.entity.update({
                 where: {
                     id: entity.id
                 },
@@ -262,16 +282,19 @@ export class EntityService {
                 }
             });
 
-            if(isPosibleTransaction && ('rollback' in prisma) && (typeof prisma.rollback === 'function')) {
-                await prisma.rollback();
+            console.log('entity');
+            if(isPosibleTransaction && ('commit' in prisma)) {
+                await prisma.commit();
             }
         } catch(e: any) {
-            if(isPosibleTransaction && ('rollback' in prisma) && (typeof prisma.rollback === 'function')) {
+            console.log('entity');
+            if(isPosibleTransaction && ('rollback' in prisma)) {
                 await prisma.rollback();
             }
 
             if(!!addData.photo && !!photopath) {
-                fs.renameSync(photopath, addData.photo.path);
+                fs.renameSync(photopath, rootProjectPath);
+                fs.rmdirSync(entity_folder);
                 // fs.mkdirSync(dirName, { recursive: true });
             }
 
