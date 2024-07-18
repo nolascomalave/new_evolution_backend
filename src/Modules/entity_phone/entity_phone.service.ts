@@ -67,7 +67,7 @@ export class EntityPhoneService {
             errors.set('id_entity', validateId(params.id_entity, params.name + ' entity ID'));
             errors.set('created_by', validateId(params.created_by, params.name + ' processing user ID', true));
             errors.set('id_entity_phone', validateId(params.id_entity_phone, params.name + ' ID'));
-            errors.set('phone', validatePhoneNumber(params.phone, params.name, true));
+            errors.set(params.name, validatePhoneNumber(params.phone, params.name, true));
 
             if(!errors.exists('id_entity') && (params.id_entity ?? null) !== null) {
                 errors.set('order', validateCuantity({
@@ -122,7 +122,7 @@ export class EntityPhoneService {
                     }, prisma);
 
                     if(exisingPhoneByEntity) {
-                        errors.set('id_entity_email', params.name + ' already exists!');
+                        errors.set('id_entity_email', params.name + ' already exists for another entity as principal!');
                     }
                 }
 
@@ -437,7 +437,7 @@ export class EntityPhoneService {
                 data: null
             };
         } else {
-            params.name ??= 'email';
+            params.name ??= 'phone';
 
             errors.set('id_entity', validateId(params.id_entity, params.name + ' entity ID', true));
             errors.set('id_entity_phone', validateId(params.id_entity_phone, params.name + ' phone ID', true));

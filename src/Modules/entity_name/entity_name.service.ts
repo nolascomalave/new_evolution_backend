@@ -10,6 +10,7 @@ import {
     validateId,
     validateName,
     validateCuantity,
+    validateSimpleText,
 } from '../../util/validators';
 
 type ProcessNameType = {
@@ -19,6 +20,7 @@ type ProcessNameType = {
     name: any;
     created_by: number;
     order?: number;
+    name_type?: string;
 } | any;
 
 type GetBelonginSystemType = {
@@ -34,6 +36,7 @@ type ChangeNameOrderParams = {
     id_entity: number;
     order: number;
     id_entity_name_type: number;
+    name_type?: string;
     // type: entity_name_by_entity_type;
 };
 
@@ -41,7 +44,9 @@ type ProcessMultipleNamesType = {
     id_entity?: number;
     names: string[];
     id_entity_name_type?: number;
-    created_by: number
+    created_by: number;
+    name_type?: string;
+    initialIndex: number;
 } | any;
 
 @Injectable()
@@ -60,23 +65,25 @@ export class EntityNameService {
         }
 
         if(typeof params !== 'object' || Array.isArray(params)) {
-            errors.set('params', 'The parameter name must be defined as a JSON object!');
+            errors.set('params', 'The name parameter must be defined as a JSON object!');
 
             return {
                 errors,
                 data: null
             };
         } else {
-            errors.set('id_entity', validateId(params.id_entity, 'Entity ID'));
-            errors.set('created_by', validateId(params.created_by, 'Processing user ID', true));
-            errors.set('id_entity_name_type', validateId(params.id_entity_name_type, 'Type Name ID', true));
-            errors.set('id_entity_name', validateId(params.id_entity_name, 'Name ID'));
+            params.name_type ??= 'name';
+
+            errors.set('id_entity', validateId(params.id_entity, params.name_type + ' entity ID'));
+            errors.set('created_by', validateId(params.created_by, params.name_type + ' processing user ID', true));
+            errors.set('id_entity_name_type', validateId(params.id_entity_name_type, params.name_type + ' Type Name ID', true));
+            errors.set('id_entity_name', validateId(params.id_entity_name, params.name_type + ' ID'));
             // errors.set('name', validateName(params.id_entity_name, true));
 
             if(!errors.exists('id_entity') && (params.id_entity ?? null) !== null) {
                 errors.set('order', validateCuantity({
                     num: params.order,
-                    name: 'name order',
+                    name: params.name_type + ' order',
                     min: 0,
                     int: true,
                     required: true
@@ -101,29 +108,31 @@ export class EntityNameService {
                 let name_by_entity: entity_name_by_entity | null = null;
 
                 if(!ent_name_type) {
-                    errors.set('name_by_entity', 'Type Name not found!');
+                    errors.set('name_by_entity', params.name_type + ' type Name not found!');
                 } else {
-                    errors.set('name', validateName(params.name, ent_name_type.type, true));
+                    // errors.set(params.name_type, validateName(params.name, ent_name_type.type, true));
 
-                    if(!errors.exists('name')) {
+                    // if(!errors.exists(params.name_type)) {
                         if(params.id_entity_name) {
                             name = await prisma.entity_name.findUnique({ where: { id: params.id_entity_name } });
 
                             if(!name) {
-                                errors.set('id_entity_name', 'Name not found!');
+                                errors.set('id_entity_name', params.name_type + ' not found!');
                             }
                         } else {
                             name = await prisma.entity_name.findUnique({ where: { name: params.name.toString().trim().toLowerCase() } });
                         }
-                    }
+                    // }
                 }
 
                 if(params.id_entity && !entity) {
-                    errors.set('id_entity', 'Entity not found!');
+                    errors.set('id_entity', params.name_type + ' entity not found!');
+                } else if(entity && ent_name_type) {
+                    errors.set(params.name_type, (entity.is_natural && (['name', 'surname']).includes(ent_name_type.type.toLowerCase())) ? validateName(params.name, params.name_type, Number(params.order) === 1) : validateSimpleText(params.name, params.name_type, 2, 250, Number(params.order) === 1))
                 }
 
                 if(!user) {
-                    errors.set('created_by', 'Processing user not found!');
+                    errors.set('created_by', params.name_type + ' processing user not found!');
                 }
 
                 // Vefifying if the name is used by another entity:
@@ -275,7 +284,8 @@ export class EntityNameService {
                         id_entity_name_type: (ent_name_type?.id ?? 0),
                         id_entity: entity.id,
                         id_entity_name: name.id,
-                        order: params.order ?? 0
+                        order: params.order ?? 0,
+                        name_type: params.name_type
                     }, prisma);
 
                     if(changedNameOrder.errors.existsErrors()) {
@@ -312,28 +322,32 @@ export class EntityNameService {
         const errors = new HandlerErrors();
 
         let isPosibleTransaction = false,
-            names: entity_name[] = [];
+            names: entity_name[] = [],
+            initialIndex = 0;
 
         if(!prisma) {
             isPosibleTransaction = true;
         }
 
         if(typeof params !== 'object' || Array.isArray(params)) {
-            errors.set('params', 'The parameter name must be defined as a JSON object!');
+            errors.set('params', 'The names parameter must be defined as a JSON object!');
 
             return {
                 errors,
                 data: null
             };
         } else {
-            errors.set('id_entity', validateId(params.id_entity, 'Entity ID'));
-            errors.set('id_entity_name_type', validateId(params.id_entity_name_type, 'Type Name ID', true));
-            errors.set('created_by', validateId(params.created_by, 'Processing user ID', true));
+            params.name_type ??= 'names';
+            initialIndex = params.initialIndex ?? initialIndex;
+
+            errors.set('id_entity', validateId(params.id_entity, params.name_type + ' entity ID'));
+            errors.set('id_entity_name_type', validateId(params.id_entity_name_type, params.name_type + ' Type Name ID', true));
+            errors.set('created_by', validateId(params.created_by, params.name_type + ' processing user ID', true));
 
             if(!Array.isArray(params.names)) {
-                errors.set('names', 'Names must be an array!');
+                errors.set(params.name_type, params.name_type + ' must be an array!');
             } else if(params.names.length < 1) {
-                errors.set('names', 'The names parameter must contain at least one item!');
+                errors.set(params.name_type, params.name_type + ' parameter must contain at least one item!');
             }
         }
 
@@ -353,15 +367,15 @@ export class EntityNameService {
                     ent_name_type = await prisma.entity_name_type.findUnique({where: {id: params.id_entity_name_type}});
 
                 if(!ent_name_type) {
-                    errors.set('name_by_entity', 'Type Name not found!');
+                    errors.set('name_by_entity', params.name_type + ' Type Name not found!');
                 }
 
                 if(params.id_entity && !entity) {
-                    errors.set('id_entity', 'Entity not found!');
+                    errors.set('id_entity', params.name_type + ' entity not found!');
                 }
 
                 if(!user) {
-                    errors.set('created_by', 'Processing user not found!');
+                    errors.set('created_by', params.name_type + ' processing user not found!');
                 }
 
                 if(!errors.existsErrors()) {
@@ -371,11 +385,12 @@ export class EntityNameService {
                             id_entity_name_type: params.id_entity_name_type,
                             name: params.names[i],
                             created_by: params.created_by,
-                            order: i + 1
+                            order: i + 1,
+                            name_type: params.name_type + '.' + (initialIndex + i)
                         }, prisma);
 
                         if(nameResult.errors.existsErrors()) {
-                            errors.pushErrorInArray('names', nameResult.errors.getErrors());
+                            errors.pushErrorInArray(params.name_type, nameResult.errors.getErrors());
                         } else if(nameResult.data) {
                             names.push(nameResult.data);
                         }
@@ -406,7 +421,8 @@ export class EntityNameService {
                             id_entity_name_type: (ent_name_type?.id ?? 0),
                             id_entity: (entity?.id ?? 0),
                             id_entity_name: names[0].id,
-                            order: params.order ?? 0
+                            order: params.order ?? 0,
+                            name_type: params.name_type + '.0'
                         }, prisma);
 
                         if(changedNameOrder.errors.existsErrors()) {
@@ -451,6 +467,8 @@ export class EntityNameService {
 
         let isPosibleTransaction = false;
 
+        params.name_type ??= 'name';
+
         if(!prisma) {
             isPosibleTransaction = true;
         }
@@ -480,15 +498,15 @@ export class EntityNameService {
                 });
 
                 if(!name) {
-                    errors.set('name', 'Name not found!');
+                    errors.set(params.name_type, params.name_type + ' not found!');
                 }
 
                 if(!ent) {
-                    errors.set('entity', 'Entity not found!');
+                    errors.set('entity', params.name_type + ' entity not found!');
                 }
 
                 if(ent && name && !name_by_ent) {
-                    errors.set('name', 'The name does not belong to the entity!');
+                    errors.set(params.name_type, params.name_type + ' does not belong to the entity!');
                 }
 
                 if(errors.existsErrors() || !ent || !name || !name_by_ent) {

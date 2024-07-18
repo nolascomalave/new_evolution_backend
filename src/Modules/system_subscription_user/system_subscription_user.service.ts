@@ -5,6 +5,7 @@ import { username as usernameGenerator } from "src/util/formats";
 import { hashSync } from 'bcryptjs';
 import { system_subscription_user } from "@prisma/client";
 import HandlerErrors from "src/util/HandlerErrors";
+import { GetByIdDto } from "./dto/system_subscription_user.dto";
 
 type FullUser = {
     id: number;
@@ -36,6 +37,28 @@ export class SystemSubscriptionUserService {
         private prisma: PrismaService,
         private entityService: EntityService
     ) {}
+
+    async getById({ id, id_system_subscription }: GetByIdDto & { id_system_subscription?: number }) {
+        let AND: string[] | string = [
+            `annulled_at IS NULL`
+        ];
+
+        if(id_system_subscription !== undefined) {
+            AND.push(`id_system_subscription_user = ${id_system_subscription}`);
+        }
+
+        AND = AND.length < 1 ? '' : ('AND '.concat(AND.join("\nAND ")));
+
+        const sql = `SELECT
+            *
+        FROM system_subscription_user_complete_info ssu
+        WHERE id_system_subscription_user = ${id}
+            ${AND}`;
+
+        const user: FullUser | null = await this.prisma.findOneUnsafe(sql);
+
+        return user;
+    }
 
     async add(addData: AddParams, prisma?: PrismaTransactionOrService) {
         const isPosibleTransaction = !prisma;
@@ -99,7 +122,7 @@ export class SystemSubscriptionUserService {
                 errors.set('system_subscription_user', 'User must have a first name.');
             }
 
-            if(Array.isArray(errors)) {
+            if(errors.existsErrors()) {
                 throw 'error';
             }
 
@@ -117,7 +140,7 @@ export class SystemSubscriptionUserService {
         }
 
         return {
-            data: !!errors ? null : {
+            data: errors.existsErrors() ? null : {
                 user,
                 fullUser
             },

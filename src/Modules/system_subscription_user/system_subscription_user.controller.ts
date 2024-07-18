@@ -1,5 +1,5 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, InternalServerErrorException, Post, Req, UploadedFile, UploadedFiles, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
-import { AddDto } from './dto/system_subscription_user.dto';
+import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, InternalServerErrorException, NotFoundException, Param, Post, Req, UploadedFile, UploadedFiles, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { AddDto, GetByIdDto } from './dto/system_subscription_user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AddPipe } from './pipes/system_subscription_user.pipe';
 import { PrismaService, TransactionPrisma } from 'src/prisma.service';
@@ -18,15 +18,32 @@ export class SystemSubscriptionUserController {
         private service: SystemSubscriptionUserService
     ) {}
 
-    @Get()
-    Index() {
-        return {
-            Hola: 'Example'
-        };
+    @Get('/:id')
+    @HttpCode(HttpStatus.OK)
+    async getById(@Req() { user: { id_system_subscription } }: RequestSession, @Param() { id }: GetByIdDto) {
+        const result = await this.service.getById({
+            id,
+            id_system_subscription
+        });
+
+        if(result !== null) {
+            delete result.password;
+        } else {
+            throw new NotFoundException(undefined, 'User not found!');
+        }
+
+        return JSONParser(result);
     }
+
 
     @Post()
     @HttpCode(HttpStatus.CREATED)
+    // @UsePipes(new ValidationPipe())
+    // Status:
+    //      201 Created.
+    //      400 Errors in params.
+    //      401 Unauthorized.
+    //      500 Error in server.
     @UseInterceptors(
         FileInterceptor(
             'photo',
@@ -37,82 +54,31 @@ export class SystemSubscriptionUserController {
             }
         )
     )
-    // @UsePipes(new ValidationPipe())
-    // Status:
-    //      201 Created.
-    //      400 Errors in params.
-    //      401 Unauthorized.
-    //      500 Error in server.
     async add(@Req() req: RequestSession, @Body(AddPipe) data: AddDto, @UploadedFile() photo: Express.Multer.File) {
-        let errorsInProcess = new HandlerErrors,
-            dataProcess: any = null;
-
-        /* try {
-            await this.prisma.$transaction(async (prisma: TransactionPrisma) => {
-                const {
-                    data: userData,
-                    errors
-                } = await this.service.add({
-                    ...data,
-                    photo,
-                    id_system_subscription_user_moderator: req.user.id,
-                    is_natural: true
-                }, prisma);
-
-                if(!!errors) {
-                    errorsInProcess = errors;
-                    throw 'error';
-                }
-
-                dataProcess = userData;
-
-                return console.log('finalizado');
-            }, {
-                timeout: 10000, // default: 5000
-            });
-        } catch(e: any) {
-            console.log(e);
-            if(!!photo) {
-                Files.deleteFile(photo.path);
-            }
-
-            if(e === 'error') {
-                throw new BadRequestException(errorsInProcess);
-            }
-
-            throw new InternalServerErrorException(e);
-        }
-
-        return {
-            data: dataProcess,
-            message: 'User created!'
-        }; */
+        let errorsInProcess = new HandlerErrors;
 
         const prisma = await this.prisma.beginTransaction();
 
         try {
-            const {
-                data: userData,
-                errors
-            } = await this.service.add({
+            const entityResult = await this.service.add({
                 ...data,
                 photo,
                 id_system_subscription_user_moderator: req.user.id,
                 is_natural: true
             }, prisma);
 
-            if(errors.existsErrors()) {
-                errorsInProcess = errors;
+            if(entityResult.errors.existsErrors()) {
+                errorsInProcess = entityResult.errors;
                 throw 'error';
             }
 
-            await prisma.rollback();
+            delete entityResult.data.fullUser.password;
+            delete entityResult.data.user.password;
 
-            delete userData.fullUser.password;
-            delete userData.user.password;
+            await prisma.commit();
 
             return {
-                data: JSONParser(userData),
+                data: JSONParser(entityResult.data),
                 message: 'User created!'
             };
         } catch(e: any) {

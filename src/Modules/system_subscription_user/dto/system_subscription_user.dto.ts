@@ -100,3 +100,9 @@ export class AddDto {
     @MaxLength(2500)
     address?: string
 }
+
+export class GetByIdDto {
+    @Transform(({ value }) => (isNaN(value) ? value : Number(value)))
+    @IsInt()
+    id: number;
+}

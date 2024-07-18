@@ -37,6 +37,7 @@ type ValidateEntityDocumentType = {
     id_state?: number;
     id_city?: number;
     order: number;
+    name?: string;
     validatorFn?: Function;
     /* validatorConfig?: {
         fn: (document: any, ...params: any) => any | null;
@@ -52,8 +53,9 @@ type ProcessMultipleDocumentsType = {
     id_country?: number;
     id_state?: number;
     id_city?: number;
+    name?: string;
     validatorConfig?: {
-        fn: (document: any, ...params: any) => any | null;
+        fn: (document: any, name: string, order: number, ...params: any) => any | null;
         params?: any[];
     };
     created_by: number;
@@ -62,6 +64,7 @@ type ProcessMultipleDocumentsType = {
 type ChangeDocumentOrderType = {
     id_entity_document: number;
     order: number;
+    name?: string;
 }
 
 type GetBelongingSystemType = {
@@ -83,46 +86,47 @@ export class EntityDocumentService {
             isPosibleTransaction = false;
 
         if(typeof params !== 'object' || Array.isArray(params)) {
-            errors.set('params', 'The parameter name must be defined as a JSON object!');
+            errors.set('params', 'The document parameter must be defined as a JSON object!');
 
             return {
                 errors,
                 data: null
             };
         } else {
+            params.name ??= 'document';
             if(typeof params.validatorFn === 'function') {
-                errors.set('document', params.validatorFn(params.document, params.order));
+                errors.set(params.name, params.validatorFn(params.document, params.name, (isNaN(params.order) || Math.round(Number(params.order)) < 1) ? 1 : Math.round(Number(params.order))));
             } else {
-                errors.set('document', validateSimpleText(params.document, 'document', 2, 250, true));
+                errors.set(params.name, validateSimpleText(params.document, params.name, 2, 250, true));
             }
 
             /* if(typeof params.validatorConfig === 'function') {
                 if(Array.isArray(params.validatorConfig.params)) {
-                    errors.set('document', params.validatorConfig.fn(params.document, ...params.validatorConfig.params));
+                    errors.set(params.name, params.validatorConfig.fn(params.document, ...params.validatorConfig.params));
                 } else {
-                    errors.set('document', params.validatorConfig.fn(params.document));
+                    errors.set(params.name, params.validatorConfig.fn(params.document));
                 }
             } else {
-                errors.set('document', validateSimpleText(params.document, 'document', 2, 250, true));
+                errors.set(params.name, validateSimpleText(params.document, 'document', 2, 250, true));
             } */
 
-            const cityError = validateId(params.id_city, 'City ID'),
-                stateError = validateId(params.id_state, 'State ID', !errors.exists('id_city') && (params.id_city ?? null) !== null);
+            const cityError = validateId(params.id_city, params.name + ' city ID'),
+                stateError = validateId(params.id_state, params.name + ' state ID', !errors.exists('id_city') && (params.id_city ?? null) !== null);
 
-            errors.set('id_entity_document', validateId(params.id_entity_document, 'Document ID'));
-            errors.set('id_entity_document_category', validateId(params.id_entity_document_category, 'Document type ID', true));
+            errors.set('id_entity_document', validateId(params.id_entity_document, params.name + ' ID'));
+            errors.set('id_entity_document_category', validateId(params.id_entity_document_category, params.name + ' document type ID', true));
             /* if(params.entity_document_category ??) {
 
             }
             errors.set('id_entity_document_category', validateId(params.id_entity_document_category, 'Document Type ID')); */
 
-            errors.set('id_country', validateId(params.id_country, 'Country ID', !errors.existsSome('id_city', 'id_state') && (params.id_city ?? params.id_state ?? null) !== null));
+            errors.set('id_country', validateId(params.id_country,  params.name + ' country ID', !errors.existsSome('id_city', 'id_state') && (params.id_city ?? params.id_state ?? null) !== null));
             errors.set('id_state', stateError);
             errors.set('id_city', cityError);
 
             errors.set('order', validateCuantity({
                 num: params.order,
-                name: 'document order',
+                name: params.name + ' order',
                 min: 0,
                 int: true,
                 required: true
@@ -157,23 +161,23 @@ export class EntityDocumentService {
                     user: User | null = users.length > 0 ? users[0] : null;
 
                 if(!user) {
-                    errors.set('moderator', 'Moderator user not found!');
+                    errors.set('moderator', params.name + ' moderator user not found!');
                 } else if((user.annulled_at ?? null) !== null) {
-                    errors.set('moderator', 'The moderator user is currently disabled!');
+                    errors.set('moderator', params.name + ' moderator user is currently disabled!');
                 }
 
                 document = !params.id_entity_document ? null : await prisma.entity_document.findFirst({ where: { id: params.id_entity_document } });
 
                 if(!document && (params.id_entity_document ?? null) !== null) {
-                    errors.set('id_entity_document', 'Document not found!');
+                    errors.set('id_entity_document', params.name + ' not found!');
                 }
 
                 if(!document_category) {
-                    errors.set('id_entity_document_category', 'Document Type not found!');
+                    errors.set('id_entity_document_category', params.name + ' document Type not found!');
                 }
 
                 if(!entity && (params.id_entity ?? null) !== null) {
-                    errors.set('id_entity', 'Entity not found!');
+                    errors.set('id_entity', params.name + ' entity not found!');
                 }
 
                 if(entity && user && document_category) {
@@ -188,9 +192,9 @@ export class EntityDocumentService {
 
                     if(existingEntityWithDocument) {
                         if(existingEntityWithDocument.id_entity === entity.id) {
-                            errors.set('id_entity_document', 'The document already exists for this entity!');
+                            errors.set('id_entity_document', params.name + ' already exists for this entity!');
                         } else {
-                            errors.set('id_entity_document', 'The document already exists for another entity!');
+                            errors.set('id_entity_document', params.name + ' already exists for another entity!');
                         }
                     }
                 }
@@ -233,7 +237,8 @@ export class EntityDocumentService {
 
                     const changeDocumentOrderResult = await this.changeDocumentOrder({
                         id_entity_document: document.id,
-                        order: params.order
+                        order: params.order,
+                        name: params.name
                     }, prisma);
 
                     if(changeDocumentOrderResult.errors.existsErrors()) {
@@ -269,23 +274,24 @@ export class EntityDocumentService {
         let isPosibleTransaction = false;
 
         if(typeof params !== 'object' || Array.isArray(params)) {
-            errors.set('params', 'The parameter name must be defined as a JSON object!');
+            errors.set('params', 'The documents parameter must be defined as a JSON object!');
 
             return {
                 errors,
                 data: null
             };
         } else {
-            const cityError = validateId(params.id_city, 'City ID'),
-                stateError = validateId(params.id_state, 'State ID', !errors.exists('id_city') && (params.id_city ?? null) !== null);
+            params.name ??= 'documents';
+            const cityError = validateId(params.id_city, params.name + ' city ID'),
+                stateError = validateId(params.id_state, params.name + ' state ID', !errors.exists('id_city') && (params.id_city ?? null) !== null);
 
             if(!Array.isArray(params.documents)) {
-                errors.set('documents', 'The documents must be defined as an array!');
+                errors.set(params.name, params.name + ' must be defined as an array!');
             }
 
-            errors.set('id_entity_document_category', validateId(params.id_entity_document_category, 'Document type ID', (params.id_entity_document ?? null) === null));
+            errors.set('id_entity_document_category', validateId(params.id_entity_document_category, params.name + ' document type ID', (params.id_entity_document ?? null) === null));
 
-            errors.set('id_country', validateId(params.id_country, 'Country ID', !errors.existsSome('id_city', 'id_state') && (params.id_city ?? params.id_state ?? null) !== null));
+            errors.set('id_country', validateId(params.id_country, params.name + ' country ID', !errors.existsSome('id_city', 'id_state') && (params.id_city ?? params.id_state ?? null) !== null));
             errors.set('id_state', stateError);
             errors.set('id_city', cityError);
         }
@@ -323,19 +329,19 @@ export class EntityDocumentService {
                     user: User | null = users.length > 0 ? users[0] : null;
 
                 if(users.length < 1) {
-                    errors.set('moderator', 'Moderator user not found!');
+                    errors.set('moderator', params.name + ' moderator user not found!');
                 } else if((users[0].annulled_at ?? null) !== null) {
-                    errors.set('moderator', 'The moderator user is currently disabled!');
+                    errors.set('moderator', params.name + ' moderator user is currently disabled!');
                 }
 
                 if(!document_category && (params.id_entity_document_category ?? null) !== null) {
-                    errors.set('id_entity_document_category', 'Document Type not found!');
+                    errors.set('id_entity_document_category', params.name + ' document Type not found!');
                 } else if((params.id_entity_document_category ?? null) === null && (params.id_entity_document ?? null) === null) {
-                    errors.set('id_entity_document_category', 'Document Type ID is required!');
+                    errors.set('id_entity_document_category', params.name + ' document Type ID is required!');
                 }
 
                 if(!entity && (params.id_entity ?? null) !== null) {
-                    errors.set('id_entity', 'Entity not found!');
+                    errors.set('id_entity', params.name + ' entity not found!');
                 }
 
                 /* if(!country && (params.id_country ?? null) !== null) {
@@ -363,11 +369,12 @@ export class EntityDocumentService {
                             id_city: params.id_city, */
                             validatorConfig: params.validatorConfig,
                             order: i + 1,
-                            created_by: user?.id ?? 0
+                            created_by: user?.id ?? 0,
+                            name: params.name + '.' + i
                         }, prisma);
 
                         if(document.errors.existsErrors()) {
-                            errors.pushErrorInArray('documents', document.errors.getErrors());
+                            errors.pushErrorInArray(params.name, document.errors.getErrors());
                         } else if(document.data) {
                             documents.push(document.data);
                         }
@@ -395,7 +402,8 @@ export class EntityDocumentService {
 
                         const changeDocumentOrderResult = await this.changeDocumentOrder({
                             id_entity_document: documents[0].id,
-                            order: 1
+                            order: 1,
+                            name: params.name + '.' + 0
                         }, prisma);
 
                         if(changeDocumentOrderResult.errors.existsErrors()) {
@@ -466,9 +474,11 @@ export class EntityDocumentService {
         let isPosibleTransaction = false,
             document: entity_document | null = null;
 
+        params.name ??= 'document';
+
         errors.set('order', validateCuantity({
             num: params.order,
-            name: 'document order',
+            name: params.name + ' order',
             min: 0,
             int: true,
             required: true
@@ -496,7 +506,7 @@ export class EntityDocumentService {
                 });
 
                 if(!document) {
-                    errors.set('id_document', 'Document not found!');
+                    errors.set('id_document', params.name + ' not found!');
                 } else {
                     await prisma.$queryRawUnsafe(`UPDATE entity_document ed
                     inner join (

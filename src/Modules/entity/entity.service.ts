@@ -9,6 +9,7 @@ import { EntityPhoneService } from '../entity_phone/entity_phone.service';
 import HandlerErrors from 'src/util/HandlerErrors';
 import fs from 'fs';
 import path from 'path';
+import { validateSSN } from 'src/util/validators';
 
 export type AddParams = AddDto & {
     is_natural: boolean;
@@ -121,14 +122,18 @@ export class EntityService {
                     throw errors;
                 }
 
-                const type = (typeof el === 'string' ? undefined : el.id_entity_name_type) ?? (addData?.is_natural == true ? natural_entity_name_types[0] : legal_entity_name_types[0]).id
-
+                const type = (typeof el === 'string' ? undefined : el.id_entity_name_type) ?? (addData?.is_natural == true ? natural_entity_name_types[0] : legal_entity_name_types[0]).id;
                 const name = typeof el === 'string' ? el : el.name;
 
                 if(!(type in names)) {
-                    names[type.toString()] = [name];
+                    const name_type = [...natural_entity_name_types, ...legal_entity_name_types].find(name => name.id === type);
+
+                    names[type.toString()] = {
+                        type: name_type === null ? null : name_type.type,
+                        names: [name],
+                    }
                 } else {
-                    names[type.toString()].push(name);
+                    names[type.toString()].names.push(name);
                 }
             });
 
@@ -138,19 +143,24 @@ export class EntityService {
             }
 
             const names_types = Object.keys(names);
+            let currentNameIndex = 0;
 
             for(let i = 0; i < names_types.length; i++) {
                 const namesResult = await this.nameService.processMultipleNames({
-                    names: names[names_types[i]],
+                    names: names[names_types[i]].names,
                     id_entity: entity.id,
                     id_entity_name_type: Number(names_types[i]),
-                    created_by: Number(addData.id_system_subscription_user_moderator)
+                    created_by: Number(addData.id_system_subscription_user_moderator),
+                    initialIndex: currentNameIndex,
+                    name_type: 'names'
                 }, prisma);
 
                 if(namesResult.errors.existsErrors()) {
-                    errors.set('names', namesResult.errors.getErrors());
+                    errors.pushErrorInArray('names', namesResult.errors.getErrors());
                     // throw errors;
                 }
+
+                currentNameIndex = currentNameIndex + names[names_types[i]].names.length;
             }
 
 
@@ -224,11 +234,13 @@ export class EntityService {
                         documents: documentsByType[docs],
                         id_entity_document_category: Number(docs),
                         id_entity: entity.id,
-                        created_by: Number(addData.id_system_subscription_user_moderator)
+                        created_by: Number(addData.id_system_subscription_user_moderator),
+                        validatorFn: (doc: string, name: string, order: number) => validateSSN(doc, name, order === 1),
+                        name: 'documents'
                     }, prisma);
 
                     if(documentsResult.errors.existsErrors()) {
-                        errors.merege(documentsResult.errors);
+                        errors.pushErrorInArray('documents', documentsResult.errors.getErrors());
                     } else if(Array.isArray(documentsResult.documents)) {
                         documents.push(...documentsResult.documents);
                     }
@@ -259,7 +271,8 @@ export class EntityService {
             WHERE id = ${entity.id}`, prisma);
 
             if(!fullEntity) {
-                throw 'Entity not found.';
+                errors.set('entity', 'Entity not found.');
+                throw 'error';
             }
 
             entity = await prisma.entity.update({
