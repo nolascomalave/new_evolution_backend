@@ -297,3 +297,38 @@ export function JSONParser(obj: any) {
 export function getCompleteDateToSQL(date: Date, exclude: {minutes?:  null | boolean, seconds?:  null | boolean, milliseconds?:  null | boolean} = {}) {
 	return `${adaptZerosNum(date.getFullYear(), 4)}-${adaptZerosNum(date.getMonth() + 1, 2)}-${adaptZerosNum(date.getDate(), 2)} ${exclude.minutes ? adaptZerosNum(date.getMinutes(), 2) : '00'}:${exclude.seconds ? adaptZerosNum(date.getSeconds(), 2) : '00'}:${exclude.milliseconds ? adaptZerosNum(date.getMilliseconds(), 2) : '00'}`;
 }
+
+
+export function getAllFlatValuesOfDataAsArray(data, ignoreNulls): any[] {
+    if (ignoreNulls === void 0) {
+		ignoreNulls = false;
+	}
+
+    let results = [];
+
+    if ((data !== null && data !== void 0 ? data : null) === null) {
+		return ignoreNulls === true ? results : [data];
+	}
+
+    if (typeof data !== 'object') {
+        return [data];
+	}
+
+    if (Array.isArray(data)) {
+        data.forEach(function (el) {
+			return results = [
+				...results,
+				...getAllFlatValuesOfDataAsArray(el, ignoreNulls)
+			];
+		});
+	} else {
+        for (var prop in data) {
+			results = [
+				...results,
+				...getAllFlatValuesOfDataAsArray(data[prop], ignoreNulls)
+			];
+		}
+	}
+
+    return results;
+}

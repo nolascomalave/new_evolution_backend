@@ -51,13 +51,11 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
                     await (new Promise((res, rej) => {
                         emmiter.on('commit', () => {
-                            console.log('Removed');
                             emmiter.removeAllListeners();
                             res(true);
                         });
 
                         emmiter.on('rollback', () => {
-                            console.log('rejected');
                             emmiter.removeAllListeners();
                             rej('Error');
                         });

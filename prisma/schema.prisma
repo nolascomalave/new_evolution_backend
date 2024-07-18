@@ -261,7 +261,7 @@ model system_subscription_user {
   id                                                                                            Int                        @id @default(autoincrement())
   id_system_subscription                                                                        Int
   id_entity                                                                                     Int
-  username                                                                                      String                     @unique(map: "username") @db.VarChar(250)
+  username                                                                                      String                     @db.VarChar(250)
   password                                                                                      String                     @db.VarChar(2500)
   created_at                                                                                    DateTime                   @default(now()) @db.DateTime(0)
   created_by                                                                                    Int?
@@ -303,6 +303,7 @@ model system_subscription_user {
   other_system_subscription_user_system_subscription_user_annulled_byTosystem_subscription_user system_subscription_user[] @relation("system_subscription_user_annulled_byTosystem_subscription_user")
 
   @@unique([id_system_subscription, id_entity], map: "system_subscription_user_index_0")
+  @@unique([id_system_subscription, username], map: "system_subscription_user_index_1")
   @@index([annulled_by], map: "annulled_by")
   @@index([created_by], map: "created_by")
   @@index([id_entity], map: "id_entity")

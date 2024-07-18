@@ -6,22 +6,22 @@ type ReturnValidator<Type> = Type | null;
 
 export function validateId(id: any, type: string, required?: boolean): ReturnValidator<string> {
 	if(!id && !required) return null;
-	if(!id) return `The ${type} id is required!`;
+	if(!id) return `${type} id is required!`;
 
-	if((typeof id !== 'string') && typeof id !== 'number') return 'The '+type+' must be defined in text or number format!';
+	if((typeof id !== 'string') && typeof id !== 'number') return (type+' must be defined in text or number format!');
 
-	if(!(/^[1-9]([0-9]+)?$/.test(id.toString()))) return 'The '+type+' id must be a natural number in text or number format greater than 0!';
+	if(!(/^[1-9]([0-9]+)?$/.test(id.toString()))) return (type+' id must be a natural number in text or number format greater than 0!');
 
 	return null;
 }
 
 export function validateBoolean(bool: any, type: string, required?: boolean){
 	if(typeof bool === 'boolean') return null;
-	if(!bool && bool != 0 && bool != '0' && bool != '' && required === true) return `The ${type} is required!`;
+	if(!bool && bool != 0 && bool != '0' && bool != '' && required === true) return `${type} is required!`;
 
 	if(typeof bool === 'string' && (bool.toLowerCase() === 'false' || bool.toLowerCase() === 'true')) return null;
 
-	return 'The '+type+' must be defined in boolean format!';
+	return type+' must be defined in boolean format!';
 }
 
 export function validatePassword(pass: any, min: number = 4, max: number = (min > 30) ? (min + 26) : 30): ReturnValidator<string> {
@@ -40,7 +40,7 @@ export function validatePassword(pass: any, min: number = 4, max: number = (min 
 
 export function validateSimpleText(text: any, name: string, min?: number, max?: null | number, required?: boolean): ReturnValidator<string> {
 	if(!text && !required) return null;
-	if(typeof text!='string' && typeof text!='number') return 'The value "'+name+'" must be defined in text or numeric format!';
+	if(typeof text!='string' && typeof text!='number') return (name + ' value must be defined in text or numeric format!');
 
 	if(min === undefined || min === null) min = 1;
 	if(min<1) min=1;
@@ -53,9 +53,9 @@ export function validateSimpleText(text: any, name: string, min?: number, max?: 
 	}
 
 	text = text.toString().trim();
-	if(text.length<1) return 'The value "'+name+'" is required!';
-	if(text.length<min) return 'The value "'+name+'" must not contain less than '+min+' characters!';
-	if(text.length>max) return 'The value "'+name+'" must not contain more than '+max+' characters!';
+	if(text.length<1) return (name + ' value is required!');
+	if(text.length<min) return (name + ' value must not contain less than '+min+' characters!');
+	if(text.length>max) return (name + ' value must not contain more than '+max+' characters!');
 
 	return null;
 }
@@ -68,87 +68,87 @@ export function validateName(name: any, type: string, obligatory?: null | boolea
 	}
 
 	if((typeOf === 'string' && name.trim().length < 1) || name === undefined || name === null){
-		return `The value "${typeOf}" is required!`;
+		return `${type} value is required!`;
 	}
 
-	if(typeOf != 'string') return 'The value "'+ type +'" must be defined in text or numeric format!';
+	if(typeOf != 'string') return type + ' value must be defined in text or numeric format!';
 
-	if(!name && obligatory) return `The value "${type}" is required!`;
+	if(!name && obligatory) return `${type} value is required!`;
 
 	if(!name) return null;
 
 	name = name.trim();
 
 	if(name.length>50){
-		return 'The value of "'+type+'" must not contain more than 50 characters!';
+		return type+' value must not contain more than 50 characters!';
 	}else if(name.length<2){
-		return 'The value of "' + type + '" must not contain less than 2 characters!';
+		return type + ' value must not contain less than 2 characters!';
 	}else if(/^[a-zA-ZáéíóúÁÉÍÓÚÑñ][a-zA-ZáéíóúÁÉÍÓÚÑñ\-\_]*( [a-zA-ZáéíóúÁÉÍÓÚÑñ][a-zA-ZáéíóúÁÉÍÓÚÑñ\-\_]*)?$/gi.test(name)==false){
-		return 'The value of "'+type+'" can only contain some specific special characters (.\'_-)!';
+		return type+' value can only contain some specific special characters (.\'_-)!';
 	}
 
 	return null;
 }
 
 
-export function validateSSN(ssn: string | number, required?: boolean): ReturnValidator<string>{
+export function validateSSN(ssn: string | number, name: string = 'Social Security Number', required?: boolean): ReturnValidator<string>{
 	if(!ssn && !required) return null;
-	if(!ssn) return 'The Social Security Number is required!';
+	if(!ssn) return `${name} is required!`;
 
 	let type=typeof ssn;
-	if(type!=='number' && type!=='string') return 'The Social Security Number must be defined in text or numeric format!';
+	if(type!=='number' && type!=='string') return `${name} must be defined in text or numeric format!`;
 	ssn = ssn.toString().trim();
-	if(!/^(\d+|\d+\-\d+\-\d+)$/.test(ssn)) return 'Wrong Social Security Number Format!';
+	if(!/^(\d+|\d+\-\d+\-\d+)$/.test(ssn)) return `${name} Number Format is wrong!`;
 
 	ssn=ssn.replace(/\-/g, '');
 
-	if(ssn.length!==9) return 'The Social Security Number must be contain 9 digits!';
+	if(ssn.length!==9) return `${name} must be contain 9 digits!`;
 
 	let part=[ssn.slice(0,3), ssn.slice(3,5), ssn.slice(5)];
 
-	if(part[0]==='000') return 'The Area Number can\'t be "000"';
-	if(part[1]==='00') return 'The Group Number can\'t be "00"';
-	if(part[2]==='0000') return 'The Serial Number can\'t be "0000"';
+	if(part[0]==='000') return `${name} Area Number can't be "000"`;
+	if(part[1]==='00') return `${name} Group Number can't be "00"`;
+	if(part[2]==='0000') return `${name} Serial Number can't be "0000"`;
 
-	if(part[0]==='666' || Number(part[0])>=900) return 'The Area Number can\'t be "666" or be in the hundred of 900!';
+	if(part[0]==='666' || Number(part[0])>=900) return `${name} Area Number can't be "666" or be in the hundred of 900!`;
 
 	return null;
 }
 
 
 
-export function validateGender(gender: string, required?: boolean): ReturnValidator<string>{
+export function validateGender(gender: string, name: string = 'Gender', required?: boolean): ReturnValidator<string>{
 	if(!gender && !required) return null;
-	if(!gender) return 'Gender is required!';
+	if(!gender) return `${name} is required!`;
 
-	if(typeof gender!=='string') return 'The gender must be defined in text format!';
+	if(typeof gender!=='string') return `${name} must be defined in text format!`;
 	gender=gender.trim().toLocaleLowerCase();
 
-	if(gender!=='male' && gender!=='female') return 'The gender must be "Male" or "Female"!';
+	if(gender!=='male' && gender!=='female') return `${name} must be "Male" or "Female"!`;
 	return null;
 }
 
 
 
-export function validateEmail(email: any, obligatory?: boolean | null): ReturnValidator<string> {
+export function validateEmail(email: any, name: string = 'Email', obligatory?: boolean | null): ReturnValidator<string> {
 	let error=null, type: string = typeof email,
 	regExp=/^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i;
 
-	if(type != 'string' && type != 'null' && type != 'undefined') return 'The email format must be defined in text!';
+	if(type != 'string' && type != 'null' && type != 'undefined') return `${name} format must be defined in text!`;
 
 	if(!email && !obligatory) return null;
 
-	if(!email) return 'You must enter an email!';
+	if(!email && obligatory) return `${name} is required!`;
 
 	email = email.trim();
 	if(email.length>0){
 		if(email.length>131){
-			return 'Email must be less than 132 characters long!';
+			return `${name} must be less than 132 characters long!`;
 		}else if(regExp.test(email)==false){
-			return 'Wrong email format!';
+			return `${name} format is wrong!`;
 		}
 	}else if(obligatory){
-		return 'You must enter an email!';
+		return `${name} is required!`;
 	}
 
 	return null;
@@ -159,39 +159,39 @@ export function validateEmail(email: any, obligatory?: boolean | null): ReturnVa
 export function validateDate(date: any | string | Date, type: string, minDate: null | Date, maxDate: null | Date, required?: boolean): ReturnValidator<string> {
 	if(!date && !required) return null;
 
-	if(!date) return `The ${type} date is required!`;
+	if(!date) return `${type} is required!`;
 
-	if((typeof date !== 'string') && !(date instanceof Date)) return `The date format must be "dd-mm-yy", or an instance of the "Date" object!`;
+	if((typeof date !== 'string') && !(date instanceof Date)) return `${type} format must be "dd-mm-yy", or an instance of the "Date" object!`;
 
 	if(typeof date === 'string'){
 		date = new Date(date);
-		if(isNaN(date.getTime())) return `The date format must be "dd-mm-yy", or an instance of the "Date" object!`;
+		if(isNaN(date.getTime())) return `${type} format must be "dd-mm-yy", or an instance of the "Date" object!`;
 	}
 
 	if(!!minDate && !!maxDate){
-		if(maxDate.getTime() < minDate.getTime()) return `The defined minimum date ("${dateToString(maxDate)}") must not be greater than the maximum date ("${dateToString(maxDate)}")`;
+		if(maxDate.getTime() < minDate.getTime()) return `${type} minimum date defined ("${dateToString(maxDate)}") must not be greater than the maximum date ("${dateToString(maxDate)}")`;
 	}
 
 	if(minDate !== null){
-		if(minDate.getTime() > date.getTime()) return `The date in ${type} "${dateToString(date)}" must not be less than "${dateToString(minDate)}"`;
+		if(minDate.getTime() > date.getTime()) return `${type} minimum date defined "${dateToString(date)}" must not be less than "${dateToString(minDate)}"`;
 	}
 
 	if(maxDate !== null){
-		if(maxDate.getTime() < date.getTime()) return `The date in ${type} "${dateToString(date)}" must not be greater than "${dateToString(maxDate)}"`;
+		if(maxDate.getTime() < date.getTime()) return `${type} maximum date defined "${dateToString(date)}" must not be greater than "${dateToString(maxDate)}"`;
 	}
 
 	return null;
 }
 
-export function validatePhoneNumber(phone: any, required?: boolean): ReturnValidator<string>  {
+export function validatePhoneNumber(phone: any, name: string = 'Phone', required?: boolean): ReturnValidator<string>  {
 	if((!phone && (typeof phone !== 'boolean')) && !required) return null;
-	if((!phone && (typeof phone !== 'boolean'))) return 'Phone number is required!';
+	if((!phone && (typeof phone !== 'boolean'))) return `${name} number is required!`;
 
-	if((typeof phone !== 'string' && typeof phone !== 'number')) return 'The phone number must be defined in text or numeric format!';
+	if((typeof phone !== 'string' && typeof phone !== 'number')) return `${name} must be defined in text or numeric format!`;
 
 	phone = cleanSpaces((typeof phone === 'string') ? phone : phone.toString());
 
-	if(!/^(\+?\d{1,3} ?)?\(?0?\d{3}\)?[- ]?\d{3}-?\d{4}$/.test(phone)) return 'Invalid phone number!';
+	if(!/^(\+?\d{1,3} ?)?\(?0?\d{3}\)?[- ]?\d{3}-?\d{4}$/.test(phone)) return `${name} is invalid!`;
 
 	return null;
 }
@@ -338,14 +338,14 @@ export type ValidateCuantity = {
 export function validateCuantity({num, name, min, max, int, required}: ValidateCuantity): ReturnValidator<string> {
 	if((!num && num!=='0' && num!==0) && !required) return null;
 	if(!name) name = 'quantity';
-	if((!num && num!=='0' && num!==0)) return `The ${name} is required!`;
+	if((!num && num!=='0' && num!==0)) return `${name} is required!`;
 
 	let type=typeof num;
-	if(type!=='string' && type!=='number') return `The ${name} must be defined in text or number format!`;
-	if(type==='string' && isNaN(num)) return `The ${name} is not a number!`;
+	if(type!=='string' && type!=='number') return `${name} must be defined in text or number format!`;
+	if(type==='string' && isNaN(num)) return `${name} is not a number!`;
 	num=Number(num);
 
-	if(int && !Number.isInteger(num)) return `The ${name} must be an integer!`;
+	if(int && !Number.isInteger(num)) return `${name} must be an integer!`;
 
 	if(!min){
 		min=0;
@@ -359,9 +359,9 @@ export function validateCuantity({num, name, min, max, int, required}: ValidateC
 		if(valid) return valid;
 	}
 
-	if(num<min) return `The ${name} must not be less than ${min}!`;
+	if(num<min) return `${name} must not be less than ${min}!`;
 
-	if(!!max && num>max) return `The ${name} must not be greater than ${max}!`;
+	if(!!max && num>max) return `${name} must not be greater than ${max}!`;
 
 	return null;
 }
@@ -370,9 +370,9 @@ export function validateJSONQuillContext(json: any, type: string, required = fal
     json ??= null;
 
     if (json === null && required !== true) return null;
-    else if (json === null) return `The "${type}" value is required!`;
+    else if (json === null) return `${type} value is required!`;
 
-    if ((typeof json !== 'object' || Array.isArray(json) && typeof json !== 'string')) return `The "${type}" value must be defined in JSON format!`;
+    if ((typeof json !== 'object' || Array.isArray(json) && typeof json !== 'string')) return `${type} value must be defined in JSON format!`;
 
     try {
         const obj = typeof json === 'string' ? JSON.parse(json) : json;
@@ -386,8 +386,8 @@ export function validateJSONQuillContext(json: any, type: string, required = fal
                 return null;
             }
         }
-        return `The "${type}" value is not a valid react-quill context!`;
+        return `${type} value is not a valid react-quill context!`;
     } catch (e) {
-        return `The "${type}" value is not a valid react-quill context!`;
+        return `${type} value is not a valid react-quill context!`;
     }
 }

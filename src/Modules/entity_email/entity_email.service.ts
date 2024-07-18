@@ -16,19 +16,22 @@ type ProcessEmailType = {
     email: any;
     created_by: number;
     order?: number;
+    name?: string;
 } | any;
 
 type ProcessMultipleEmailsType = {
     id_entity?: number;
     emails: string[];
     order: number;
-    created_by: number
+    created_by: number;
+    name?: string;
 } | any;
 
 export type ChangeEmailOrderType = {
     id_entity_email: number;
     id_entity: number;
     order: number;
+    name?: string;
 } | any;
 
 type GetBelongingSystemType = {
@@ -53,22 +56,24 @@ export class EntityEmailService {
         }
 
         if(typeof params !== 'object' || Array.isArray(params)) {
-            errors.set('params', 'The parameter name must be defined as a JSON object!');
+            errors.set('params', 'The Email parameter must be defined as a JSON object!');
 
             return {
                 errors,
                 data: null
             };
         } else {
-            errors.set('id_entity', validateId(params.id_entity, 'Entity ID'));
-            errors.set('created_by', validateId(params.created_by, 'Processing user ID', true));
-            errors.set('id_entity_email', validateId(params.id_entity_email, 'Email ID'));
-            errors.set('email', validateEmail(params.email, true));
+            params.name ??= 'email';
+
+            errors.set('id_entity', validateId(params.id_entity, params.name + ' entity ID'));
+            errors.set('created_by', validateId(params.created_by, params.name + ' processing user ID', true));
+            errors.set('id_entity_email', validateId(params.id_entity_email, params.name + ' ID'));
+            errors.set('email', validateEmail(params.email, params.name, true));
 
             if(!errors.exists('id_entity') && (params.id_entity ?? null) !== null) {
                 errors.set('order', validateCuantity({
                     num: params.order,
-                    name: 'email order',
+                    name: params.name + ' order',
                     min: 0,
                     int: true,
                     required: true
@@ -95,18 +100,18 @@ export class EntityEmailService {
                     email = await prisma.entity_email.findUnique({ where: { id: params.id_entity_email } });
 
                     if(!email) {
-                        errors.set('id_entity_email', 'Email not found!');
+                        errors.set('id_entity_email', params.name + ' not found!');
                     }
                 } else {
                     email = await prisma.entity_email.findUnique({ where: { email: params.email.trim().toLowerCase() } });
                 }
 
                 if(params.id_entity && !entity) {
-                    errors.set('id_entity', 'Entity not found!');
+                    errors.set('id_entity', params.name + ' entity not found!');
                 }
 
                 if(!user) {
-                    errors.set('created_by', 'Processing user not found!');
+                    errors.set('created_by', params.name + ' processing user not found!');
                 }
 
                 if(user && entity && email && (params.order ?? null) !== null && params.order == 1) {
@@ -118,7 +123,7 @@ export class EntityEmailService {
                     }, prisma);
 
                     if(exisingEmailByEntity) {
-                        errors.set('id_entity_email', 'Email already exists!');
+                        errors.set('id_entity_email', params.name + ' already exists!');
                     }
                 }
 
@@ -251,7 +256,8 @@ export class EntityEmailService {
                         const changedEmailOrder = await this.changeEmailOrder({
                             id_entity: entity.id,
                             id_entity_email: email.id,
-                            order: params.order ?? 0
+                            order: params.order ?? 0,
+                            name: params.name
                         }, prisma);
 
                         if(changedEmailOrder.errors.existsErrors()) {
@@ -296,20 +302,22 @@ export class EntityEmailService {
         }
 
         if(typeof params !== 'object' || Array.isArray(params)) {
-            errors.set('params', 'The parameter name must be defined as a JSON object!');
+            errors.set('params', 'The Emails parameter must be defined as a JSON object!');
 
             return {
                 errors,
                 data: null
             };
         } else {
-            errors.set('id_entity', validateId(params.id_entity, 'Entity ID'));
-            errors.set('created_by', validateId(params.created_by, 'Processing user ID', true));
+            params.name ??= 'emails';
+
+            errors.set('id_entity', validateId(params.id_entity, params.name + ' entity ID'));
+            errors.set('created_by', validateId(params.created_by, params.name + ' processing user ID', true));
 
             if(!Array.isArray(params.emails)) {
-                errors.set('emails', 'Emails must be an array!');
+                errors.set(params.name, params.name + ' must be an array!');
             } else if(params.emails.length < 1) {
-                errors.set('emails', 'The emails parameter must contain at least one item!');
+                errors.set(params.name, params.name + ' parameter must contain at least one item!');
             }
         }
 
@@ -328,11 +336,11 @@ export class EntityEmailService {
                     user = (params.created_by ?? null) === null ? null : await prisma.system_subscription_user.findUnique({ where: { id: params.created_by } });
 
                 if(params.id_entity && !entity) {
-                    errors.set('id_entity', 'Entity not found!');
+                    errors.set('id_entity', params.name + ' entity not found!');
                 }
 
                 if(!user) {
-                    errors.set('created_by', 'Processing user not found!');
+                    errors.set('created_by', params.name + ' processing user not found!');
                 }
 
                 if(!errors.existsErrors()) {
@@ -341,7 +349,8 @@ export class EntityEmailService {
                             id_entity: params.id_entity,
                             email: params.emails[i],
                             created_by: params.created_by,
-                            order: i + 1
+                            order: i + 1,
+                            name: params.name.concat('.' + i)
                         }, prisma);
 
                         if(emailResult.errors.existsErrors()) {
@@ -374,7 +383,8 @@ export class EntityEmailService {
                         const changedEmailOrder = await this.changeEmailOrder({
                             id_entity: entity?.id,
                             id_entity_email: emails[0].id,
-                            order: params.order ?? 0
+                            order: 1,
+                            name: params.name + '.0'
                         }, prisma);
 
                         if(changedEmailOrder.errors.existsErrors()) {
@@ -421,20 +431,22 @@ export class EntityEmailService {
         }
 
         if(typeof params !== 'object' || Array.isArray(params)) {
-            errors.set('params', 'The parameter name must be defined as a JSON object!');
+            errors.set('params', 'The email order allocator parameter must be defined as a JSON object!');
 
             return {
                 errors,
                 data: null
             };
         } else {
-            errors.set('id_entity', validateId(params.id_entity, 'Entity ID', true));
-            errors.set('id_entity_email', validateId(params.id_entity_email, 'Email ID', true));
+            params.name ??= 'email';
+
+            errors.set('id_entity', validateId(params.id_entity, params.name + ' entity ID', true));
+            errors.set('id_entity_email', validateId(params.id_entity_email, params.name + ' ID', true));
 
             if(!errors.existsErrors()) {
                 errors.set('order', validateCuantity({
                     num: params.order,
-                    name: 'email order',
+                    name: params.name + ' order',
                     min: 0,
                     int: true,
                     required: true
@@ -459,15 +471,15 @@ export class EntityEmailService {
                 email = await prisma.entity_email.findUnique({ where: { id: params.id_entity_email } });
 
                 if(!email) {
-                    errors.set('id_entity_email', 'Email not found!');
+                    errors.set('id_entity_email', params.name + ' not found!');
                 }
 
                 if(!entity) {
-                    errors.set('id_entity', 'Entity not found!');
+                    errors.set('id_entity', params.name + ' entity not found!');
                 }
 
                 if(entity && email && !email_by_entity) {
-                    errors.set('id_entity_email', 'The email does not belong to the entity!');
+                    errors.set('id_entity_email', params.name + ' does not belong to the entity!');
                 }
 
                 if(errors.existsErrors()) {

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 // import { CreateUserDto } from './dto/create-user.dto';
-import { PrismaService, TransactionPrisma } from '../../prisma.service';
+import { PrismaService, PrismaTransactionOrService, TransactionPrisma } from '../../prisma.service';
 import { Prisma, PrismaClient, entity, entity_name, entity_name_by_entity } from '@prisma/client';
 // import getBelongingSystemDto from './dto/getBelonginSystemDto.dto';
 import HandlerErrors from '../../util/HandlerErrors';
@@ -48,7 +48,7 @@ type ProcessMultipleNamesType = {
 export class EntityNameService {
     constructor(private prisma: PrismaService) {}
 
-    async processName(params: ProcessNameType, prisma?: Prisma.TransactionClient | PrismaClient | TransactionPrisma) {
+    async processName(params: ProcessNameType, prisma?: PrismaTransactionOrService) {
         const errors = new HandlerErrors();
 
         let isPosibleTransaction = false,
@@ -271,18 +271,16 @@ export class EntityNameService {
                         }
                     }
 
-                    if(entity) {
-                        const changedNameOrder = await this.changeNameOrder({
-                            id_entity_name_type: (ent_name_type?.id ?? 0),
-                            id_entity: entity.id,
-                            id_entity_name: name.id,
-                            order: params.order ?? 0
-                        }, prisma);
+                    const changedNameOrder = await this.changeNameOrder({
+                        id_entity_name_type: (ent_name_type?.id ?? 0),
+                        id_entity: entity.id,
+                        id_entity_name: name.id,
+                        order: params.order ?? 0
+                    }, prisma);
 
-                        if(changedNameOrder.errors.existsErrors()) {
-                            errors.merege(changedNameOrder.errors);
-                            throw errors;
-                        }
+                    if(changedNameOrder.errors.existsErrors()) {
+                        errors.merege(changedNameOrder.errors);
+                        throw errors;
                     }
                 }
 
@@ -310,7 +308,7 @@ export class EntityNameService {
         };
     }
 
-    async processMultipleNames(params: ProcessMultipleNamesType, prisma?: Prisma.TransactionClient | PrismaClient | TransactionPrisma) {
+    async processMultipleNames(params: ProcessMultipleNamesType, prisma?: PrismaTransactionOrService) {
         const errors = new HandlerErrors();
 
         let isPosibleTransaction = false,
@@ -395,6 +393,7 @@ export class EntityNameService {
                             },
                             where: {
                                 id_entity: entity?.id,
+                                id_entity_name_type: ent_name_type.id,
                                 NOT: {
                                     id_entity_name: {
                                         in: names.map(el => el.id)

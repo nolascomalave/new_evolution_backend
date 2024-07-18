@@ -8,6 +8,8 @@ import { diskStorage } from 'multer';
 import Files from 'src/Util/Files';
 import { RequestSession } from '../auth/middlewares/auth.middleware';
 import { Prisma } from '@prisma/client';
+import { JSONParser, getAllFlatValuesOfDataAsArray } from 'src/util/formats';
+import HandlerErrors from 'src/util/HandlerErrors';
 
 @Controller('system-subscription-users')
 export class SystemSubscriptionUserController {
@@ -42,7 +44,7 @@ export class SystemSubscriptionUserController {
     //      401 Unauthorized.
     //      500 Error in server.
     async add(@Req() req: RequestSession, @Body(AddPipe) data: AddDto, @UploadedFile() photo: Express.Multer.File) {
-        let errorsInProcess: string[] = null,
+        let errorsInProcess = new HandlerErrors,
             dataProcess: any = null;
 
         /* try {
@@ -99,30 +101,30 @@ export class SystemSubscriptionUserController {
                 is_natural: true
             }, prisma);
 
-            if(!!errors) {
+            if(errors.existsErrors()) {
                 errorsInProcess = errors;
                 throw 'error';
             }
 
-            console.log('controller');
             await prisma.rollback();
-            console.log('controller 1');
+
+            delete userData.fullUser.password;
+            delete userData.user.password;
 
             return {
-                data: userData,
+                data: JSONParser(userData),
                 message: 'User created!'
             };
         } catch(e: any) {
             console.log(e);
             await prisma.rollback();
-            console.log('controller 3');
 
             if(!!photo) {
                 Files.deleteFile(photo.path);
             }
 
             if(e === 'error') {
-                throw new BadRequestException(errorsInProcess);
+                throw new BadRequestException(getAllFlatValuesOfDataAsArray(errorsInProcess, true));
             }
 
             throw new InternalServerErrorException(e);

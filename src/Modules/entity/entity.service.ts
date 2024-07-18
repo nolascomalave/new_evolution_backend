@@ -75,7 +75,6 @@ export class EntityService {
             // --------------------------------------------------------------------------------------------------------------------------------------------
             // - Creating Entity: -------------------------------------------------------------------------------------------------------------------------
             // --------------------------------------------------------------------------------------------------------------------------------------------
-            console.log('Crea entidad.');
             entity = await this.prisma.entity.create({
                 data: {
                     is_natural: addData.is_natural,
@@ -140,7 +139,6 @@ export class EntityService {
 
             const names_types = Object.keys(names);
 
-            console.log('Crea nombres.');
             for(let i = 0; i < names_types.length; i++) {
                 const namesResult = await this.nameService.processMultipleNames({
                     names: names[names_types[i]],
@@ -160,11 +158,11 @@ export class EntityService {
             // - Processing Emails: -----------------------------------------------------------------------------------------------------------------------
             // --------------------------------------------------------------------------------------------------------------------------------------------
             let emails = [];
-            console.log('Crea correos.');
             const emailsResult = await this.emailService.processMultipleEmails({
                 emails: addData.emails,
                 id_entity: entity.id,
-                created_by: Number(addData.id_system_subscription_user_moderator)
+                created_by: Number(addData.id_system_subscription_user_moderator),
+                name: 'emails'
             }, prisma);
 
             if(emailsResult.errors.existsErrors()) {
@@ -178,7 +176,6 @@ export class EntityService {
             // - Processing Phones: -----------------------------------------------------------------------------------------------------------------------
             // --------------------------------------------------------------------------------------------------------------------------------------------
             let phones = [];
-            console.log('Crea teléfonos.');
             const phonesResult = await this.phoneService.processMultiplePhones({
                 phones: addData.phones,
                 id_entity: entity.id,
@@ -221,7 +218,6 @@ export class EntityService {
                 }
             }
 
-            console.log('Crea documentos.');
             if(!errors.exists('documents')) {
                 for(let docs in documentsByType) {
                     const documentsResult = await this.documentService.processMultipleDocuments({
@@ -257,19 +253,14 @@ export class EntityService {
                 // fs.mkdirSync(dirName, { recursive: true });
             }
 
-            console.log('Ya procesó la foto.');
             fullEntity = await this.prisma.findOneUnsafe(`SELECT
                 *
             FROM entity_complete_info eci
             WHERE id = ${entity.id}`, prisma);
 
-            console.log('Hay una consulta');
-
             if(!fullEntity) {
                 throw 'Entity not found.';
             }
-
-            console.log('Actualiza la entidad');
 
             entity = await prisma.entity.update({
                 where: {
@@ -282,12 +273,10 @@ export class EntityService {
                 }
             });
 
-            console.log('entity');
             if(isPosibleTransaction && ('commit' in prisma)) {
                 await prisma.commit();
             }
         } catch(e: any) {
-            console.log('entity');
             if(isPosibleTransaction && ('rollback' in prisma)) {
                 await prisma.rollback();
             }
@@ -308,7 +297,7 @@ export class EntityService {
                 entity,
                 fullEntity
             },
-            errors: errors.existsErrors() ? errors.getArrayErrors() : null,
+            errors: errors,
         };
     }
 }

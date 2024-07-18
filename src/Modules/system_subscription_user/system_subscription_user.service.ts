@@ -4,6 +4,7 @@ import { AddParams, CompleteEntity, EntityService } from "../entity/entity.servi
 import { username as usernameGenerator } from "src/util/formats";
 import { hashSync } from 'bcryptjs';
 import { system_subscription_user } from "@prisma/client";
+import HandlerErrors from "src/util/HandlerErrors";
 
 type FullUser = {
     id: number;
@@ -38,17 +39,15 @@ export class SystemSubscriptionUserService {
 
     async add(addData: AddParams, prisma?: PrismaTransactionOrService) {
         const isPosibleTransaction = !prisma;
-        let errors: null | string[] = null,
+        let errors = new HandlerErrors,
             user: system_subscription_user | null = null,
             fullUser: FullUser | null = null;
 
-        console.log('Inicia usuario');
         if(isPosibleTransaction) {
             prisma = await this.prisma.beginTransaction();
         }
 
         try {
-            console.log('Inicia creación de entidad.');
             const {
                 data,
                 errors: entityErrors
@@ -64,13 +63,11 @@ export class SystemSubscriptionUserService {
                 is_natural: addData.is_natural
             }, prisma);
 
-            console.log('Inicia Consulta 1');
             const moderator_user: CompleteEntity | null = !data ? null : await this.prisma.findOneUnsafe(`SELECT
                 *
             FROM entity_complete_info eci
             WHERE id = ${addData.id_system_subscription_user_moderator}`, prisma);
 
-            console.log('Inicia Consulta 2');
             const usernames: string[] = !moderator_user ? null : (await this.prisma.queryUnsafe<{username: string}>(`SELECT
                 ssu.username
             FROM entity_complete_info eci
@@ -79,12 +76,9 @@ export class SystemSubscriptionUserService {
             WHERE eci.id_system_subscription = ${moderator_user.id_system_subscription}`, prisma) ?? [])
                 .map(el => (el.username));
 
-            console.log(data.fullEntity);
+            const username: string | null = (!data || !moderator_user || !usernames || !data.fullEntity.names) ? null : usernameGenerator(data.fullEntity.names.split(' ')[0], data.fullEntity.surnames === null ? 'user' : data.fullEntity.surnames.split(' ')[0], usernames);
 
-            const username: string | null = (!data || !moderator_user || !usernames) ? null : usernameGenerator(data.fullEntity.names.split(' ')[0], data.fullEntity.surnames.split(' ')[0], []);
-
-            console.log('Inicia creación de usurio 1');
-            user = (!data || !moderator_user) ? null : (await this.prisma.system_subscription_user.create({
+            user = (!data || !moderator_user || !username) ? null : (await prisma.system_subscription_user.create({
                 data: {
                     id_entity: data.entity.id,
                     id_system_subscription: moderator_user.id_system_subscription,
@@ -101,18 +95,21 @@ export class SystemSubscriptionUserService {
 
             if(!data) {
                 errors = entityErrors;
+            } else if(data.fullEntity.names === null) {
+                errors.set('system_subscription_user', 'User must have a first name.');
+            }
+
+            if(Array.isArray(errors)) {
                 throw 'error';
             }
 
             if(isPosibleTransaction && ('commit' in prisma)) {
                 prisma.commit();
             }
-            console.log('user');
         } catch(e: any) {
             if(isPosibleTransaction && ('rollback' in prisma)) {
                 prisma.rollback();
             }
-            console.log('user');
 
             if(e !== 'error') {
                 throw e;
@@ -124,7 +121,7 @@ export class SystemSubscriptionUserService {
                 user,
                 fullUser
             },
-            errors: !errors ? null : errors,
+            errors: errors,
         };
     }
 }

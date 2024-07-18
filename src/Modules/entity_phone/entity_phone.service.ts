@@ -16,18 +16,21 @@ type ProcessPhoneType = {
     phone: any;
     created_by: number;
     order?: number;
+    name?: string;
 } | any;
 
 type ProcessMultiplePhonesType = {
     id_entity?: number;
     phones: string[];
-    created_by: number
-};
+    created_by: number;
+    name?: string;
+} | any;
 
 export type ChangePhoneOrderType = {
     id_entity_phone: number;
     id_entity: number;
     order: number;
+    name?: string;
 } | any;
 
 type GetBelongingSystemType = {
@@ -59,15 +62,17 @@ export class EntityPhoneService {
                 data: null
             };
         } else {
-            errors.set('id_entity', validateId(params.id_entity, 'Entity ID'));
-            errors.set('created_by', validateId(params.created_by, 'Processing user ID', true));
-            errors.set('id_entity_phone', validateId(params.id_entity_phone, 'Phone ID'));
-            errors.set('phone', validatePhoneNumber(params.phone, true));
+            params.name ??= 'phone';
+
+            errors.set('id_entity', validateId(params.id_entity, params.name + ' entity ID'));
+            errors.set('created_by', validateId(params.created_by, params.name + ' processing user ID', true));
+            errors.set('id_entity_phone', validateId(params.id_entity_phone, params.name + ' ID'));
+            errors.set('phone', validatePhoneNumber(params.phone, params.name, true));
 
             if(!errors.exists('id_entity') && (params.id_entity ?? null) !== null) {
                 errors.set('order', validateCuantity({
                     num: params.order,
-                    name: 'phone order',
+                    name: params.name + ' order',
                     min: 0,
                     int: true,
                     required: true
@@ -94,18 +99,18 @@ export class EntityPhoneService {
                     phone = await prisma.entity_phone.findUnique({ where: { id: params.id_entity_phone } });
 
                     if(!phone) {
-                        errors.set('id_entity_phone', 'Phone not found!');
+                        errors.set('id_entity_phone', params.name + ' not found!');
                     }
                 } else {
                     phone = await prisma.entity_phone.findUnique({ where: { phone: params.phone.toString().trim().toLowerCase() } });
                 }
 
                 if(params.id_entity && !entity) {
-                    errors.set('id_entity', 'Entity not found!');
+                    errors.set('id_entity', params.name + ' entity not found!');
                 }
 
                 if(!user) {
-                    errors.set('created_by', 'Processing user not found!');
+                    errors.set('created_by', params.name + ' processing user not found!');
                 }
 
                 if(user && entity && phone && (params.order ?? null) !== null && params.order == 1) {
@@ -117,7 +122,7 @@ export class EntityPhoneService {
                     }, prisma);
 
                     if(exisingPhoneByEntity) {
-                        errors.set('id_entity_email', 'Phone already exists!');
+                        errors.set('id_entity_email', params.name + ' already exists!');
                     }
                 }
 
@@ -250,7 +255,8 @@ export class EntityPhoneService {
                         const changedPhoneOrder = await this.changePhoneOrder({
                             id_entity: entity.id,
                             id_entity_phone: phone.id,
-                            order: params.order ?? 0
+                            order: params.order ?? 0,
+                            name: params.name
                         }, prisma);
 
                         if(changedPhoneOrder.errors.existsErrors()) {
@@ -284,7 +290,7 @@ export class EntityPhoneService {
         };
     }
 
-    async processMultiplePhones(params: ProcessPhoneType, prisma?: Prisma.TransactionClient | PrismaClient | TransactionPrisma) {
+    async processMultiplePhones(params: ProcessMultiplePhonesType, prisma?: Prisma.TransactionClient | PrismaClient | TransactionPrisma) {
         const errors = new HandlerErrors();
 
         let isPosibleTransaction = false,
@@ -295,20 +301,22 @@ export class EntityPhoneService {
         }
 
         if(typeof params !== 'object' || Array.isArray(params)) {
-            errors.set('params', 'The parameter name must be defined as a JSON object!');
+            errors.set('params', 'The phones parameter must be defined as a JSON object!');
 
             return {
                 errors,
                 data: null
             };
         } else {
-            errors.set('id_entity', validateId(params.id_entity, 'Entity ID'));
-            errors.set('created_by', validateId(params.created_by, 'Processing user ID', true));
+            params.name ??= 'phones';
+
+            errors.set('id_entity', validateId(params.id_entity, params.name + ' entity ID'));
+            errors.set('created_by', validateId(params.created_by, params.name + ' processing user ID', true));
 
             if(!Array.isArray(params.phones)) {
-                errors.set('phones', 'Phones must be an array!');
+                errors.set(params.name, params.name + ' must be an array!');
             } else if(params.phones.length < 1) {
-                errors.set('phones', 'The phones parameter must contain at least one item!');
+                errors.set(params.name, params.name + ' parameter must contain at least one item!');
             }
         }
 
@@ -327,11 +335,11 @@ export class EntityPhoneService {
                     user = (params.created_by ?? null) === null ? null : await prisma.system_subscription_user.findUnique({ where: { id: params.created_by } });
 
                 if(params.id_entity && !entity) {
-                    errors.set('id_entity', 'Entity not found!');
+                    errors.set('id_entity', params.name + ' entity not found!');
                 }
 
                 if(!user) {
-                    errors.set('created_by', 'Processing user not found!');
+                    errors.set('created_by', params.name + ' processing user not found!');
                 }
 
                 if(!errors.existsErrors()) {
@@ -340,7 +348,8 @@ export class EntityPhoneService {
                             id_entity: params.id_entity,
                             phone: params.phones[i],
                             created_by: params.created_by,
-                            order: i + 1
+                            order: i + 1,
+                            name: params.name.concat('.' + i)
                         }, prisma);
 
                         if(phoneResult.errors.existsErrors()) {
@@ -373,7 +382,8 @@ export class EntityPhoneService {
                         const changedPhoneOrder = await this.changePhoneOrder({
                             id_entity: entity?.id,
                             id_entity_phone: phones[0].id,
-                            order: params.order ?? 0
+                            order: 1,
+                            name: params.name + '.0'
                         }, prisma);
 
                         if(changedPhoneOrder.errors.existsErrors()) {
@@ -420,20 +430,22 @@ export class EntityPhoneService {
         }
 
         if(typeof params !== 'object' || Array.isArray(params)) {
-            errors.set('params', 'The parameter name must be defined as a JSON object!');
+            errors.set('params', 'The parameter parameter must be defined as a JSON object!');
 
             return {
                 errors,
                 data: null
             };
         } else {
-            errors.set('id_entity', validateId(params.id_entity, 'Entity ID', true));
-            errors.set('id_entity_phone', validateId(params.id_entity_phone, 'Phone ID', true));
+            params.name ??= 'email';
+
+            errors.set('id_entity', validateId(params.id_entity, params.name + ' entity ID', true));
+            errors.set('id_entity_phone', validateId(params.id_entity_phone, params.name + ' phone ID', true));
 
             if(!errors.existsErrors()) {
                 errors.set('order', validateCuantity({
                     num: params.order,
-                    name: 'phone order',
+                    name: params.name +' order',
                     min: 0,
                     int: true,
                     required: true
@@ -458,15 +470,15 @@ export class EntityPhoneService {
                 phone = await prisma.entity_phone.findUnique({ where: { id: params.id_entity_phone } });
 
                 if(!phone) {
-                    errors.set('id_entity_phone', 'Phone not found!');
+                    errors.set('id_entity_phone', params.name + ' not found!');
                 }
 
                 if(!entity) {
-                    errors.set('id_entity', 'Entity not found!');
+                    errors.set('id_entity', params.name + ' entity not found!');
                 }
 
                 if(entity && phone && !phone_by_entity) {
-                    errors.set('id_entity_phone', 'The phone does not belong to the entity!');
+                    errors.set('id_entity_phone', params.name + ' does not belong to the entity!');
                 }
 
                 if(errors.existsErrors()) {

@@ -573,7 +573,7 @@ export class EntityDocumentService {
         let AND: string[] | string = [];
 
         if(('id_entity' in params) && (params.id_entity ?? null) !== null) {
-            AND.push(`doc.id_entity = ${params.id_entity}`);
+            AND.push(`doc.id_entity <> ${params.id_entity}`);
         }
 
         if(('id_entity_document' in params) && (params.id_entity_document ?? null) !== null) {
