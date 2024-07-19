@@ -7,7 +7,6 @@ import { SystemSubscriptionUserService } from './system_subscription_user.servic
 import { diskStorage } from 'multer';
 import Files from 'src/Util/Files';
 import { RequestSession } from '../auth/middlewares/auth.middleware';
-import { Prisma } from '@prisma/client';
 import { JSONParser, getAllFlatValuesOfDataAsArray } from 'src/util/formats';
 import HandlerErrors from 'src/util/HandlerErrors';
 
@@ -20,6 +19,13 @@ export class SystemSubscriptionUserController {
 
     @Get('/:id')
     @HttpCode(HttpStatus.OK)
+    // @UsePipes(new ValidationPipe())
+    // Status:
+    //      200 Ok.
+    //      400 Errors in params.
+    //      401 Unauthorized.
+    //      404 Not found.
+    //      500 Error in server.
     async getById(@Req() { user: { id_system_subscription } }: RequestSession, @Param() { id }: GetByIdDto) {
         const result = await this.service.getById({
             id,

@@ -1,13 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService, PrismaTransactionOrService } from "src/prisma.service";
 import { AddParams, CompleteEntity, EntityService } from "../entity/entity.service";
-import { username as usernameGenerator } from "src/util/formats";
+import { JSONParser, username as usernameGenerator } from "src/util/formats";
 import { hashSync } from 'bcryptjs';
 import { system_subscription_user } from "@prisma/client";
 import HandlerErrors from "src/util/HandlerErrors";
 import { GetByIdDto } from "./dto/system_subscription_user.dto";
 
-type FullUser = {
+export type FullUser = {
     id: number;
     id_system: number;
     id_system_subscription: number;
@@ -16,6 +16,11 @@ type FullUser = {
     username: string;
     password: string;
     name: string;
+    names_obj: string | {
+        id_entity_name_type: number;
+        type: string;
+        names: string[]
+    }[];
     complete_name: string;
     names: string | null;
     surnames: string | null;
@@ -44,7 +49,7 @@ export class SystemSubscriptionUserService {
         ];
 
         if(id_system_subscription !== undefined) {
-            AND.push(`id_system_subscription_user = ${id_system_subscription}`);
+            AND.push(`id_system_subscription = ${id_system_subscription}`);
         }
 
         AND = AND.length < 1 ? '' : ('AND '.concat(AND.join("\nAND ")));
@@ -55,7 +60,25 @@ export class SystemSubscriptionUserService {
         WHERE id_system_subscription_user = ${id}
             ${AND}`;
 
-        const user: FullUser | null = await this.prisma.findOneUnsafe(sql);
+        let user: FullUser | null = await this.prisma.findOneUnsafe(sql);
+
+        if(!!user) {
+            if(user.documents !== null && (typeof user.documents === 'string')) {
+                user.documents = JSON.parse(user.documents);
+            }
+
+            if(user.emails !== null && (typeof user.emails === 'string')) {
+                user.emails = JSON.parse(user.emails);
+            }
+
+            if(user.names_obj !== null && (typeof user.names_obj === 'string')) {
+                user.names_obj = JSON.parse(user.names_obj);
+            }
+
+            if(user.phones !== null && (typeof user.phones === 'string')) {
+                user.phones = JSON.parse(user.phones);
+            }
+        }
 
         return user;
     }
@@ -127,11 +150,12 @@ export class SystemSubscriptionUserService {
             }
 
             if(isPosibleTransaction && ('commit' in prisma)) {
-                prisma.commit();
+                await prisma.commit();
             }
         } catch(e: any) {
             if(isPosibleTransaction && ('rollback' in prisma)) {
-                prisma.rollback();
+                console.log('Aquí ocurre el error.');
+                await prisma.rollback();
             }
 
             if(e !== 'error') {

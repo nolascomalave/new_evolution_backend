@@ -76,7 +76,7 @@ export class EntityService {
             // --------------------------------------------------------------------------------------------------------------------------------------------
             // - Creating Entity: -------------------------------------------------------------------------------------------------------------------------
             // --------------------------------------------------------------------------------------------------------------------------------------------
-            entity = await this.prisma.entity.create({
+            entity = await prisma.entity.create({
                 data: {
                     is_natural: addData.is_natural,
                     gender: addData.is_natural ? $Enums.entity_gender[addData.gender] : undefined,
@@ -126,7 +126,7 @@ export class EntityService {
                 const name = typeof el === 'string' ? el : el.name;
 
                 if(!(type in names)) {
-                    const name_type = [...natural_entity_name_types, ...legal_entity_name_types].find(name => name.id === type);
+                    const name_type = [...natural_entity_name_types, ...legal_entity_name_types].find(name => name.id === type) ?? null;
 
                     names[type.toString()] = {
                         type: name_type === null ? null : name_type.type,

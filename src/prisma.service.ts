@@ -60,10 +60,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
                             rej('Error');
                         });
                     }));
-                }, {
-                    isolationLevel: Prisma.TransactionIsolationLevel.Serializable, // optional, default defined by database configuration
-                    maxWait: 10000, // default: 2000
-                    timeout: 5000, // default: 5000
                 });
             } catch(e: any) {
                 if(isPrismaError) {
