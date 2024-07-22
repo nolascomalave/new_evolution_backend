@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService, PrismaTransactionOrService, TransactionPrisma } from '../../prisma.service';
+import { PrismaService, PrismaTransactionOrService } from '../../prisma.service';
 import { $Enums, entity } from '@prisma/client';
-import { AddDto } from '../system_subscription_user/dto/system_subscription_user.dto';
+import { AddOrUpdateDto } from '../system_subscription_user/dto/system_subscription_user.dto';
 import { EntityDocumentService } from '../entity_document/entity_document.service';
 import { EntityNameService } from '../entity_name/entity_name.service';
 import { EntityEmailService } from '../entity_email/entity_email.service';
@@ -10,43 +10,62 @@ import HandlerErrors from 'src/util/HandlerErrors';
 import fs from 'fs';
 import path from 'path';
 import { validateSSN } from 'src/util/validators';
+import { booleanFormat } from 'src/util/formats';
 
-export type AddParams = AddDto & {
+export type AddOrUpdateParams = AddOrUpdateDto & {
+    id_entity?: number;
     is_natural: boolean;
     photo?: Express.Multer.File;
     id_system_subscription_user_moderator: number
 };
 
-
 export type CompleteEntity = {
     id: number;
-    id_entity_parent: number | null;
+    id_entity_parent: number;
     id_document: number;
-    is_natural: number;
+    is_natural: 1 | 0;
     name: string;
-    gender: $Enums.entity_gender;
-    date_birth: Date | null;
-    address: string | null;
-    photo: string | null;
-    created_at: Date;
-    created_by: number | null;
-    updated_at: number | null;
-    updated_by: number | null;
-    annulled_at: number | null;
-    annulled_by: number | null;
-    complete_name: number;
-    names: string | null;
-    surnames: string | null;
-    legal_name: string | null;
-    business_name: string | null;
-    comercial_designation: string | null;
-    documents: string[] | null;
-    phones:  string[] | null;
-    emails:  string[] | null;
+    gender: null | $Enums.entity_gender;
+    date_birth: null | string | Date;
+    address: null | number;
+    photo: null | string;
+    created_at: number;
+    created_by: number;
+    updated_at: number;
+    updated_by: number;
+    annulled_at: number;
+    annulled_by: number;
+    complete_name: string;
+    names_obj: string | {
+        type: string,
+        names: string[],
+        id_entity_name_type: number
+    }[];
+    names: null | string;
+    surnames: null | string;
+    legal_name: null | string;
+    business_name: null | string;
+    comercial_designation: null | string;
+    documents: null | {
+        id: number,
+        order: number,
+        symbol: string,
+        id_city: null | number,
+        category: string,
+        document: string,
+        id_state: null | number,
+        id_entity: number,
+        id_country: null | number,
+        id_entity_document: number,
+        id_entity_document_category: number
+    };
+    phones: null | string[];
+    emails: null | string[];
     id_system: number;
     id_system_subscription: number;
     id_system_subscription_user: number;
 }
+
 @Injectable()
 export class EntityService {
     constructor(
@@ -57,7 +76,7 @@ export class EntityService {
         private phoneService: EntityPhoneService
     ) {}
 
-    async add(addData: AddParams, prisma?: PrismaTransactionOrService) {
+    async addOrUpdate(addData: AddOrUpdateParams, prisma?: PrismaTransactionOrService) {
         const isPosibleTransaction = !prisma,
             errors = new HandlerErrors();
 
@@ -76,15 +95,43 @@ export class EntityService {
             // --------------------------------------------------------------------------------------------------------------------------------------------
             // - Creating Entity: -------------------------------------------------------------------------------------------------------------------------
             // --------------------------------------------------------------------------------------------------------------------------------------------
-            entity = await prisma.entity.create({
-                data: {
-                    is_natural: addData.is_natural,
-                    gender: addData.is_natural ? $Enums.entity_gender[addData.gender] : undefined,
-                    name: '',
-                    address: addData.address,
-                    created_by: addData.id_system_subscription_user_moderator,
+            const proccessingData = {
+                is_natural: addData.is_natural,
+                gender: addData.is_natural ? $Enums.entity_gender[addData.gender] : undefined,
+                name: '',
+                address: addData.address
+            }
+
+            if('id_entity' in addData) {
+                entity = await prisma.entity.findUnique({
+                    where: {
+                        id: addData.id_entity
+                    }
+                });
+
+                if(!entity) {
+                    errors.set('id_entity', 404);
+                    throw errors;
                 }
-            });
+
+                entity = await prisma.entity.update({
+                    where: {
+                        id: addData.id_entity
+                    },
+                    data: {
+                        ...proccessingData,
+                        updated_by: addData.id_system_subscription_user_moderator,
+                        updated_at: new Date
+                    }
+                });
+            } else {
+                entity = await prisma.entity.create({
+                    data: {
+                        ...proccessingData,
+                        created_by: addData.id_system_subscription_user_moderator,
+                    }
+                });
+            }
 
             // --------------------------------------------------------------------------------------------------------------------------------------------
             // - Processing Names: ------------------------------------------------------------------------------------------------------------------------
@@ -251,9 +298,11 @@ export class EntityService {
                 throw 'error';
             }
 
+            entity_folder = path.join(__dirname, `../../../public/storage/entity/entity-${entity.id}`);
+
+            console.log(addData.photo);
             if(!!addData.photo) {
-                photoname = `profile-photo.${addData.photo.mimetype.replace(/^image\//i, '')}`;
-                entity_folder = path.join(__dirname, `../../../public/storage/entity/entity-${entity.id}`);
+                photoname = `${addData.photo.filename}.${addData.photo.mimetype.replace(/^image\//i, '')}`;
                 photopath = `${entity_folder}/${photoname}`;
                 rootProjectPath = path.join(__dirname, '../../../' + addData.photo.path);
 
@@ -262,7 +311,11 @@ export class EntityService {
                 }
 
                 fs.renameSync(rootProjectPath, photopath);
-                // fs.mkdirSync(dirName, { recursive: true });
+            } else if(booleanFormat(addData.removePhoto)) {
+                let photo = `${entity_folder}/${entity.photo}`;
+                if(('id_entity' in addData) && fs.existsSync(photo)) {
+                    fs.unlinkSync(photo);
+                }
             }
 
             fullEntity = await this.prisma.findOneUnsafe(`SELECT
@@ -282,7 +335,7 @@ export class EntityService {
                 data: {
                     id_document: documents[0].id,
                     name: (entity.is_natural ? (`${fullEntity.names} ${fullEntity.surnames}`) : (`${fullEntity.business_name} ${fullEntity.comercial_designation}`)).trim(),
-                    photo: photoname
+                    photo: !!addData.photo ? photoname : (('photo' in addData && addData.photo !== undefined) ? undefined : entity.photo)
                 }
             });
 
@@ -296,7 +349,9 @@ export class EntityService {
 
             if(!!addData.photo && !!photopath) {
                 fs.renameSync(photopath, rootProjectPath);
-                fs.rmdirSync(entity_folder);
+                if('id_entity' in addData) {
+                    fs.rmdirSync(entity_folder);
+                }
                 // fs.mkdirSync(dirName, { recursive: true });
             }
 

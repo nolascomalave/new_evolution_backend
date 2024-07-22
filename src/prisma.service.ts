@@ -25,46 +25,47 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     // return transaction prisma instance:
     public beginTransaction(): Promise<TransactionPrisma> {
         return new Promise(async (resolve) => {
-            const emmiter: EventEmitter = new EventEmitter();
-            let transaction: TransactionPrisma,
-                isPrismaError = true;
+            const emmiter: EventEmitter = new EventEmitter(),
+                rollbackError = (Date.now()).toString().concat('-rollbackError'),
+                transactionAction = async (event: string) => {
+                    emmiter.emit(event);
+
+                    return (new Promise(res => {
+                        emmiter.on('endTransaction', () => {
+                            res(true);
+                        });
+                    }))
+                },
+                endTransaction = () => {
+                    emmiter.emit('endTransaction');
+                    emmiter.removeAllListeners();
+                };
+            let transaction: TransactionPrisma;
 
             try {
                 await this.$transaction(async (tx) => {
-                    /* const execTransactionInstanceFunction = async <Type>(fn: (...params: any) => Promise<Type>, ...params) => {
-                        isPrismaError = true;
-                        const returnData = await fn(...params);
-                        isPrismaError = false;
-
-                        return returnData;
-                    }; */
-
-                    isPrismaError = false;
                     transaction = Object.assign(tx, {
-                        rollback: () => emmiter.emit('rollback'),
-                        commit: () => emmiter.emit('commit'),
-                        /* queryUnsafe: async <T>(params: QueryUnsafeParams): Promise<T[]> => await execTransactionInstanceFunction<T[]>(this.queryUnsafe, params, tx),
-                        findOneUnsafe: async <T>(params: QueryUnsafeParams): Promise<T> => await execTransactionInstanceFunction<T>(this.findOneUnsafe, params, tx) */
+                        rollback: () => transactionAction('rollback'),
+                        commit: () => transactionAction('commit')
                     });
 
                     resolve(transaction);
 
                     await (new Promise((res, rej) => {
-                        emmiter.on('commit', () => {
-                            emmiter.removeAllListeners();
-                            res(true);
-                        });
+                        emmiter.on('commit', () => res(true));
 
-                        emmiter.on('rollback', () => {
-                            emmiter.removeAllListeners();
-                            rej('Error');
-                        });
+                        emmiter.on('rollback', () => rej(rollbackError));
                     }));
+
+                    endTransaction();
                 });
             } catch(e: any) {
-                if(isPrismaError) {
+                if(e !== rollbackError) {
+                    emmiter.removeAllListeners();
                     throw e;
                 }
+
+                endTransaction();
             }
         });
     }

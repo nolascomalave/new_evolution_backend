@@ -267,11 +267,11 @@ export class EntityPhoneService {
                 }
 
                 if(isPosibleTransaction && 'commit' in prisma) {
-                    prisma.commit();
+                    await prisma.commit();
                 }
             } catch(e: any) {
                 if(isPosibleTransaction && 'commit' in prisma) {
-                    prisma.rollback();
+                    await prisma.rollback();
                 }
 
                 if(!(e instanceof HandlerErrors)) {
@@ -396,11 +396,11 @@ export class EntityPhoneService {
                 }
 
                 if(isPosibleTransaction && 'commit' in prisma) {
-                    prisma.commit();
+                    await prisma.commit();
                 }
             } catch(e: any) {
                 if(isPosibleTransaction && 'commit' in prisma) {
-                    prisma.rollback();
+                    await prisma.rollback();
                 }
 
                 if(!(e instanceof HandlerErrors)) {
@@ -541,11 +541,11 @@ export class EntityPhoneService {
                     \`order\` = (phone.real_order + ${maxNotNullOrder._max.order ?? 0})`);
 
                 if(isPosibleTransaction && 'commit' in prisma) {
-                    prisma.commit();
+                    await prisma.commit();
                 }
             } catch(e: any) {
                 if(isPosibleTransaction && 'commit' in prisma) {
-                    prisma.rollback();
+                    await prisma.rollback();
                 }
 
                 if(!(e instanceof HandlerErrors)) {

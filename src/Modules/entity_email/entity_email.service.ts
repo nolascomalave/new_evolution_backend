@@ -268,11 +268,11 @@ export class EntityEmailService {
                 }
 
                 if(isPosibleTransaction && 'commit' in prisma) {
-                    prisma.commit();
+                    await prisma.commit();
                 }
             } catch(e: any) {
                 if(isPosibleTransaction && 'commit' in prisma) {
-                    prisma.rollback();
+                    await prisma.rollback();
                 }
 
                 if(!(e instanceof HandlerErrors)) {
@@ -397,11 +397,11 @@ export class EntityEmailService {
                 }
 
                 if(isPosibleTransaction && 'commit' in prisma) {
-                    prisma.commit();
+                    await prisma.commit();
                 }
             } catch(e: any) {
                 if(isPosibleTransaction && 'commit' in prisma) {
-                    prisma.rollback();
+                    await prisma.rollback();
                 }
 
                 if(!(e instanceof HandlerErrors)) {
@@ -542,11 +542,11 @@ export class EntityEmailService {
                     \`order\` = (email.real_order + ${maxNotNullOrder._max.order ?? 0})`);
 
                 if(isPosibleTransaction && 'commit' in prisma) {
-                    prisma.commit();
+                    await prisma.commit();
                 }
             } catch(e: any) {
                 if(isPosibleTransaction && 'commit' in prisma) {
-                    prisma.rollback();
+                    await prisma.rollback();
                 }
 
                 if(!(e instanceof HandlerErrors)) {

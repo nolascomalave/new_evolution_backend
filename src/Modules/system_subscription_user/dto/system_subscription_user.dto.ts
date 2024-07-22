@@ -1,5 +1,6 @@
 import { Transform, Type } from "class-transformer";
-import { IsArray, IsString, MaxLength, MinLength, ValidateNested, IsNumber, IsInt, Min, IsEnum, IsOptional } from "class-validator";
+import { IsArray, IsString, MaxLength, MinLength, ValidateNested, IsNumber, IsInt, Min, IsEnum, IsOptional, IsBoolean } from "class-validator";
+import { booleanFormat } from "src/util/formats";
 
 enum GenderEnum {
     Male,
@@ -70,7 +71,11 @@ const transformJSON = ({ value }) => {
     return value;
 }
 
-export class AddDto {
+export class AddOrUpdateDto {
+    @IsOptional()
+    @IsInt()
+    id_system_subscription_user?: number;
+
     @Transform(transformJSON)
     @IsArray()
     @ValidateNested({ each: true })
@@ -98,11 +103,23 @@ export class AddDto {
     @IsString()
     @MinLength(5)
     @MaxLength(2500)
-    address?: string
+    address?: string;
+
+    @IsOptional()
+    @Transform(({value}) => booleanFormat(value))
+    @IsBoolean()
+    removePhoto?: boolean;
 }
 
 export class GetByIdDto {
     @Transform(({ value }) => (isNaN(value) ? value : Number(value)))
     @IsInt()
     id: number;
+}
+
+export class GetByIdQueryDto {
+    // @IsOptional()
+    @Transform(({value}) => booleanFormat(value))
+    @IsBoolean()
+    allEntityInfo: boolean;
 }
