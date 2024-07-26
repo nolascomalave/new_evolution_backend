@@ -2,7 +2,7 @@ import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Inter
 import { AddOrUpdateDto, GetByIdDto, GetByIdQueryDto } from './dto/system_subscription_user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AddPipe } from './pipes/system_subscription_user.pipe';
-import { PrismaService, TransactionPrisma } from 'src/prisma.service';
+import { PrismaService } from 'src/prisma.service';
 import { SystemSubscriptionUserService } from './system_subscription_user.service';
 import { diskStorage } from 'multer';
 import Files from 'src/Util/Files';
@@ -16,6 +16,23 @@ export class SystemSubscriptionUserController {
         private prisma: PrismaService,
         private service: SystemSubscriptionUserService
     ) {}
+
+    // Status:
+    //      200 Ok.
+    //      401 Unauthorized.
+    //      500 Error in server.
+    @Get()
+    async Index(@Query() { page = 1, search }: { page: number | undefined, search?: string }) {
+        page = (isNaN(page) || !Number.isInteger(Number(page))) ? undefined : Number(page);
+        search = (typeof search !== 'string' && typeof search !== 'number') ? undefined : (typeof search === 'number' ? ('').concat(search) : search);
+
+        const users = await this.service.getAll({ page, search });
+
+        return {
+            data: JSONParser(users),
+            message: 'Users result.'
+        };
+    }
 
     @Get('/:id')
     @HttpCode(HttpStatus.OK)

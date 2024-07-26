@@ -112,6 +112,53 @@ export class SystemSubscriptionUserService {
         private entityService: EntityService
     ) {}
 
+    parseUser(user: CompleteEntityUser | FullUser) {
+        if(user.documents !== null && (typeof user.documents === 'string')) {
+            user.documents = JSON.parse(user.documents);
+        }
+
+        if(user.emails !== null && (typeof user.emails === 'string')) {
+            user.emails = JSON.parse(user.emails);
+        }
+
+        if(user.names_obj !== null && (typeof user.names_obj === 'string')) {
+            user.names_obj = JSON.parse(user.names_obj);
+
+            if(Array.isArray(user.names_obj)) {
+                user.names_obj = user.names_obj.map(names => {
+                    names.names = Array.isArray(names.names) ? names.names : JSON.parse(names.names);
+                    return names;
+                });
+            }
+        }
+
+        if(user.phones !== null && (typeof user.phones === 'string')) {
+            user.phones = JSON.parse(user.phones);
+        }
+
+        return user;
+    }
+
+    async getAll({ page, search }: { page?: number, search?: string }) {
+        let where: string[] | string = [
+            `annulled_at IS NULL`
+        ];
+
+        where = where.length < 1 ? '' : ('where '.concat(where.join("\nAND ")));
+
+        const sql = `SELECT
+            *
+        FROM system_subscription_user_complete_info ssu
+        ${where}`;
+
+        let users: FullUser[] = await this.prisma.queryUnsafe(sql) ?? [];
+
+        console.log(users);
+        users = users.map(user => this.parseUser(user));
+
+        return users;
+    }
+
     async getById({ id, id_system_subscription }: GetByIdDto & { id_system_subscription?: number }) {
         let AND: string[] | string = [
             `annulled_at IS NULL`
@@ -132,7 +179,7 @@ export class SystemSubscriptionUserService {
         let user: FullUser | null = await this.prisma.findOneUnsafe(sql);
 
         if(!!user) {
-            if(user.documents !== null && (typeof user.documents === 'string')) {
+            /* if(user.documents !== null && (typeof user.documents === 'string')) {
                 user.documents = JSON.parse(user.documents);
             }
 
@@ -153,7 +200,7 @@ export class SystemSubscriptionUserService {
 
             if(user.phones !== null && (typeof user.phones === 'string')) {
                 user.phones = JSON.parse(user.phones);
-            }
+            } */
         }
 
         return user;
