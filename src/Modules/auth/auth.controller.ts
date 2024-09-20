@@ -16,13 +16,13 @@ export class AuthController {
         private jwtService: JwtService,
     ) {}
 
-    /* @Post('hash-password')
+    @Post('hash-password')
     @HttpCode(HttpStatus.OK)
     hashPassword(@Body() data: {password: string}) {
         return {
             password: hashSync(data.password, 10)
         };
-    } */
+    }
 
     @Post('login')
     // Posible status code: 200, 400, 401, 500

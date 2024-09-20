@@ -26,7 +26,7 @@ export class SystemSubscriptionUserController {
         page = (isNaN(page) || !Number.isInteger(Number(page))) ? undefined : Number(page);
         search = (typeof search !== 'string' && typeof search !== 'number') ? undefined : (typeof search === 'number' ? ('').concat(search) : search);
 
-        const users = await this.service.getAll({ page, search });
+        const users = await this.service.getAll({ page, search, WithoutPassword: true });
 
         return {
             data: JSONParser(users),

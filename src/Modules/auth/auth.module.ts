@@ -15,6 +15,7 @@ export class AuthModule implements NestModule {
       consumer
         .apply(VerifyTokenMiddleware)
         .exclude(
+            { path: 'auth/hash-password', method: RequestMethod.POST },
             { path: 'auth/login', method: RequestMethod.POST },
             { path: 'auth/refresh', method: RequestMethod.POST },
             'static/*'

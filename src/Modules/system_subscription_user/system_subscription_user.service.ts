@@ -112,7 +112,7 @@ export class SystemSubscriptionUserService {
         private entityService: EntityService
     ) {}
 
-    parseUser(user: CompleteEntityUser | FullUser) {
+    parseUser(user: CompleteEntityUser | FullUser, WithoutPassword: boolean = false) {
         if(user.documents !== null && (typeof user.documents === 'string')) {
             user.documents = JSON.parse(user.documents);
         }
@@ -136,10 +136,14 @@ export class SystemSubscriptionUserService {
             user.phones = JSON.parse(user.phones);
         }
 
+        if(WithoutPassword === true) {
+            delete user.password;
+        }
+
         return user;
     }
 
-    async getAll({ page, search }: { page?: number, search?: string }) {
+    async getAll({ page, search, WithoutPassword }: { page?: number, search?: string, WithoutPassword?: boolean }) {
         let where: string[] | string = [
             `annulled_at IS NULL`
         ];
@@ -154,7 +158,7 @@ export class SystemSubscriptionUserService {
         let users: FullUser[] = await this.prisma.queryUnsafe(sql) ?? [];
 
         console.log(users);
-        users = users.map(user => this.parseUser(user));
+        users = users.map(user => this.parseUser(user, WithoutPassword));
 
         return users;
     }
