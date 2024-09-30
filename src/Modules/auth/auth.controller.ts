@@ -70,6 +70,7 @@ export class AuthController {
 
     @UseGuards(RefreshJwtGuard)
     @Post('refresh')
+    @HttpCode(HttpStatus.OK)
     async refreshToken(@Body() body) {
         const payload = { ...body };
 
