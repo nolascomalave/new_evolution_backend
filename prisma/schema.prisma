@@ -22,6 +22,8 @@ model entity {
   created_by                                                            Int?
   updated_at                                                            DateTime?                  @db.DateTime(0)
   updated_by                                                            Int?
+  inactivated_at                                                        DateTime?                  @db.DateTime(0)
+  inactivated_by                                                        Int?
   annulled_at                                                           DateTime?                  @db.DateTime(0)
   annulled_by                                                           Int?
   entity                                                                entity?                    @relation("entityToentity", fields: [id_entity_parent], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_ibfk_1")
@@ -228,6 +230,7 @@ model system {
   name                String                @db.VarChar(250)
   logo                String?               @db.VarChar(2000)
   created_at          DateTime              @default(now()) @db.DateTime(0)
+  inactivated_at      DateTime              @default(now()) @db.DateTime(0)
   updated_at          DateTime?             @db.DateTime(0)
   annulled_at         DateTime?             @db.DateTime(0)
   system_subscription system_subscription[]
@@ -241,6 +244,8 @@ model system_subscription {
   created_by                                                                                    Int?
   updated_at                                                                                    DateTime?                  @db.DateTime(0)
   updated_by                                                                                    Int?
+  inactivated_at                                                                                DateTime?                  @db.DateTime(0)
+  inactivated_by                                                                                Int?
   annulled_at                                                                                   DateTime?                  @db.DateTime(0)
   annulled_by                                                                                   Int?
   system                                                                                        system                     @relation(fields: [id_system], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "system_subscription_ibfk_1")
@@ -265,6 +270,8 @@ model system_subscription_user {
   password                                                                                      String                     @db.VarChar(2500)
   created_at                                                                                    DateTime                   @default(now()) @db.DateTime(0)
   created_by                                                                                    Int?
+  inactivated_at                                                                                DateTime?                  @db.DateTime(0)
+  inactivated_by                                                                                Int?
   annulled_at                                                                                   DateTime?                  @db.DateTime(0)
   annulled_by                                                                                   Int?
   entity_entity_created_byTosystem_subscription_user                                            entity[]                   @relation("entity_created_byTosystem_subscription_user")

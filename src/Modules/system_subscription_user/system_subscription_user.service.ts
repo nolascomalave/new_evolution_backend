@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { PrismaService, PrismaTransactionOrService } from "src/prisma.service";
+import { PrismaService, PrismaTransactionOrService, TransactionPrisma } from "src/prisma.service";
 import { AddOrUpdateParams, CompleteEntity, EntityService } from "../entity/entity.service";
-import { JSONParser, username as usernameGenerator } from "src/util/formats";
+import { JSONParser, adaptNumTwo, adaptZerosNum, username as usernameGenerator } from "src/util/formats";
 import { hashSync } from 'bcryptjs';
 import { $Enums, system_subscription_user } from "@prisma/client";
 import HandlerErrors from "src/util/HandlerErrors";
-import { GetByIdDto } from "./dto/system_subscription_user.dto";
+import { ChangeStatusDto, GetByIdDto } from "./dto/system_subscription_user.dto";
+import { escape } from "querystring";
 
 export type FullUser = {
     id: number;
@@ -162,10 +163,35 @@ export class SystemSubscriptionUserService {
             `annulled_at IS NULL`
         ];
 
+        console.log(`IF(LENGTH(REPLACE(username, '${escape(search)}', '')) < LENGTH(username), 1, 0)`);
+
+        if((search ?? null) !== null) {
+            search = search.trim().replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
+                switch (char) {
+                    case "\"":
+                    case "'":
+                    case "\\":
+                    case "%":
+                        return "\\" + char; // Escapa el carácter con una barra invertida
+                    default:
+                        return char;
+                }
+            });
+
+            console.log(search);
+
+            where.push(`(
+                username LIKE '%${search}%'
+                OR complete_name LIKE '%${search}%'
+                OR name LIKE '%${search}%'
+            )`);
+        }
+
         where = where.length < 1 ? '' : ('where '.concat(where.join("\nAND ")));
 
         const sql = `SELECT
-            *
+            *,
+            IF('Malavé' LIKE '%Malavé', 0, 1) AS example
         FROM system_subscription_user_complete_info ssu
         ${where}`;
 
@@ -398,11 +424,11 @@ export class SystemSubscriptionUserService {
             }
 
             if(e !== 'error') {
+                throw e;
+            } else {
                 if(errors.get('id_entity') === 404) {
                     errors.set('id_entity', 'Entity not found!');
                 }
-
-                throw e;
             }
         }
 
@@ -413,5 +439,69 @@ export class SystemSubscriptionUserService {
             },
             errors: errors,
         };
+    }
+
+    async changeStatus(data: ChangeStatusDto & { id_system_subscription_user_moderator: number }, prisma?: TransactionPrisma, user?: system_subscription_user) {
+        const isPosibleTransaction = !prisma,
+            errors = new HandlerErrors(),
+            system_subscription_user_id_field = 'id_system_subscription';
+        let now: Date = new Date();
+
+        if(isPosibleTransaction) {
+            prisma = await this.prisma.beginTransaction();
+        }
+
+        try {
+            const moderator_user = await prisma.system_subscription_user.findUnique({where: {id: data.id_system_subscription_user_moderator, annulled_at: null}}),
+                where = {
+                    id: data.id_system_subscription_user,
+                    annulled_at: null
+                };
+
+            if(!moderator_user) {
+                errors.set('id_system_subscription_user_moderator', 'Moderator user not found!');
+            }
+
+            user = await prisma.system_subscription_user.findUnique({ where });
+
+            if(!user){
+                errors.set(system_subscription_user_id_field, 404);
+            }
+
+            if(errors.existsErrors()) {
+                throw 'error';
+            }
+
+            now = new Date();
+
+            user = await prisma.system_subscription_user.update({
+                data: {
+                    inactivated_at: data.type.toString() === 'ACTIVE' ? null : (user.inactivated_at ?? `${adaptNumTwo(now.getFullYear())}-${adaptNumTwo(now.getMonth())}-${adaptNumTwo(now.getDate())}T${adaptNumTwo(now.getHours())}:${adaptNumTwo(now.getMinutes())}:${adaptNumTwo(now.getSeconds())}.${adaptZerosNum(now.getMilliseconds(), 3)}Z`),
+                    inactivated_by: data.type.toString() === 'ACTIVE' ? null : (user.inactivated_by ?? data.id_system_subscription_user_moderator)
+                },
+                where
+            });
+
+            if(isPosibleTransaction) {
+                await prisma.commit();
+            }
+        } catch(e: any) {
+            if(isPosibleTransaction) {
+                await prisma.rollback();
+            }
+
+            if(e !== 'error') {
+                throw e;
+            } else {
+                if(errors.get(system_subscription_user_id_field) === 404) {
+                    errors.set(system_subscription_user_id_field, 'User not found!');
+                }
+            }
+        }
+
+        return {
+            data: user,
+            errors: errors
+        }
     }
 }

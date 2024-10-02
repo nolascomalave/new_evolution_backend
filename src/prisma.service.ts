@@ -7,7 +7,8 @@ type QueryUnsafeParams = string | {
     values?: any[];
 }
 
-export type TransactionPrisma  = Prisma.TransactionClient & {
+export type TransactionPrisma = Prisma.TransactionClient & {
+    isTransaction: () => boolean;
     rollback: () => void;
     commit:  () => void;
     /* queryUnsafe: <type>(params: QueryUnsafeParams) => Promise<type[]>;
@@ -20,6 +21,10 @@ export type PrismaTransactionOrService = PrismaService | TransactionPrisma;
 export class PrismaService extends PrismaClient implements OnModuleInit {
     async onModuleInit() {
         await this.$connect();
+    }
+
+    public isTransaction(): boolean {
+        return false;
     }
 
     // return transaction prisma instance:
@@ -46,7 +51,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
                 await this.$transaction(async (tx) => {
                     transaction = Object.assign(tx, {
                         rollback: () => transactionAction('rollback'),
-                        commit: () => transactionAction('commit')
+                        commit: () => transactionAction('commit'),
+                        isTransaction: () => true
                     });
 
                     resolve(transaction);

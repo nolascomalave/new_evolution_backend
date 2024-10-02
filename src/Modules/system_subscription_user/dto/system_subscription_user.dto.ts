@@ -123,3 +123,11 @@ export class GetByIdQueryDto {
     @IsBoolean()
     allEntityInfo: boolean;
 }
+
+export class ChangeStatusDto {
+    @IsInt()
+    id_system_subscription_user?: number;
+
+    @IsEnum(['ACTIVE', 'INACTIVE'])
+    type: GenderEnum;
+}

@@ -1,5 +1,5 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, InternalServerErrorException, NotFoundException, Param, Post, Query, Req, UploadedFile, UploadedFiles, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
-import { AddOrUpdateDto, GetByIdDto, GetByIdQueryDto } from './dto/system_subscription_user.dto';
+import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, InternalServerErrorException, NotFoundException, Param, Patch, Post, Query, Req, UploadedFile, UploadedFiles, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { AddOrUpdateDto, ChangeStatusDto, GetByIdDto, GetByIdQueryDto } from './dto/system_subscription_user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AddPipe } from './pipes/system_subscription_user.pipe';
 import { PrismaService } from 'src/prisma.service';
@@ -25,6 +25,8 @@ export class SystemSubscriptionUserController {
     async Index(@Query() { page = 1, search }: { page: number | undefined, search?: string }) {
         page = (isNaN(page) || !Number.isInteger(Number(page))) ? undefined : Number(page);
         search = (typeof search !== 'string' && typeof search !== 'number') ? undefined : (typeof search === 'number' ? ('').concat(search) : search);
+
+        // await new Promise(res => setTimeout(() => res(true), 2000));
 
         const users = await this.service.getAll({ page, search, WithoutPassword: true });
 
@@ -181,6 +183,44 @@ export class SystemSubscriptionUserController {
                     throw new NotFoundException(undefined, 'User not found!');
                 }
 
+                throw new BadRequestException(getAllFlatValuesOfDataAsArray(errorsInProcess, true));
+            }
+
+            throw new InternalServerErrorException(e);
+        }
+    }
+
+    @Patch('/change-status')
+    @HttpCode(HttpStatus.OK)
+    async changeStatus(@Req() { user: moderator }: RequestSession, @Body() data: ChangeStatusDto) {
+        let errorsInProcess = new HandlerErrors;
+
+        const prisma = await this.prisma.beginTransaction();
+
+        try {
+            const result = await this.service.changeStatus({
+                ...data,
+                id_system_subscription_user_moderator: moderator.id
+            }, prisma);
+
+            if(result.errors.existsErrors()) {
+                errorsInProcess = result.errors;
+                throw 'error';
+            }
+
+            delete result.data.password;
+
+            await prisma.commit();
+
+            return {
+                data: result.data,
+                message: `User ${data.type.toString() === 'ACTIVE' ? '' : 'in'}activated correctly!`
+            };
+        } catch(e: any) {
+            console.log(e);
+            await prisma.rollback();
+
+            if(e === 'error') {
                 throw new BadRequestException(getAllFlatValuesOfDataAsArray(errorsInProcess, true));
             }
 
