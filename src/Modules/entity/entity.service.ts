@@ -300,7 +300,6 @@ export class EntityService {
 
             entity_folder = path.join(__dirname, `../../../public/storage/entity/entity-${entity.id}`);
 
-            console.log(addData.photo);
             if(!!addData.photo) {
                 photoname = `${addData.photo.filename}.${addData.photo.mimetype.replace(/^image\//i, '')}`;
                 photopath = `${entity_folder}/${photoname}`;

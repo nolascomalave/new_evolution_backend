@@ -163,8 +163,6 @@ export class SystemSubscriptionUserService {
             `annulled_at IS NULL`
         ];
 
-        console.log(`IF(LENGTH(REPLACE(username, '${escape(search)}', '')) < LENGTH(username), 1, 0)`);
-
         if((search ?? null) !== null) {
             search = search.trim().replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
                 switch (char) {
@@ -177,8 +175,6 @@ export class SystemSubscriptionUserService {
                         return char;
                 }
             });
-
-            console.log(search);
 
             where.push(`(
                 username LIKE '%${search}%'
@@ -197,7 +193,6 @@ export class SystemSubscriptionUserService {
 
         let users: FullUser[] = await this.prisma.queryUnsafe(sql) ?? [];
 
-        console.log(users);
         users = users.map(user => this.parseUser(user, WithoutPassword));
 
         return users;
