@@ -158,10 +158,8 @@ export class SystemSubscriptionUserService {
         return user;
     }
 
-    async getAll({ page, search, WithoutPassword }: { page?: number, search?: string, WithoutPassword?: boolean }) {
-        let where: string[] | string = [
-            `annulled_at IS NULL`
-        ];
+    async getAll({ page, search, status, WithoutPassword }: { page?: number, search?: string, status?: any, WithoutPassword?: boolean }) {
+        let where: string[] | string = [];
 
         if((search ?? null) !== null) {
             search = search.trim().replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
@@ -183,6 +181,40 @@ export class SystemSubscriptionUserService {
             )`);
         }
 
+        if((typeof status === 'string') || (typeof status === 'object' && !Array.isArray(status))) {
+            let isValidStatus = true;
+
+            if(typeof status !== 'object') {
+                try {
+                    status = JSON.parse(status);
+                } catch(e: any) {
+                    isValidStatus = false;
+                }
+            }
+
+            if(isValidStatus) {
+                if('Annulled' in status) {
+
+                } else {
+                    const statusCondition: string[] = [];
+
+                    where.push(`COALESCE(annulled_at, annulled_at_system_subscription_user) IS NULL`);
+
+                    if('Active' in status) {
+                        statusCondition.push(`COALESCE(inactivated_at, inactivated_at_system_subscription_user) IS ${(status.Active === 'false' || status.Active === false || status.Active == 0) ? 'NOT' : ''} NULL`.replace(/ +/gi, ' '));
+                    }
+
+                    if('Inactive' in status) {
+                        statusCondition.push(`COALESCE(inactivated_at, inactivated_at_system_subscription_user) IS ${(status.Inactive === 'false' || status.Inactive === false || status.Inactive == 0) ? '' : 'NOT'} NULL`.replace(/ +/gi, ' '));
+                    }
+
+                    where.push(`(${statusCondition.join("\nOR ")})`);
+                }
+            }
+        } else {
+            where.push(`COALESCE(annulled_at, annulled_at_system_subscription_user) IS NULL`);
+        }
+
         where = where.length < 1 ? '' : ('where '.concat(where.join("\nAND ")));
 
         const sql = `SELECT
@@ -194,6 +226,8 @@ export class SystemSubscriptionUserService {
         let users: FullUser[] = await this.prisma.queryUnsafe(sql) ?? [];
 
         users = users.map(user => this.parseUser(user, WithoutPassword));
+
+        console.log(users);
 
         return users;
     }

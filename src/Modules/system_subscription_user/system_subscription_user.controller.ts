@@ -22,11 +22,11 @@ export class SystemSubscriptionUserController {
     //      401 Unauthorized.
     //      500 Error in server.
     @Get()
-    async Index(@Query() { page = 1, search }: { page: number | undefined, search?: string }) {
+    async Index(@Query() { page = 1, search, status }: { page?: number, search?: string, status?: any }) {
         page = (isNaN(page) || !Number.isInteger(Number(page))) ? undefined : Number(page);
         search = (typeof search !== 'string' && typeof search !== 'number') ? undefined : (typeof search === 'number' ? ('').concat(search) : search);
 
-        const users = await this.service.getAll({ page, search, WithoutPassword: true });
+        const users = await this.service.getAll({ page, search, status, WithoutPassword: true });
 
         return {
             data: JSONParser(users),
@@ -36,6 +36,7 @@ export class SystemSubscriptionUserController {
 
     @Get('/:id')
     @HttpCode(HttpStatus.OK)
+    @HttpCode(HttpStatus.UNAUTHORIZED)
     // @UsePipes(new ValidationPipe())
     // Status:
     //      200 Ok.
