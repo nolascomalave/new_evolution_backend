@@ -334,9 +334,13 @@ export class EntityService {
                 data: {
                     id_document: documents[0].id,
                     name: (entity.is_natural ? (`${fullEntity.names} ${fullEntity.surnames}`) : (`${fullEntity.business_name} ${fullEntity.comercial_designation}`)).trim(),
-                    photo: !!addData.photo ? photoname : (('photo' in addData && addData.photo !== undefined) ? undefined : entity.photo)
+                    photo: booleanFormat(addData.removePhoto) === true ? null : (!!addData.photo ? photoname : (('photo' in addData && addData.photo !== undefined) ? null : entity.photo))
                 }
             });
+
+            if('photo' in fullEntity) {
+                fullEntity.photo = entity.photo;
+            }
 
             if(isPosibleTransaction && ('commit' in prisma)) {
                 await prisma.commit();

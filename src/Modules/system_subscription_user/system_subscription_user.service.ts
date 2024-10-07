@@ -40,6 +40,7 @@ export type FullUser = {
     };
     phones: null | string[];
     emails: null | string[];
+    photo: null | string;
     is_admin: number | boolean;
     inactivated_at_system: Date | null;
     inactivated_at_system_subscription: Date | null;
@@ -226,8 +227,6 @@ export class SystemSubscriptionUserService {
         let users: FullUser[] = await this.prisma.queryUnsafe(sql) ?? [];
 
         users = users.map(user => this.parseUser(user, WithoutPassword));
-
-        console.log(users);
 
         return users;
     }

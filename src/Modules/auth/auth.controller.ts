@@ -32,7 +32,7 @@ export class AuthController {
         const user: system_subscription_user | undefined = await this.prisma.findOneUnsafe(`SELECT
             *
         FROM system_subscription_user ssu
-        WHERE ssu.annulled_at IS NULL
+        WHERE COALESCE(ssu.annulled_at, ssu.inactivated_at) IS NULL
             AND ssu.username = '${escape(credentials.username)}'
             AND EXISTS(
                 SELECT
@@ -41,7 +41,7 @@ export class AuthController {
                 INNER JOIN \`system\` sys
                     ON sys.id = ss.id_system
                 WHERE ss.id = ssu.id_system_subscription
-                    AND COALESCE(sys.annulled_at, ss.annulled_at) IS NULL
+                    AND COALESCE(sys.annulled_at, ss.annulled_at, sys.inactivated_at, ss.inactivated_at) IS NULL
                     AND ss.id = ${credentials.id_system_subscription}
                     AND sys.id = ${credentials.id_system}
             )`);
