@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, UnauthorizedException, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, UnauthorizedException, InternalServerErrorException, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { system_subscription_user } from '@prisma/client';
 import { hashSync, compareSync } from 'bcryptjs';
 import { escape } from 'querystring';
@@ -6,6 +6,8 @@ import { PrismaService } from 'src/prisma.service';
 import { LoginDto } from './dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { RefreshJwtGuard } from './guards/refresh.guard';
+import { FullUser, SystemSubscriptionUserService } from '../system_subscription_user/system_subscription_user.service';
+import { JSONParser } from 'src/util/formats';
 
 const EXPIRE_TIME = 20 * 1000;
 
@@ -14,6 +16,7 @@ export class AuthController {
     constructor(
         private prisma: PrismaService,
         private jwtService: JwtService,
+        private systemSubscriptionUserService: SystemSubscriptionUserService
     ) {}
 
     @Post('hash-password')
@@ -29,7 +32,7 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     // @UsePipes(new ValidationPipe())
     async login(@Body() credentials: LoginDto) {
-        const user: system_subscription_user | undefined = await this.prisma.findOneUnsafe(`SELECT
+        const user: FullUser | system_subscription_user | undefined = await this.prisma.findOneUnsafe(`SELECT
             *
         FROM system_subscription_user ssu
         WHERE COALESCE(ssu.annulled_at, ssu.inactivated_at) IS NULL
@@ -50,10 +53,20 @@ export class AuthController {
             throw new UnauthorizedException();
         }
 
+        const userData = await this.systemSubscriptionUserService.getUserEntityById({id: user.id});
+
+        if(!userData) {
+            throw new InternalServerErrorException();
+        }
+
+        if('password' in userData) {
+            delete userData.password;
+        }
+
         delete user.password;
 
         return {
-            user,
+            user: JSONParser(userData),
             backendTokens: {
                 accessToken: await this.jwtService.signAsync(user, {
                     expiresIn: '1d',

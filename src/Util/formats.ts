@@ -290,7 +290,7 @@ export function convertJSONStringToJSON(obj: any): any {
 
 export function JSONParser(obj: any) {
 	return JSON.parse(JSON.stringify(obj, (key, value) => {
-		return (typeof value === 'bigint' ? value.toString() : value);
+		return (typeof value === 'bigint' ? (!(value < parseInt(value.toString())) && !(value > parseInt(value.toString())) ? parseInt(value.toString()) : value.toString()) : value);
 	}));
 }
 

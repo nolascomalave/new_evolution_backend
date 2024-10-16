@@ -8,6 +8,7 @@ import { EntityDocumentModule } from '../entity_document/entity_document.module'
 @Module({
     controllers: [SystemSubscriptionUserController],
     providers: [PrismaService, SystemSubscriptionUserService],
-    imports: [EntityModule/* , EntityDocumentModule */]
+    imports: [EntityModule/* , EntityDocumentModule */],
+    exports: [SystemSubscriptionUserService]
 })
 export class SystemSubscriptionUserModule {}
