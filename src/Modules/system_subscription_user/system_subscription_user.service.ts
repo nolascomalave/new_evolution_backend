@@ -1,12 +1,15 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService, PrismaTransactionOrService, TransactionPrisma } from "src/prisma.service";
 import { AddOrUpdateParams, CompleteEntity, EntityService } from "../entity/entity.service";
-import { JSONParser, adaptNumTwo, adaptZerosNum, username as usernameGenerator } from "src/util/formats";
-import { hashSync } from 'bcryptjs';
+import { adaptNumTwo, adaptZerosNum, getRandomString, username as usernameGenerator } from "src/util/formats";
+import { hashSync, compareSync } from 'bcryptjs';
 import { $Enums, system_subscription_user } from "@prisma/client";
 import HandlerErrors from "src/util/HandlerErrors";
 import { ChangeStatusDto, GetByIdDto } from "./dto/system_subscription_user.dto";
-import { escape } from "querystring";
+import { readFileSync } from "fs";
+import { resolve } from "path";
+import resendInstance from "src/lib/resendInstance";
+import { renderString } from "src/Util/functionals";
 
 export type FullUser = {
     id: number;
@@ -120,6 +123,8 @@ export type CompleteEntityUser = {
     business_name: null | string;
     comercial_designation: null | string;
 }
+
+const resetPasswordTemplate = readFileSync(resolve(__dirname, '../../Templates/PDFs/reset-password.html'), {encoding:'utf8'});
 
 @Injectable()
 export class SystemSubscriptionUserService {
@@ -530,6 +535,69 @@ export class SystemSubscriptionUserService {
         return {
             data: user,
             errors: errors
+        }
+    }
+
+    async resetUserPassword({ id, sendEmail = false }: { id: number, sendEmail: boolean }, prisma?: TransactionPrisma) {
+        const isPosibleTransaction = !prisma;
+        let warning: string | undefined = undefined;
+
+        if(isPosibleTransaction) {
+            prisma = await this.prisma.beginTransaction();
+        }
+
+        try {
+            let user: system_subscription_user = await prisma.system_subscription_user.findUnique({where: {id}});
+
+            if(!user) {
+                throw 404;
+            }
+
+            let newPassword: string;
+
+            do {
+                newPassword = getRandomString(8);
+            } while(compareSync(newPassword, user.password));
+
+            await prisma.system_subscription_user.update({
+                data: {
+                    password: hashSync(newPassword, 10)
+                },
+                where: {
+                    id: user.id
+                }
+            });
+
+            if(!sendEmail) {
+                const emails = await this.entityService.getEntityEmails(user.id_entity),
+                    completeUser = await this.getUserEntityById({ id: user.id });
+
+                if(emails.length < 1) {
+                    warning = 'The user does not have a registered email to notify them that their password has been reset.';
+                } else {
+                    const { error } = await resendInstance.emails.send({
+                        from: 'New Evolution <nolascomalave@hotmail.com>',
+                        to: ['nolascomalave@hotmail.com', 'proheredes@gmail.com'],
+                        subject: 'Hello World',
+                        html: renderString(resetPasswordTemplate, {
+                            name: completeUser.name,
+                            newPassword
+                        }),
+                    });
+
+                    if(error) {
+                        warning = 'An error occurred while sending the password reset notification email.';
+                    }
+                }
+            }
+
+            await prisma.commit();
+
+            return user;
+        } catch(e) {
+            await prisma.rollback();
+
+            throw e;
         }
     }
 }

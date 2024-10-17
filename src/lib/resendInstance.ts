@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
 
-const resendInstance = new Resend(process.env.MAIL_TOKEN);
+const resendInstance = new Resend(process.env.RESEND_TOKEN);
 
 export default resendInstance;

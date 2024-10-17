@@ -371,4 +371,17 @@ export class EntityService {
             errors: errors,
         };
     }
+
+    async getEntityEmails(id: number, prisma?: PrismaTransactionOrService) {
+        return await this.prisma.queryUnsafe(`SELECT
+            ee.*
+        FROM entity_email_by_entity eebe
+        INNER JOIN entity_email ee
+            ON ee.id = eebe.id_entity_email
+        INNER JOIN entity ent
+            ON ent.id = eebe.id_entity
+        WHERE COALESCE(eebe.annulled_at, ee.annulled_at) IS NULL
+            AND ent.id = ${id}
+        ORDER BY eebe.order ASC`, prisma);
+    }
 }
