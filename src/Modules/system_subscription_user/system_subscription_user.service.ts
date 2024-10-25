@@ -1,15 +1,17 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService, PrismaTransactionOrService, TransactionPrisma } from "src/prisma.service";
 import { AddOrUpdateParams, CompleteEntity, EntityService } from "../entity/entity.service";
-import { adaptNumTwo, adaptZerosNum, getRandomString, username as usernameGenerator } from "src/util/formats";
+import { adaptNumTwo, adaptZerosNum, generateRandomSecurePassword, username as usernameGenerator } from "src/util/formats";
 import { hashSync, compareSync } from 'bcryptjs';
 import { $Enums, system_subscription_user } from "@prisma/client";
 import HandlerErrors from "src/util/HandlerErrors";
 import { ChangeStatusDto, GetByIdDto } from "./dto/system_subscription_user.dto";
 import { readFileSync } from "fs";
 import { resolve } from "path";
-import resendInstance from "src/lib/resendInstance";
+// import resendInstance from "src/lib/resendInstance";
 import { renderString } from "src/Util/functionals";
+import { MailerService } from "src/mailer/mailer.service";
+// import { ResendService } from "nestjs-resend";
 
 export type FullUser = {
     id: number;
@@ -124,13 +126,15 @@ export type CompleteEntityUser = {
     comercial_designation: null | string;
 }
 
-const resetPasswordTemplate = readFileSync(resolve(__dirname, '../../Templates/PDFs/reset-password.html'), {encoding:'utf8'});
+const resetPasswordTemplate = readFileSync(resolve(__dirname, '../../../views/Templates/Email/reset-password.html'), { encoding:'utf8' });
 
 @Injectable()
 export class SystemSubscriptionUserService {
     constructor(
         private prisma: PrismaService,
-        private entityService: EntityService
+        private entityService: EntityService,
+        private mailerService: MailerService,
+        // private resendService: ResendService
     ) {}
 
     parseUser(user: CompleteEntityUser | FullUser, WithoutPassword: boolean = false) {
@@ -538,7 +542,7 @@ export class SystemSubscriptionUserService {
         }
     }
 
-    async resetUserPassword({ id, sendEmail = false }: { id: number, sendEmail: boolean }, prisma?: TransactionPrisma) {
+    async resetUserPassword({ id, sendEmail = false }: { id: number, sendEmail?: boolean }, prisma?: TransactionPrisma) {
         const isPosibleTransaction = !prisma;
         let warning: string | undefined = undefined;
 
@@ -556,7 +560,7 @@ export class SystemSubscriptionUserService {
             let newPassword: string;
 
             do {
-                newPassword = getRandomString(8);
+                newPassword = generateRandomSecurePassword(8);
             } while(compareSync(newPassword, user.password));
 
             await prisma.system_subscription_user.update({
@@ -568,34 +572,50 @@ export class SystemSubscriptionUserService {
                 }
             });
 
-            if(!sendEmail) {
+            if(!!sendEmail) {
                 const emails = await this.entityService.getEntityEmails(user.id_entity),
                     completeUser = await this.getUserEntityById({ id: user.id });
 
                 if(emails.length < 1) {
                     warning = 'The user does not have a registered email to notify them that their password has been reset.';
                 } else {
-                    const { error } = await resendInstance.emails.send({
-                        from: 'New Evolution <nolascomalave@hotmail.com>',
+                    /* const result = await this.resendService.emails.send({
+                        from: 'New Evolution <proheredes@gmail.com>',
                         to: ['nolascomalave@hotmail.com', 'proheredes@gmail.com'],
                         subject: 'Hello World',
                         html: renderString(resetPasswordTemplate, {
                             name: completeUser.name,
                             newPassword
                         }),
-                    });
+                    }); */
 
-                    if(error) {
-                        warning = 'An error occurred while sending the password reset notification email.';
-                    }
+                    const result = await this.mailerService.sendMail({
+                        /* from: {
+                            name: 'New Evolution',
+                            address: 'proheredes@gmail.com'
+                        }, */
+                        recipients: ['nolascomalave@hotmail.com', 'proheredes@gmail.com'],
+                        subject: 'Reset Password',
+                        html: renderString(resetPasswordTemplate, {
+                            name: completeUser.name,
+                            newPassword
+                        })
+                    });
                 }
             }
 
-            await prisma.commit();
+            if(isPosibleTransaction) {
+                await prisma.commit();
+            }
 
-            return user;
+            return {
+                user,
+                warning
+            };
         } catch(e) {
-            await prisma.rollback();
+            if(isPosibleTransaction) {
+                await prisma.rollback();
+            }
 
             throw e;
         }

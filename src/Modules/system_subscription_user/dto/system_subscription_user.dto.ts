@@ -126,8 +126,14 @@ export class GetByIdQueryDto {
 
 export class ChangeStatusDto {
     @IsInt()
-    id_system_subscription_user?: number;
+    id_system_subscription_user: number;
 
     @IsEnum(['ACTIVE', 'INACTIVE'])
     type: GenderEnum;
+}
+
+export class ResetPasswordDto {
+    @Transform(({value}) => Number(value))
+    @IsInt()
+    id_system_subscription_user: number;
 }

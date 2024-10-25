@@ -15,6 +15,7 @@ async function bootstrap() {
   }));
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.setBaseViewsDir(join(__dirname, '..', 'views'));
 
   await app.listen(3000);
 }

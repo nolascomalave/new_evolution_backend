@@ -1,5 +1,5 @@
 import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, InternalServerErrorException, NotFoundException, Param, Patch, Post, Query, Req, UploadedFile, UploadedFiles, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
-import { AddOrUpdateDto, ChangeStatusDto, GetByIdDto, GetByIdQueryDto } from './dto/system_subscription_user.dto';
+import { AddOrUpdateDto, ChangeStatusDto, GetByIdDto, GetByIdQueryDto, ResetPasswordDto } from './dto/system_subscription_user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AddPipe } from './pipes/system_subscription_user.pipe';
 import { PrismaService } from 'src/prisma.service';
@@ -222,6 +222,30 @@ export class SystemSubscriptionUserController {
             if(e === 'error') {
                 throw new BadRequestException(getAllFlatValuesOfDataAsArray(errorsInProcess, true));
             }
+
+            throw new InternalServerErrorException(e);
+        }
+    }
+
+    @Patch('/reset-password')
+    @HttpCode(HttpStatus.OK)
+    async resetPassword(@Body() { id_system_subscription_user }: ResetPasswordDto) {
+        const prisma = await this.prisma.beginTransaction();
+
+        try {
+            const { user, warning } = await this.service.resetUserPassword({
+                id: id_system_subscription_user,
+                sendEmail: true
+            }, prisma);
+
+            await prisma.commit();
+
+            return {
+                message: `The user's password was reset!`,
+                warning
+            };
+        } catch(e: any) {
+            await prisma.rollback();
 
             throw new InternalServerErrorException(e);
         }

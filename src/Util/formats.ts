@@ -237,6 +237,64 @@ export function getRandomString(numDigits: number): string {
     return randomPassword;
 }
 
+export function generateRandomSecurePassword(limit: number = 8) {
+    const abc = 'abcdefghijklmnopqrstuvwxyz',
+        characters = {
+            abc: {
+                characters: abc,
+                regexp: /[a-z]/g
+            },
+            _ABC: {
+                characters: abc.toUpperCase(),
+                regexp: /[A-Z]/g
+            },
+            numbers: {
+                characters: '1234567890',
+                regexp: /\d/g
+            },
+            specials: {
+                characters: '!@#$%^&*()_=-=[{]}\\|/.,',
+                regexp: /(!|@|#|\$|%|\^|&|\*|\(|\)|_|=|-|=|\[|{|]|}|\'|\\|\||"|\/|\.|,)/g
+            }
+        },
+        charactersKeys = Object.keys(characters);
+
+    let charactersNotUsedKeys = [...charactersKeys],
+        charactersNotUsedKeysLenght = charactersNotUsedKeys.length,
+        randomText = '';
+
+    do {
+        if((limit - randomText.length) <= charactersNotUsedKeysLenght && charactersNotUsedKeysLenght > 0) {
+            charactersNotUsedKeys = [];
+
+            for(let index = 0; index < charactersKeys.length; index++) {
+				// La siguiente línea de código compara caracter por caracter de cada conjunto de caracteres para verificar si existe o no el caracter:
+                // let result = randomText.split('').some(text => characters[charactersKeys[index]].characters.split('').some(char => (char === text)));
+
+				// La siguiente línea de código verifica con expresiones regulares si existe algún caracter del conjunto de caracteres:
+                const evalText = randomText,
+                    result = characters[charactersKeys[index]].regexp.test(evalText);
+
+                if(result === false) {
+                    charactersNotUsedKeys.push(charactersKeys[index]);
+                }
+            }
+
+            charactersNotUsedKeysLenght = charactersNotUsedKeys.length;
+
+            if((limit - randomText.length) > charactersNotUsedKeysLenght) {
+                charactersNotUsedKeys = [...charactersKeys];
+            }
+        }
+
+        const selectedCharacters = charactersNotUsedKeys[getRandomNumber(0, charactersNotUsedKeys.length - 1)];
+
+        randomText += characters[selectedCharacters].characters.charAt(getRandomNumber(0, characters[selectedCharacters].characters.length));
+    } while(randomText.length < limit);
+
+    return randomText;
+}
+
 export function username(name: string, fname: string, array: string[]): string {
     let abc:string = 'abcdefghijklmnñopqrstuvwxyz',
         username:string|string[] = destilde(fname+name.charAt(0)).toLowerCase(),
