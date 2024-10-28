@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, InternalServerErrorException, NotFoundException, Param, Patch, Post, Query, Req, UnauthorizedException, UploadedFile, UploadedFiles, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Body, Controller, ForbiddenException, Get, HttpCode, HttpStatus, InternalServerErrorException, NotFoundException, Param, Patch, Post, Query, Req, UnauthorizedException, UploadedFile, UploadedFiles, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AddOrUpdateDto, ChangePasswordDto, ChangeStatusDto, GetByIdDto, GetByIdQueryDto, ResetPasswordDto } from './dto/system_subscription_user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AddPipe } from './pipes/system_subscription_user.pipe';
@@ -253,7 +253,11 @@ export class SystemSubscriptionUserController {
 
     @Patch('/change-password')
     @HttpCode(HttpStatus.OK)
-    async changePassword(@Body() data: ChangePasswordDto) {
+    async changePassword(@Req() { user: moderator }: RequestSession, @Body() data: ChangePasswordDto) {
+        if(moderator.id !== data.id_system_subscription_user) {
+            throw new ForbiddenException();
+        }
+
         const prisma = await this.prisma.beginTransaction();
 
         try {
