@@ -1,5 +1,5 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, InternalServerErrorException, NotFoundException, Param, Patch, Post, Query, Req, UploadedFile, UploadedFiles, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
-import { AddOrUpdateDto, ChangeStatusDto, GetByIdDto, GetByIdQueryDto, ResetPasswordDto } from './dto/system_subscription_user.dto';
+import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, InternalServerErrorException, NotFoundException, Param, Patch, Post, Query, Req, UnauthorizedException, UploadedFile, UploadedFiles, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { AddOrUpdateDto, ChangePasswordDto, ChangeStatusDto, GetByIdDto, GetByIdQueryDto, ResetPasswordDto } from './dto/system_subscription_user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AddPipe } from './pipes/system_subscription_user.pipe';
 import { PrismaService } from 'src/prisma.service';
@@ -246,6 +246,31 @@ export class SystemSubscriptionUserController {
             };
         } catch(e: any) {
             await prisma.rollback();
+
+            throw new InternalServerErrorException(e);
+        }
+    }
+
+    @Patch('/change-password')
+    @HttpCode(HttpStatus.OK)
+    async changePassword(@Body() data: ChangePasswordDto) {
+        const prisma = await this.prisma.beginTransaction();
+
+        try {
+            const { warning } = await this.service.changeUserPassword(data, prisma);
+
+            await prisma.commit();
+
+            return {
+                message: `Password has been changed!`,
+                warning
+            };
+        } catch(e: any) {
+            await prisma.rollback();
+
+            if(e instanceof UnauthorizedException) {
+                throw e;
+            }
 
             throw new InternalServerErrorException(e);
         }

@@ -1,11 +1,11 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { PrismaService, PrismaTransactionOrService, TransactionPrisma } from "src/prisma.service";
 import { AddOrUpdateParams, CompleteEntity, EntityService } from "../entity/entity.service";
 import { adaptNumTwo, adaptZerosNum, generateRandomSecurePassword, username as usernameGenerator } from "src/util/formats";
 import { hashSync, compareSync } from 'bcryptjs';
 import { $Enums, system_subscription_user } from "@prisma/client";
 import HandlerErrors from "src/util/HandlerErrors";
-import { ChangeStatusDto, GetByIdDto } from "./dto/system_subscription_user.dto";
+import { ChangePasswordDto, ChangeStatusDto, GetByIdDto } from "./dto/system_subscription_user.dto";
 import { readFileSync } from "fs";
 import { resolve } from "path";
 // import resendInstance from "src/lib/resendInstance";
@@ -127,6 +127,7 @@ export type CompleteEntityUser = {
 }
 
 const resetPasswordTemplate = readFileSync(resolve(__dirname, '../../../views/Templates/Email/reset-password.html'), { encoding:'utf8' });
+const changePasswordTemplate = readFileSync(resolve(__dirname, '../../../views/Templates/Email/change-password.html'), { encoding:'utf8' });
 
 @Injectable()
 export class SystemSubscriptionUserService {
@@ -539,6 +540,65 @@ export class SystemSubscriptionUserService {
         return {
             data: user,
             errors: errors
+        }
+    }
+
+    async changeUserPassword({ id_system_subscription_user, current_password, new_password }: ChangePasswordDto, prisma?: TransactionPrisma) {
+        const isPosibleTransaction = !prisma;
+        let warning: string | undefined = undefined;
+
+        if(isPosibleTransaction) {
+            prisma = await this.prisma.beginTransaction();
+        }
+
+        try {
+            let user: system_subscription_user = await prisma.system_subscription_user.findUnique({where: {id: id_system_subscription_user}});
+
+            if(!user) {
+                throw 404;
+            }
+
+            if(!user || !compareSync(current_password, user.password)) {
+                throw new UnauthorizedException();
+            }
+
+            user = await prisma.system_subscription_user.update({
+                data: {
+                    password: hashSync(new_password, 10)
+                },
+                where: {
+                    id: user.id
+                }
+            });
+
+            const emails = await this.entityService.getEntityEmails(user.id_entity),
+                completeUser = await this.getUserEntityById({ id: user.id });
+
+            if(emails.length < 1) {
+                warning = 'The user does not have a registered email to notify them that their password has been reset.';
+            } else {
+
+                const result = await this.mailerService.sendMail({
+                    recipients: ['nolascomalave@hotmail.com', 'proheredes@gmail.com'],
+                    subject: 'Password Changed',
+                    html: renderString(changePasswordTemplate, { name: completeUser.name })
+                });
+            }
+
+            if(isPosibleTransaction) {
+                await prisma.commit();
+            }
+
+            return {
+                user,
+                warning
+            };
+        } catch(e) {
+            if(isPosibleTransaction) {
+                await prisma.rollback();
+            }
+
+            throw e;
         }
     }
 
