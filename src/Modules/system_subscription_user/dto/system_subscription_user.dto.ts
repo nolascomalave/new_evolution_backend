@@ -139,10 +139,6 @@ export class ResetPasswordDto {
 }
 
 export class ChangePasswordDto {
-    @Transform(({value}) => Number(value))
-    @IsInt()
-    id_system_subscription_user: number;
-
     @IsString()
     @MinLength(3)
     @MaxLength(30)

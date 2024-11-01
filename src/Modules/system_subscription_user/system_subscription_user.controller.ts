@@ -254,14 +254,11 @@ export class SystemSubscriptionUserController {
     @Patch('/change-password')
     @HttpCode(HttpStatus.OK)
     async changePassword(@Req() { user: moderator }: RequestSession, @Body() data: ChangePasswordDto) {
-        if(moderator.id !== data.id_system_subscription_user) {
-            throw new ForbiddenException();
-        }
 
         const prisma = await this.prisma.beginTransaction();
 
         try {
-            const { warning } = await this.service.changeUserPassword(data, prisma);
+            const { warning } = await this.service.changeUserPassword({id_system_subscription_user: moderator.id, ...data}, prisma);
 
             await prisma.commit();
 

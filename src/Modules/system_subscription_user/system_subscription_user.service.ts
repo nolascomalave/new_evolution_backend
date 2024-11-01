@@ -543,7 +543,7 @@ export class SystemSubscriptionUserService {
         }
     }
 
-    async changeUserPassword({ id_system_subscription_user, current_password, new_password }: ChangePasswordDto, prisma?: TransactionPrisma) {
+    async changeUserPassword({ id_system_subscription_user, current_password, new_password }: {id_system_subscription_user: number} & ChangePasswordDto, prisma?: TransactionPrisma) {
         const isPosibleTransaction = !prisma;
         let warning: string | undefined = undefined;
 
