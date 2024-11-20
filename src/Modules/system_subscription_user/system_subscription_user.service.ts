@@ -229,8 +229,7 @@ export class SystemSubscriptionUserService {
         where = where.length < 1 ? '' : ('where '.concat(where.join("\nAND ")));
 
         const sql = `SELECT
-            *,
-            IF('Malavé' LIKE '%Malavé', 0, 1) AS example
+            *
         FROM system_subscription_user_complete_info ssu
         ${where}`;
 

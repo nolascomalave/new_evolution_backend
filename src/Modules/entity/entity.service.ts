@@ -11,6 +11,7 @@ import fs from 'fs';
 import path from 'path';
 import { validateSSN } from 'src/util/validators';
 import { booleanFormat } from 'src/util/formats';
+import { GetByIdDto } from './dto/entity.dto';
 
 export type AddOrUpdateParams = AddOrUpdateDto & {
     id_entity?: number;
@@ -66,6 +67,57 @@ export type CompleteEntity = {
     id_system_subscription_user: number;
 }
 
+/* type NamesTypes = {
+    type: string;
+    id_entity_name_type: number;
+    names: string[]
+};
+
+type EntityDocumentType = {
+    id: number;
+    id_entity: number;
+    id_entity_document_category: number;
+    id_entity_document: number;
+    id_country: null | number;
+    id_state: null | number;
+    id_city: null | number;
+    order: number;
+    symbol: string;
+    category: string;
+    document: string;
+}
+
+type EntityFullInfo = {
+    id: number;
+    id_entity_parent: number;
+    id_document: number;
+    is_natural: boolean | 1 | 0;
+    id_system: number;
+    id_system_subscription: number;
+    id_system_subscription_user: number;
+    name: 'string';
+    gender: null | 'Male' | 'Female';
+    date_birth: null | string | Date;
+    address: null | string;
+    photo: null | string;
+    created_at: string | Date;
+    created_by: number;
+    updated_at: null | string | Date;
+    updated_by: null | number;
+    annulled_at: null | string | Date;
+    annulled_by: null | number;
+    complete_name: null | string;
+    names_obj: null | string | NamesTypes[];
+    names: null | string;
+    surnames: null | string;
+    legal_name: null | string;
+    business_name: null | string;
+    comercial_designation: null | string;
+    documents: null | string | EntityDocumentType[];
+    phones: null | string | string[];
+    emails: null | string | string[];
+} */
+
 @Injectable()
 export class EntityService {
     constructor(
@@ -75,6 +127,150 @@ export class EntityService {
         private emailService: EntityEmailService,
         private phoneService: EntityPhoneService
     ) {}
+
+    parseEntity(entity: CompleteEntity) {
+        if(entity.documents !== null && (typeof entity.documents === 'string')) {
+            entity.documents = JSON.parse(entity.documents);
+        }
+
+        if(entity.emails !== null && (typeof entity.emails === 'string')) {
+            entity.emails = JSON.parse(entity.emails);
+        }
+
+        if(entity.names_obj !== null && (typeof entity.names_obj === 'string')) {
+            entity.names_obj = JSON.parse(entity.names_obj);
+
+            if(Array.isArray(entity.names_obj)) {
+                entity.names_obj = entity.names_obj.map(names => {
+                    names.names = Array.isArray(names.names) ? names.names : JSON.parse(names.names);
+                    return names;
+                });
+            }
+        }
+
+        if(entity.phones !== null && (typeof entity.phones === 'string')) {
+            entity.phones = JSON.parse(entity.phones);
+        }
+
+        return entity;
+    }
+
+    async getAll({ page, search, status }: { page?: number, search?: string, status?: any }) {
+        let where: string[] | string = ["complete_name IS NOT NULL"];
+
+        if((search ?? null) !== null) {
+            search = search.trim().replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
+                switch (char) {
+                    case "\"":
+                    case "'":
+                    case "\\":
+                    case "%":
+                        return "\\" + char; // Escapa el carácter con una barra invertida
+                    default:
+                        return char;
+                }
+            });
+
+            where.push(`(
+                complete_name LIKE '%${search}%'
+                OR name LIKE '%${search}%'
+            )`);
+        }
+
+        if((typeof status === 'string') || (typeof status === 'object' && !Array.isArray(status))) {
+            let isValidStatus = true;
+
+            if(typeof status !== 'object') {
+                try {
+                    status = JSON.parse(status);
+                } catch(e: any) {
+                    isValidStatus = false;
+                }
+            }
+
+            if(isValidStatus) {
+                if('Annulled' in status) {
+
+                } else {
+                    const statusCondition: string[] = [];
+
+                    where.push(`annulled_at IS NULL`);
+
+                    /* if('Active' in status) {
+                        statusCondition.push(`inactivated_at IS ${(status.Active === 'false' || status.Active === false || status.Active == 0) ? 'NOT' : ''} NULL`.replace(/ +/gi, ' '));
+                    }
+
+                    if('Inactive' in status) {
+                        statusCondition.push(`inactivated_at IS ${(status.Inactive === 'false' || status.Inactive === false || status.Inactive == 0) ? '' : 'NOT'} NULL`.replace(/ +/gi, ' '));
+                    } */
+
+                    // where.push(`(${statusCondition.join("\nOR ")})`);
+                }
+            }
+        } else {
+            where.push(`COALESCE(annulled_at, annulled_at_system_subscription_user) IS NULL`);
+        }
+
+        where = where.length < 1 ? '' : ('where '.concat(where.join("\nAND ")));
+
+        const sql = `SELECT
+            *
+        FROM entity_complete_info eci
+        ${where}`;
+
+        let users: CompleteEntity[] = await this.prisma.queryUnsafe(sql) ?? [];
+
+        users = users.map(user => this.parseEntity(user));
+
+        return users;
+    }
+
+    async getById({ id, id_system_subscription }: GetByIdDto & { id_system_subscription?: number }) {
+        let AND: string[] | string = [
+            `annulled_at IS NULL`
+        ];
+
+        if(id_system_subscription !== undefined) {
+            AND.push(`id_system_subscription = ${id_system_subscription}`);
+        }
+
+        AND = AND.length < 1 ? '' : ('AND '.concat(AND.join("\nAND ")));
+
+        const sql = `SELECT
+            *
+        FROM entity_complete_info eci
+        WHERE id = ${id}
+            ${AND}`;
+
+        let entity: CompleteEntity | null = await this.prisma.findOneUnsafe(sql);
+
+        if(!!entity) {
+            if(entity.documents !== null && (typeof entity.documents === 'string')) {
+                entity.documents = JSON.parse(entity.documents);
+            }
+
+            if(entity.emails !== null && (typeof entity.emails === 'string')) {
+                entity.emails = JSON.parse(entity.emails);
+            }
+
+            if(entity.names_obj !== null && (typeof entity.names_obj === 'string')) {
+                entity.names_obj = JSON.parse(entity.names_obj);
+
+                if(Array.isArray(entity.names_obj)) {
+                    entity.names_obj = entity.names_obj.map(names => {
+                        names.names = Array.isArray(names.names) ? names.names : JSON.parse(names.names);
+                        return names;
+                    });
+                }
+            }
+
+            if(entity.phones !== null && (typeof entity.phones === 'string')) {
+                entity.phones = JSON.parse(entity.phones);
+            }
+        }
+
+        return entity;
+    }
 
     async addOrUpdate(addData: AddOrUpdateParams, prisma?: PrismaTransactionOrService) {
         const isPosibleTransaction = !prisma,
