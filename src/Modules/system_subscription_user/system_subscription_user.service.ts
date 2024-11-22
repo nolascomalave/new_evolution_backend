@@ -1,17 +1,23 @@
 import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { PrismaService, PrismaTransactionOrService, TransactionPrisma } from "src/prisma.service";
-import { AddOrUpdateParams, CompleteEntity, EntityService } from "../entity/entity.service";
+import { CompleteEntity, EntityService } from "../entity/entity.service";
 import { adaptNumTwo, adaptZerosNum, generateRandomSecurePassword, username as usernameGenerator } from "src/util/formats";
 import { hashSync, compareSync } from 'bcryptjs';
 import { $Enums, system_subscription_user } from "@prisma/client";
 import HandlerErrors from "src/util/HandlerErrors";
-import { ChangePasswordDto, ChangeStatusDto, GetByIdDto } from "./dto/system_subscription_user.dto";
+import { AddOrUpdateDto, ChangePasswordDto, ChangeStatusDto, GetByIdDto } from "./dto/system_subscription_user.dto";
 import { readFileSync } from "fs";
 import { resolve } from "path";
 // import resendInstance from "src/lib/resendInstance";
 import { renderString } from "src/Util/functionals";
 import { MailerService } from "src/mailer/mailer.service";
 // import { ResendService } from "nestjs-resend";
+
+export type AddOrUpdateParams = AddOrUpdateDto & {
+    is_natural: boolean;
+    photo?: Express.Multer.File;
+    id_system_subscription_user_moderator: number
+};
 
 export type FullUser = {
     id: number;
@@ -363,7 +369,7 @@ export class SystemSubscriptionUserService {
         try {
             user = ('id_system_subscription_user' in addData) ? await prisma.system_subscription_user.findUnique({where: {id: Number(addData.id_system_subscription_user)}}) : null;
 
-            if(!user && !('id_system_subscription_user' in addData)) {
+            if(!user && ('id_system_subscription_user' in addData)) {
                 errors.set('id_system_subscription_user', 404);
                 throw 'error';
             }

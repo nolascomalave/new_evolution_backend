@@ -69,11 +69,12 @@ export class AddOrUpdateDto {
     @Type(() => NameDto)
     names: NameDto[];
 
+    @IsOptional()
     @Transform(transformJSON)
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => DocumentDto)
-    documents: DocumentDto[];
+    documents?: DocumentDto[];
 
     @Transform(transformJSON)
     @IsArray()
@@ -83,8 +84,9 @@ export class AddOrUpdateDto {
     @IsArray()
     emails: string[];
 
+    @IsOptional()
     @IsEnum(['Male', 'Female'])
-    gender: GenderEnum;
+    gender?: GenderEnum;
 
     @IsOptional()
     @IsString()

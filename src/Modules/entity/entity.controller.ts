@@ -109,4 +109,68 @@ export class EntityController {
             throw new InternalServerErrorException(e);
         }
     }
+
+
+    @Post('/:id')
+    @HttpCode(HttpStatus.OK)
+    // @UsePipes(new ValidationPipe())
+    // Status:
+    //      201 Created.
+    //      400 Errors in params.
+    //      401 Unauthorized.
+    //      404 Unauthorized.
+    //      500 Error in server.
+    @UseInterceptors(
+        FileInterceptor(
+            'photo',
+            {
+                storage: diskStorage({
+                    destination: './uploads',
+                })
+            }
+        )
+    )
+    async update(@Req() req: RequestSession, @Body() data: AddOrUpdateDto, @Param() { id }: GetByIdDto, @UploadedFile() photo: Express.Multer.File) {
+        let errorsInProcess = new HandlerErrors;
+
+        const prisma = await this.prisma.beginTransaction();
+
+        try {
+            const entityResult = await this.service.addOrUpdate({
+                ...data,
+                photo,
+                id_entity: id,
+                id_system_subscription_user_moderator: req.user.id
+            }, prisma);
+
+            if(entityResult.errors.existsErrors()) {
+                errorsInProcess = entityResult.errors;
+                throw 'error';
+            }
+
+            await prisma.commit();
+
+            return {
+                data: JSONParser(entityResult.data),
+                message: 'Entiy created!'
+            };
+        } catch(e: any) {
+            console.log(e);
+            await prisma.rollback();
+
+            if(!!photo) {
+                Files.deleteFile(photo.path);
+            }
+
+            if(e === 'error') {
+                if(errorsInProcess.get('id_entity') === 404) {
+                    throw new NotFoundException(undefined, 'Entiy not found!');
+                }
+
+                throw new BadRequestException(getAllFlatValuesOfDataAsArray(errorsInProcess, true));
+            }
+
+            throw new InternalServerErrorException(e);
+        }
+    }
 }

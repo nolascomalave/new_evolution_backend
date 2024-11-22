@@ -84,25 +84,25 @@ export class SystemSubscriptionUserController {
         const prisma = await this.prisma.beginTransaction();
 
         try {
-            const entityResult = await this.service.addOrUpdate({
+            const user = await this.service.addOrUpdate({
                 ...data,
                 photo,
                 id_system_subscription_user_moderator: req.user.id,
                 is_natural: true
             }, prisma);
 
-            if(entityResult.errors.existsErrors()) {
-                errorsInProcess = entityResult.errors;
+            if(user.errors.existsErrors()) {
+                errorsInProcess = user.errors;
                 throw 'error';
             }
 
-            delete entityResult.data.fullUser.password;
-            delete entityResult.data.user.password;
+            delete user.data.fullUser.password;
+            delete user.data.user.password;
 
             await prisma.commit();
 
             return {
-                data: JSONParser(entityResult.data),
+                data: JSONParser(user.data),
                 message: 'User created!'
             };
         } catch(e: any) {

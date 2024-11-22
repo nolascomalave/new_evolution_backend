@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService, PrismaTransactionOrService } from '../../prisma.service';
 import { $Enums, entity } from '@prisma/client';
-import { AddOrUpdateDto } from '../system_subscription_user/dto/system_subscription_user.dto';
+import { AddOrUpdateDto } from './dto/entity.dto';
 import { EntityDocumentService } from '../entity_document/entity_document.service';
 import { EntityNameService } from '../entity_name/entity_name.service';
 import { EntityEmailService } from '../entity_email/entity_email.service';
@@ -14,8 +14,6 @@ import { booleanFormat } from 'src/util/formats';
 import { GetByIdDto } from './dto/entity.dto';
 
 export type AddOrUpdateParams = AddOrUpdateDto & {
-    id_entity?: number;
-    is_natural: boolean;
     photo?: Express.Multer.File;
     id_system_subscription_user_moderator: number
 };
@@ -298,7 +296,7 @@ export class EntityService {
                 address: addData.address
             }
 
-            if('id_entity' in addData) {
+            if('id_entity' in addData && (addData.id_entity ?? null) !== null) {
                 entity = await prisma.entity.findUnique({
                     where: {
                         id: addData.id_entity
@@ -385,8 +383,10 @@ export class EntityService {
                 throw errors;
             }
 
-            const names_types = Object.keys(names);
-            let currentNameIndex = 0;
+            const names_types = Object.keys(names),
+                newNamesIDs = [];
+            let currentNameIndex = 0,
+                errorsInNamesProcessing = false;
 
             for(let i = 0; i < names_types.length; i++) {
                 const namesResult = await this.nameService.processMultipleNames({
@@ -400,10 +400,33 @@ export class EntityService {
 
                 if(namesResult.errors.existsErrors()) {
                     errors.pushErrorInArray('names', namesResult.errors.getErrors());
+
+                    if(!errorsInNamesProcessing) {
+                        errorsInNamesProcessing = true;
+                    }
                     // throw errors;
+                } else {
+                    newNamesIDs.push(...(namesResult.data.map(name => (name.id))));
                 }
 
                 currentNameIndex = currentNameIndex + names[names_types[i]].names.length;
+            }
+
+            if(!errorsInNamesProcessing) {
+                /* const voidedNames = */ await prisma.entity_name_by_entity.updateMany({
+                    data: {
+                        annulled_by: Number(addData.id_system_subscription_user_moderator),
+                        annulled_at: new Date()
+                    },
+                    where: {
+                        id_entity: entity.id,
+                        NOT: {
+                            id_entity_name: {
+                                in: newNamesIDs
+                            }
+                        }
+                    }
+                });
             }
 
 
@@ -445,10 +468,12 @@ export class EntityService {
             // --------------------------------------------------------------------------------------------------------------------------------------------
             // - Processing Documents: --------------------------------------------------------------------------------------------------------------------
             // --------------------------------------------------------------------------------------------------------------------------------------------
-            let documents = [];
-            const documentsByType: {} | {[key: number | string]: string[] | number[]} = {};
+            let documents = [],
+                errorsInDocumentsProcessing = false;
+            const documentsByType: {} | {[key: number | string]: string[] | number[]} = {},
+                newDocumentsIDs = [];
 
-            for(let i = 0; i < addData.documents.length; i++) {
+            for(let i = 0; i < (addData.documents ?? []).length; i++) {
                 if(typeof addData.documents[i] !== 'object' || Array.isArray(addData.documents[i])) {
                     errors.pushErrorInArray('documents', `documents.${i} must be a JSON.`);
                     continue;
@@ -484,9 +509,31 @@ export class EntityService {
 
                     if(documentsResult.errors.existsErrors()) {
                         errors.pushErrorInArray('documents', documentsResult.errors.getErrors());
-                    } else if(Array.isArray(documentsResult.documents)) {
+
+                        if(!errorsInDocumentsProcessing) {
+                            errorsInDocumentsProcessing = true;
+                        }
+                    }  else {
                         documents.push(...documentsResult.documents);
+                        newDocumentsIDs.push(...(documentsResult.documents.map(doc => (doc.id))));
                     }
+                }
+
+                if(!errorsInDocumentsProcessing) {
+                    /* const voidedDocuments = */ await prisma.entity_document.updateMany({
+                        data: {
+                            annulled_by: Number(addData.id_system_subscription_user_moderator),
+                            annulled_at: new Date()
+                        },
+                        where: {
+                            id_entity: entity?.id,
+                            NOT: {
+                                id: {
+                                    in: newDocumentsIDs
+                                }
+                            }
+                        }
+                    });
                 }
             }
 
@@ -528,8 +575,8 @@ export class EntityService {
                     id: entity.id
                 },
                 data: {
-                    id_document: documents[0].id,
-                    name: (entity.is_natural ? (`${fullEntity.names} ${fullEntity.surnames}`) : (`${fullEntity.business_name} ${fullEntity.comercial_designation}`)).trim(),
+                    id_document: (documents ?? []).length < 1 ? undefined : documents[0].id,
+                    name: (entity.is_natural ? (`${fullEntity.names} ${fullEntity.surnames}`) : fullEntity.business_name).trim(),
                     photo: booleanFormat(addData.removePhoto) === true ? null : (!!addData.photo ? photoname : (('photo' in addData && addData.photo !== undefined) ? null : entity.photo))
                 }
             });
