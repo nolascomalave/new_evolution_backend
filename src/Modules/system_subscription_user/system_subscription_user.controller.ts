@@ -56,7 +56,11 @@ export class SystemSubscriptionUserController {
             throw new NotFoundException(undefined, 'User not found!');
         }
 
-        return JSONParser(result);
+        const data = JSONParser(result)
+
+        console.log(data);
+
+        return data;
     }
 
 

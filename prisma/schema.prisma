@@ -328,3 +328,32 @@ enum entity_gender {
   Male
   Female
 }
+
+model unit_measurement_type {
+  id              Int           @id @default(autoincrement())
+  type            String        @unique(map: "name") @db.VarChar(100)
+  created_at      DateTime      @default(now()) @db.DateTime(0)
+  created_by      Int
+  annulled_at     DateTime?     @db.DateTime(0)
+  annulled_by     Int?
+
+  @@index([annulled_by], map: "annulled_by")
+  @@index([created_by], map: "created_by")
+}
+
+model unit_measurement {
+  id                            Int           @id @default(autoincrement())
+  id_unit_measurement_type      Int
+  id_unit_measurement_base      Int
+  unit_measurement              String        @unique(map: "unit_measurement") @db.VarChar(250)
+  anglo_saxon                   Boolean       @default(dbgenerated("b'1'")) @db.Bit(1)
+  created_at                    DateTime      @default(now()) @db.DateTime(0)
+  created_by                    Int
+  annulled_at                   DateTime?     @db.DateTime(0)
+  annulled_by                   Int?
+
+  @@index([id_unit_measurement_type], map: "id_unit_measurement_type")
+  @@index([id_unit_measurement_base], map: "id_unit_measurement_base")
+  @@index([annulled_by], map: "annulled_by")
+  @@index([created_by], map: "created_by")
+}
