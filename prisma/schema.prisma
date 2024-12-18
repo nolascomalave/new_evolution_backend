@@ -331,7 +331,7 @@ enum entity_gender {
 
 model unit_measurement_type {
   id              Int           @id @default(autoincrement())
-  type            String        @unique(map: "name") @db.VarChar(100)
+  type            String        @unique(map: "type") @db.VarChar(100)
   created_at      DateTime      @default(now()) @db.DateTime(0)
   created_by      Int
   annulled_at     DateTime?     @db.DateTime(0)
@@ -356,4 +356,66 @@ model unit_measurement {
   @@index([id_unit_measurement_base], map: "id_unit_measurement_base")
   @@index([annulled_by], map: "annulled_by")
   @@index([created_by], map: "created_by")
+}
+
+model unit_measurement_symbol {
+  id              Int           @id @default(autoincrement())
+  symbol          String        @unique(map: "symbol") @db.VarChar(250)
+  created_at      DateTime      @default(now()) @db.DateTime(0)
+  created_by      Int
+  annulled_at     DateTime?     @db.DateTime(0)
+  annulled_by     Int?
+
+  @@index([annulled_by], map: "annulled_by")
+  @@index([created_by], map: "created_by")
+}
+
+model symbol_by_unit_measurement {
+  id                            Int           @id @default(autoincrement())
+  id_unit_measurement_symbol    Int
+  id_unit_measurement           Int
+  ordering                      Int
+  symbol                        String        @unique(map: "symbol") @db.VarChar(250)
+  created_at                    DateTime      @default(now()) @db.DateTime(0)
+  created_by                    Int
+  annulled_at                   DateTime?     @db.DateTime(0)
+  annulled_by                   Int?
+
+  @@index([id_unit_measurement_symbol], map: "id_unit_measurement_symbol")
+  @@index([id_unit_measurement], map: "id_unit_measurement")
+  @@index([annulled_by], map: "annulled_by")
+  @@index([created_by], map: "created_by")
+  @@unique([id_unit_measurement_symbol, id_unit_measurement], map: "symbol_by_unit_measurement_index_1")
+}
+
+model unit_measurement_by_system_subscription {
+  id                            Int           @id @default(autoincrement())
+  id_unit_measurement           Int
+  id_system_subscription        Int
+  created_at                    DateTime      @default(now()) @db.DateTime(0)
+  created_by                    Int
+  annulled_at                   DateTime?     @db.DateTime(0)
+  annulled_by                   Int?
+
+  @@index([id_unit_measurement], map: "id_unit_measurement")
+  @@index([id_system_subscription], map: "id_system_subscription")
+  @@index([annulled_by], map: "annulled_by")
+  @@index([created_by], map: "created_by")
+  @@unique([id_unit_measurement, id_system_subscription], map: "unit_measurement_by_system_subscription_index_1")
+}
+
+model sym_by_unit_meas_by_sys_subsc {
+  id_unit_measurement_by_system_subscription    Int
+  id_symbol_by_unit_measurement                 Int
+  Ordering                                      Int
+  created_at                                    DateTime      @default(now()) @db.DateTime(0)
+  created_by                                    Int
+  annulled_at                                   DateTime?     @db.DateTime(0)
+  annulled_by                                   Int?
+
+  @@index([id_unit_measurement_by_system_subscription], map: "id_unit_measurement_by_system_subscription")
+  @@index([id_symbol_by_unit_measurement], map: "id_symbol_by_unit_measurement")
+  @@index([annulled_by], map: "annulled_by")
+  @@index([created_by], map: "created_by")
+  @@unique([id_unit_measurement_by_system_subscription, id_symbol_by_unit_measurement], map: "sym_by_unit_meas_by_sys_subsc_index_1")
 }
