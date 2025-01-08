@@ -347,6 +347,7 @@ model unit_measurement {
   id_unit_measurement_base      Int
   unit_measurement              String        @unique(map: "unit_measurement") @db.VarChar(250)
   anglo_saxon                   Boolean       @default(dbgenerated("b'1'")) @db.Bit(1)
+  value                         Decimal
   created_at                    DateTime      @default(now()) @db.DateTime(0)
   created_by                    Int
   annulled_at                   DateTime?     @db.DateTime(0)
