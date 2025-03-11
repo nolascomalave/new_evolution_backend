@@ -1,0 +1,5807 @@
+[
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Métrico",
+        "unit_measurement": "Kilómetro",
+        "symbol": "(km)",
+        "value": "10*(10**-14)",
+        "numericValue": 1e-13
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Métrico",
+        "unit_measurement": "Metro",
+        "symbol": "(m)",
+        "value": "(10**-10)",
+        "numericValue": 1e-10
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Métrico",
+        "unit_measurement": "Decímetro",
+        "symbol": "(dm)",
+        "value": "(10**-9)",
+        "numericValue": 1e-9
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Métrico",
+        "unit_measurement": "Centímetro",
+        "symbol": "(cm)",
+        "value": "(10**-8)",
+        "numericValue": 1e-8
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Métrico",
+        "unit_measurement": "Milímetro",
+        "symbol": "(mm)",
+        "value": "(10**-7)",
+        "numericValue": 1e-7
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Métrico",
+        "unit_measurement": "Micrómetro",
+        "symbol": "(µm)",
+        "value": "0.0001",
+        "numericValue": 0.0001
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Métrico",
+        "unit_measurement": "Nanómetro",
+        "symbol": "(nm)",
+        "value": "0.1",
+        "numericValue": 0.1
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Métrico",
+        "unit_measurement": "Angstrom",
+        "symbol": "(Å)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Legua",
+        "symbol": null,
+        "value": "2.0712373075*(10**-14)",
+        "numericValue": 2.0712373075e-14
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Milla",
+        "symbol": "(mi)",
+        "value": "6.2137119224*(10**-14)",
+        "numericValue": 6.2137119224e-14
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Estadio",
+        "symbol": null,
+        "value": "4.9709695379*(10**-13)",
+        "numericValue": 4.9709695379e-13
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Cadena",
+        "symbol": null,
+        "value": "4.9709695379*(10**-12)",
+        "numericValue": 4.9709695379e-12
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Barra",
+        "symbol": "(rd)",
+        "value": "1.9883878152*(10**-11)",
+        "numericValue": 1.9883878151999998e-11
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Yarda",
+        "symbol": "(yd)",
+        "value": "1.0936132983*(10**-10)",
+        "numericValue": 1.0936132983e-10
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Pie",
+        "symbol": "(ft)",
+        "value": "3.280839895*(10**-10)",
+        "numericValue": 3.2808398950000004e-10
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Link",
+        "symbol": null,
+        "value": "4.9709695379*(10**-10)",
+        "numericValue": 4.9709695379e-10
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Mano",
+        "symbol": null,
+        "value": "9.842519685*(10**-10)",
+        "numericValue": 9.842519684999999e-10
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Pulgada",
+        "symbol": "(in)",
+        "value": "3.937007874*(10**-9)",
+        "numericValue": 3.937007874e-9
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Línea",
+        "symbol": null,
+        "value": "3.937007874*(10**-8)",
+        "numericValue": 3.937007874e-8
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Mil",
+        "symbol": "(mil)",
+        "value": "0.000003937",
+        "numericValue": 0.000003937
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Thou",
+        "symbol": "(thou)",
+        "value": "0.000003937",
+        "numericValue": 0.000003937
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Náutico",
+        "unit_measurement": "Milla náutica",
+        "symbol": null,
+        "value": "5.3995680346*(10**-14)",
+        "numericValue": 5.3995680345999996e-14
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Náutico",
+        "unit_measurement": "Braza",
+        "symbol": null,
+        "value": "5.4680664917*(10**-11)",
+        "numericValue": 5.4680664917e-11
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Astronómico",
+        "unit_measurement": "Parsec",
+        "symbol": "(pc)",
+        "value": "3.240779*(10**-27)",
+        "numericValue": 3.240779e-27
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Astronómico",
+        "unit_measurement": "Año luz",
+        "symbol": null,
+        "value": "1.057000834*(10**-26)",
+        "numericValue": 1.0570008339999999e-26
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Astronómico",
+        "unit_measurement": "Unidad astronómica",
+        "symbol": "(AE)",
+        "value": "6.684589*(10**-22)",
+        "numericValue": 6.684589e-22
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Astronómico",
+        "unit_measurement": "Minuto luz",
+        "symbol": null,
+        "value": "5.559404*(10**-21)",
+        "numericValue": 5.5594040000000004e-21
+    },
+    {
+        "category": "Dimensión",
+        "type": "Longitud",
+        "subtype": "Astronómico",
+        "unit_measurement": "Segundo luz",
+        "symbol": null,
+        "value": "3.335642*(10**-19)",
+        "numericValue": 3.335642e-19
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Métrico",
+        "unit_measurement": "Kilómetro cúbico",
+        "symbol": null,
+        "value": "(10**-18)",
+        "numericValue": 1e-18
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Métrico",
+        "unit_measurement": "Metro cúbico",
+        "symbol": null,
+        "value": "(10**-9)",
+        "numericValue": 1e-9
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Métrico",
+        "unit_measurement": "Hectolitro",
+        "symbol": null,
+        "value": "(10**-8)",
+        "numericValue": 1e-8
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Métrico",
+        "unit_measurement": "Decalitro",
+        "symbol": null,
+        "value": "(10**-7)",
+        "numericValue": 1e-7
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Métrico",
+        "unit_measurement": "Decímetro cúbico",
+        "symbol": null,
+        "value": "(10**-6)",
+        "numericValue": 0.000001
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Métrico",
+        "unit_measurement": "Litro",
+        "symbol": "(l)",
+        "value": "(10**-6)",
+        "numericValue": 0.000001
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Métrico",
+        "unit_measurement": "Decilitro",
+        "symbol": null,
+        "value": "(10**-5)",
+        "numericValue": 0.000009999999999999999
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Métrico",
+        "unit_measurement": "Centilitro",
+        "symbol": null,
+        "value": "(10**-4)",
+        "numericValue": 0.00009999999999999999
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Métrico",
+        "unit_measurement": "Centímetro cúbico",
+        "symbol": null,
+        "value": "(10**-3)",
+        "numericValue": 0.001
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Métrico",
+        "unit_measurement": "Mililitro",
+        "symbol": null,
+        "value": "(10**-3)",
+        "numericValue": 0.001
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Métrico",
+        "unit_measurement": "Milímetro cúbico",
+        "symbol": null,
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Métrico",
+        "unit_measurement": "Microlitro",
+        "symbol": null,
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Líquido/seco imperial inglés",
+        "unit_measurement": "Barril",
+        "symbol": null,
+        "value": "6.11*(10**-9)",
+        "numericValue": 6.110000000000001e-9
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Líquido/seco imperial inglés",
+        "unit_measurement": "Medida de áridos",
+        "symbol": "(bu)",
+        "value": "2.75*(10**-8)",
+        "numericValue": 2.75e-8
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Líquido/seco imperial inglés",
+        "unit_measurement": "Picotazo",
+        "symbol": "(pk)",
+        "value": "1.1*(10**-7)",
+        "numericValue": 1.1e-7
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Líquido/seco imperial inglés",
+        "unit_measurement": "Galón",
+        "symbol": "(gal)",
+        "value": "2.2*(10**-7)",
+        "numericValue": 2.2e-7
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Líquido/seco imperial inglés",
+        "unit_measurement": "Cuarto de galón",
+        "symbol": "(qt)",
+        "value": "8.8*(10**-7)",
+        "numericValue": 8.8e-7
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Líquido/seco imperial inglés",
+        "unit_measurement": "Pinta",
+        "symbol": "(pt)",
+        "value": "1.76*(10**-6)",
+        "numericValue": 0.0000017599999999999999
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Líquido/seco imperial inglés",
+        "unit_measurement": "Onza líquida",
+        "symbol": "(oz)",
+        "value": "3.52*(10**-5)",
+        "numericValue": 0.000035199999999999995
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Medida de líquidos de EE.UU.",
+        "unit_measurement": "Pie de acre",
+        "symbol": null,
+        "value": "8.11*(10**-13)",
+        "numericValue": 8.11e-13
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Medida de líquidos de EE.UU.",
+        "unit_measurement": "Yarda cúbica",
+        "symbol": "(yd³)",
+        "value": "1.31*(10**-9)",
+        "numericValue": 1.3100000000000002e-9
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Medida de líquidos de EE.UU.",
+        "unit_measurement": "Barril",
+        "symbol": null,
+        "value": "6.29*(10**-9)",
+        "numericValue": 6.29e-9
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Medida de líquidos de EE.UU.",
+        "unit_measurement": "Pie cúbico",
+        "symbol": "(ft³)",
+        "value": "3.53*(10**-8)",
+        "numericValue": 3.53e-8
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Medida de líquidos de EE.UU.",
+        "unit_measurement": "Galón",
+        "symbol": "(gal)",
+        "value": "2.64*(10**-7)",
+        "numericValue": 2.64e-7
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Medida de líquidos de EE.UU.",
+        "unit_measurement": "Cuarto de galón",
+        "symbol": "(qt)",
+        "value": "1.06*(10**-6)",
+        "numericValue": 0.00000106
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Medida de líquidos de EE.UU.",
+        "unit_measurement": "Pinta",
+        "symbol": "(pt)",
+        "value": "2.11*(10**-6)",
+        "numericValue": 0.0000021099999999999997
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Medida de líquidos de EE.UU.",
+        "unit_measurement": "Agalla",
+        "symbol": null,
+        "value": "8.45*(10**-6)",
+        "numericValue": 0.000008449999999999999
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Medida de líquidos de EE.UU.",
+        "unit_measurement": "Onza líquida",
+        "symbol": "(oz)",
+        "value": "3.38*(10**-5)",
+        "numericValue": 0.000033799999999999995
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Medida de líquidos de EE.UU.",
+        "unit_measurement": "Pulgada cúbica",
+        "symbol": "(in³)",
+        "value": "6.1*(10**-5)",
+        "numericValue": 0.00006099999999999999
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Medida de líquidos de EE.UU.",
+        "unit_measurement": "Dram líquido",
+        "symbol": null,
+        "value": "2.71*(10**-4)",
+        "numericValue": 0.000271
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Medida de líquidos de EE.UU.",
+        "unit_measurement": "Min",
+        "symbol": null,
+        "value": "0.02",
+        "numericValue": 0.02
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "EE.UU. medida seca",
+        "unit_measurement": "Barril",
+        "symbol": null,
+        "value": "8.65*(10**-9)",
+        "numericValue": 8.650000000000001e-9
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "EE.UU. medida seca",
+        "unit_measurement": "Medida de áridos",
+        "symbol": "(bu)",
+        "value": "2.84*(10**-8)",
+        "numericValue": 2.84e-8
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "EE.UU. medida seca",
+        "unit_measurement": "Picotazo",
+        "symbol": "(pk)",
+        "value": "1.14*(10**-7)",
+        "numericValue": 1.1399999999999999e-7
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "EE.UU. medida seca",
+        "unit_measurement": "Galón",
+        "symbol": "(gal)",
+        "value": "2.27*(10**-7)",
+        "numericValue": 2.2699999999999998e-7
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "EE.UU. medida seca",
+        "unit_measurement": "Cuarto de galón",
+        "symbol": "(qt)",
+        "value": "9.08*(10**-7)",
+        "numericValue": 9.079999999999999e-7
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "EE.UU. medida seca",
+        "unit_measurement": "Pinta",
+        "symbol": "(pt)",
+        "value": "1.82*(10**-6)",
+        "numericValue": 0.00000182
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "EE.UU. medida seca",
+        "unit_measurement": "Agalla",
+        "symbol": null,
+        "value": "7.26*(10**-6)",
+        "numericValue": 0.000007259999999999999
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "EE.UU. medida seca",
+        "unit_measurement": "Pie tabla",
+        "symbol": "(FBM)",
+        "value": "4.24*(10**-7)",
+        "numericValue": 4.24e-7
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Japonés",
+        "unit_measurement": "Koku",
+        "symbol": null,
+        "value": "5.54*(10**-9)",
+        "numericValue": 5.54e-9
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Japonés",
+        "unit_measurement": "To",
+        "symbol": null,
+        "value": "5.54*(10**-8)",
+        "numericValue": 5.54e-8
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Japonés",
+        "unit_measurement": "Sho",
+        "symbol": null,
+        "value": "5.54*(10**-7)",
+        "numericValue": 5.54e-7
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Japonés",
+        "unit_measurement": "Go",
+        "symbol": null,
+        "value": "5.54*(10**-6)",
+        "numericValue": 0.0000055399999999999995
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Cocina (EE.UU.)",
+        "unit_measurement": "Taza",
+        "symbol": null,
+        "value": "4.23*(10**-6)",
+        "numericValue": 0.00000423
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Cocina (EE.UU.)",
+        "unit_measurement": "Cucharada",
+        "symbol": null,
+        "value": "6.76*(10**-5)",
+        "numericValue": 0.00006759999999999999
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Cocina (EE.UU.)",
+        "unit_measurement": "Cucharadita",
+        "symbol": null,
+        "value": "2.03*(10**-4)",
+        "numericValue": 0.00020299999999999997
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Cocina (métrico)",
+        "unit_measurement": "Cucharada",
+        "symbol": null,
+        "value": "6.67*(10**-5)",
+        "numericValue": 0.0000667
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Cocina (métrico)",
+        "unit_measurement": "Cucharadita",
+        "symbol": null,
+        "value": "2*(10**-4)",
+        "numericValue": 0.00019999999999999998
+    },
+    {
+        "category": "Dimensión",
+        "type": "Volumen",
+        "subtype": "Cocina (métrico)",
+        "unit_measurement": "Medida de especia",
+        "symbol": null,
+        "value": "(10**-3)",
+        "numericValue": 0.001
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Métrico",
+        "unit_measurement": "Kilómetro cuadrado",
+        "symbol": "(km²)",
+        "value": "(10**-24)",
+        "numericValue": 1.0000000000000001e-24
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Métrico",
+        "unit_measurement": "Hectárea",
+        "symbol": "(ha)",
+        "value": "(10**-22)",
+        "numericValue": 1e-22
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Métrico",
+        "unit_measurement": "Área",
+        "symbol": "(a)",
+        "value": "(10**-20)",
+        "numericValue": 1.0000000000000001e-20
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Métrico",
+        "unit_measurement": "Metro cuadrado",
+        "symbol": "(m²)",
+        "value": "(10**-18)",
+        "numericValue": 1e-18
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Métrico",
+        "unit_measurement": "Decímetro cuadrado",
+        "symbol": "(dm²)",
+        "value": "(10**-16)",
+        "numericValue": 1e-16
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Métrico",
+        "unit_measurement": "Centímetro cuadrado",
+        "symbol": "(cm²)",
+        "value": "10*(10**-15)",
+        "numericValue": 1.0000000000000002e-14
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Métrico",
+        "unit_measurement": "Milímetro cuadrado",
+        "symbol": "(mm²)",
+        "value": "10*(10**-13)",
+        "numericValue": 1e-12
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Métrico",
+        "unit_measurement": "Micrómetro cuadrado",
+        "symbol": "(µm²)",
+        "value": "(10**-6)",
+        "numericValue": 0.000001
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Métrico",
+        "unit_measurement": "Nanómetro cuadrado",
+        "symbol": "(nm²)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Municipio",
+        "symbol": null,
+        "value": "1.07*(10**-26)",
+        "numericValue": 1.0700000000000001e-26
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Milla cuadrada",
+        "symbol": null,
+        "value": "3.86*(10**-25)",
+        "numericValue": 3.86e-25
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Patrimonio familiar",
+        "symbol": null,
+        "value": "1.54*(10**-24)",
+        "numericValue": 1.5400000000000002e-24
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Acre",
+        "symbol": null,
+        "value": "2.47*(10**-22)",
+        "numericValue": 2.47e-22
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Rood",
+        "symbol": null,
+        "value": "9.88*(10**-22)",
+        "numericValue": 9.88e-22
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Rod cuadrada",
+        "symbol": null,
+        "value": "3.95*(10**-20)",
+        "numericValue": 3.9500000000000005e-20
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Cuadrado",
+        "symbol": null,
+        "value": "1.08*(10**-19)",
+        "numericValue": 1.0800000000000001e-19
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Yarda cuadrada",
+        "symbol": "(yr²)",
+        "value": "1.2*(10**-18)",
+        "numericValue": 1.2e-18
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Pie cuadrado",
+        "symbol": "(ft²)",
+        "value": "1.08*(10**-17)",
+        "numericValue": 1.08e-17
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Pulgada cuadrada",
+        "symbol": "(in²)",
+        "value": "1.55*(10**-15)",
+        "numericValue": 1.5500000000000001e-15
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Japonés",
+        "unit_measurement": "Tsubo",
+        "symbol": null,
+        "value": "3.02*(10**-19)",
+        "numericValue": 3.02e-19
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Japonés",
+        "unit_measurement": "Cho",
+        "symbol": null,
+        "value": "1.01*(10**-16)",
+        "numericValue": 1.01e-16
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Japonés",
+        "unit_measurement": "Tann",
+        "symbol": null,
+        "value": "1.01*(10**-15)",
+        "numericValue": 1.01e-15
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Japonés",
+        "unit_measurement": "Se",
+        "symbol": null,
+        "value": "1.01*(10**-14)",
+        "numericValue": 1.0100000000000001e-14
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Otro",
+        "unit_measurement": "Donum métrico",
+        "symbol": null,
+        "value": "(10**-21)",
+        "numericValue": 1.0000000000000001e-21
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Otro",
+        "unit_measurement": "Donum de Chipre",
+        "symbol": null,
+        "value": "7.47*(10**-22)",
+        "numericValue": 7.47e-22
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Otro",
+        "unit_measurement": "Donum iraquí",
+        "symbol": null,
+        "value": "4*(10**-22)",
+        "numericValue": 4e-22
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Otro",
+        "unit_measurement": "Campo de fútbol",
+        "symbol": null,
+        "value": "1.4*(10**-22)",
+        "numericValue": 1.4e-22
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Brasileño",
+        "unit_measurement": "Alqueire Paulista",
+        "symbol": null,
+        "value": "4.13*(10**-23)",
+        "numericValue": 4.1300000000000004e-23
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Brasileño",
+        "unit_measurement": "Alqueire Mineiro",
+        "symbol": null,
+        "value": "2.07*(10**-23)",
+        "numericValue": 2.07e-23
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Brasileño",
+        "unit_measurement": "Alqueire Baiano",
+        "symbol": null,
+        "value": "1.03*(10**-23)",
+        "numericValue": 1.0300000000000001e-23
+    },
+    {
+        "category": "Dimensión",
+        "type": "Área",
+        "subtype": "Brasileño",
+        "unit_measurement": "Alqueire do Norte",
+        "symbol": null,
+        "value": "3.68*(10**-23)",
+        "numericValue": 3.680000000000001e-23
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Faradio",
+        "symbol": "(F)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Decafaradio",
+        "symbol": "(daF)",
+        "value": "0.1",
+        "numericValue": 0.1
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Hectofaradio",
+        "symbol": "(hF)",
+        "value": "0.01",
+        "numericValue": 0.01
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Kilofaradio",
+        "symbol": "(kF)",
+        "value": "(10**-3)",
+        "numericValue": 0.001
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Megafaradio",
+        "symbol": "(MF)",
+        "value": "(10**-6)",
+        "numericValue": 0.000001
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Gigafaradio",
+        "symbol": "(GF)",
+        "value": "(10**-9)",
+        "numericValue": 1e-9
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Terafaradio",
+        "symbol": "(TF)",
+        "value": "10*(10**-13)",
+        "numericValue": 1e-12
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Petafaradio",
+        "symbol": "(PF)",
+        "value": "(10**-15)",
+        "numericValue": 1e-15
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Exafaradio",
+        "symbol": "(EF)",
+        "value": "(10**-18)",
+        "numericValue": 1e-18
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Zettafaradio",
+        "symbol": "(ZF)",
+        "value": "(10**-21)",
+        "numericValue": 1.0000000000000001e-21
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Yottafaradio",
+        "symbol": "(YF)",
+        "value": "(10**-24)",
+        "numericValue": 1.0000000000000001e-24
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Decifaradio",
+        "symbol": "(dF)",
+        "value": "10",
+        "numericValue": 10
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Centifaradio",
+        "symbol": "(cF)",
+        "value": "100",
+        "numericValue": 100
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Milifaradio",
+        "symbol": "(mF)",
+        "value": "1,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Microfaradio",
+        "symbol": "(µF)",
+        "value": "1,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Nanofaradio",
+        "symbol": "(nF)",
+        "value": "1,000,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Picofaradio",
+        "symbol": "(pF)",
+        "value": "(10**12)",
+        "numericValue": 1000000000000
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Femtofaradio",
+        "symbol": "(fF)",
+        "value": "(10**15)",
+        "numericValue": 1000000000000000
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Attofaradio",
+        "symbol": "(aF)",
+        "value": "(10**18)",
+        "numericValue": 1000000000000000000
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Zeptofaradio",
+        "symbol": "(zF)",
+        "value": "(10**21)",
+        "numericValue": 1e+21
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Yoctofaradio",
+        "symbol": "(yF)",
+        "value": "(10**24)",
+        "numericValue": 1e+24
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Culombio por voltio",
+        "symbol": null,
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Abfaradio",
+        "symbol": "(abF)",
+        "value": "(10**-9)",
+        "numericValue": 1e-9
+    },
+    {
+        "category": "Electricidad",
+        "type": "Capacidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Statfaradio",
+        "symbol": "(statF)",
+        "value": "8.99*(10**11)",
+        "numericValue": 899000000000
+    },
+    {
+        "category": "Electricidad",
+        "type": "Carga eléctrica",
+        "subtype": "",
+        "unit_measurement": "Nanoculombios",
+        "symbol": "(nC)",
+        "value": "1,000,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Carga eléctrica",
+        "subtype": "",
+        "unit_measurement": "Microculombios",
+        "symbol": "(µC)",
+        "value": "1,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Carga eléctrica",
+        "subtype": "",
+        "unit_measurement": "Miliculombios",
+        "symbol": "(mC)",
+        "value": "1,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Carga eléctrica",
+        "subtype": "",
+        "unit_measurement": "Culombios",
+        "symbol": "(C)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Electricidad",
+        "type": "Carga eléctrica",
+        "subtype": "",
+        "unit_measurement": "Kiloculombios",
+        "symbol": "(kC)",
+        "value": "(10**-3)",
+        "numericValue": 0.001
+    },
+    {
+        "category": "Electricidad",
+        "type": "Carga eléctrica",
+        "subtype": "",
+        "unit_measurement": "Megaculombios",
+        "symbol": "(MC)",
+        "value": "(10**-6)",
+        "numericValue": 0.000001
+    },
+    {
+        "category": "Electricidad",
+        "type": "Carga eléctrica",
+        "subtype": "",
+        "unit_measurement": "Abculombios",
+        "symbol": "(abC)",
+        "value": "0.1",
+        "numericValue": 0.1
+    },
+    {
+        "category": "Electricidad",
+        "type": "Carga eléctrica",
+        "subtype": "",
+        "unit_measurement": "Miliamperios-hora",
+        "symbol": "(mAh)",
+        "value": "0.28",
+        "numericValue": 0.28
+    },
+    {
+        "category": "Electricidad",
+        "type": "Carga eléctrica",
+        "subtype": "",
+        "unit_measurement": "Amperios-hora",
+        "symbol": "(Ah)",
+        "value": "2.78*(10**-4)",
+        "numericValue": 0.000278
+    },
+    {
+        "category": "Electricidad",
+        "type": "Carga eléctrica",
+        "subtype": "",
+        "unit_measurement": "Faraday",
+        "symbol": "(F)",
+        "value": "1.04*(10**-5)",
+        "numericValue": 0.000010399999999999999
+    },
+    {
+        "category": "Electricidad",
+        "type": "Carga eléctrica",
+        "subtype": "",
+        "unit_measurement": "Statculombios",
+        "symbol": "(statC)",
+        "value": "2,997,924,580",
+        "numericValue": 580
+    },
+    {
+        "category": "Electricidad",
+        "type": "Carga eléctrica",
+        "subtype": "",
+        "unit_measurement": "Carga Elemental",
+        "symbol": "(e)",
+        "value": "6.24*(10**18)",
+        "numericValue": 6240000000000000000
+    },
+    {
+        "category": "Electricidad",
+        "type": "Conductancia eléctrica",
+        "subtype": "",
+        "unit_measurement": "Nanosiemens",
+        "symbol": "(nS)",
+        "value": "1,000,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Conductancia eléctrica",
+        "subtype": "",
+        "unit_measurement": "Microsiemens",
+        "symbol": "(µS)",
+        "value": "1,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Conductancia eléctrica",
+        "subtype": "",
+        "unit_measurement": "Milisiemens",
+        "symbol": "(mS)",
+        "value": "1,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Conductancia eléctrica",
+        "subtype": "",
+        "unit_measurement": "Siemens",
+        "symbol": "(S)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Electricidad",
+        "type": "Conductancia eléctrica",
+        "subtype": "",
+        "unit_measurement": "Kilosiemens",
+        "symbol": "(kS)",
+        "value": "(10**-3)",
+        "numericValue": 0.001
+    },
+    {
+        "category": "Electricidad",
+        "type": "Conductancia eléctrica",
+        "subtype": "",
+        "unit_measurement": "Megasiemens",
+        "symbol": "(MS)",
+        "value": "(10**-6)",
+        "numericValue": 0.000001
+    },
+    {
+        "category": "Electricidad",
+        "type": "Conductancia eléctrica",
+        "subtype": "",
+        "unit_measurement": "Gigasiemens",
+        "symbol": "(GS)",
+        "value": "(10**-9)",
+        "numericValue": 1e-9
+    },
+    {
+        "category": "Electricidad",
+        "type": "Conductancia eléctrica",
+        "subtype": "",
+        "unit_measurement": "Mho",
+        "symbol": "(℧)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Electricidad",
+        "type": "Conductancia eléctrica",
+        "subtype": "",
+        "unit_measurement": "Amperios por voltios",
+        "symbol": "(A/V)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Electricidad",
+        "type": "Inductancia",
+        "subtype": "",
+        "unit_measurement": "Nanohenrio",
+        "symbol": "(nH)",
+        "value": "1,000,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Inductancia",
+        "subtype": "",
+        "unit_measurement": "Microhenrio",
+        "symbol": "(µH)",
+        "value": "1,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Inductancia",
+        "subtype": "",
+        "unit_measurement": "Milihenrio",
+        "symbol": "(mH)",
+        "value": "1,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Inductancia",
+        "subtype": "",
+        "unit_measurement": "Henrio",
+        "symbol": "(H)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Electricidad",
+        "type": "Inductancia",
+        "subtype": "",
+        "unit_measurement": "Kilohenrio",
+        "symbol": "(kH)",
+        "value": "(10**-3)",
+        "numericValue": 0.001
+    },
+    {
+        "category": "Electricidad",
+        "type": "Inductancia",
+        "subtype": "",
+        "unit_measurement": "Megahenrio",
+        "symbol": "(MH)",
+        "value": "(10**-6)",
+        "numericValue": 0.000001
+    },
+    {
+        "category": "Electricidad",
+        "type": "Inductancia",
+        "subtype": "",
+        "unit_measurement": "Gigahenrio",
+        "symbol": "(GH)",
+        "value": "(10**-9)",
+        "numericValue": 1e-9
+    },
+    {
+        "category": "Electricidad",
+        "type": "Inductancia",
+        "subtype": "",
+        "unit_measurement": "Abhenrio",
+        "symbol": "(abH)",
+        "value": "1,000,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Inductancia",
+        "subtype": "",
+        "unit_measurement": "Weber por amperio",
+        "symbol": "(Wb/A)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Electricidad",
+        "type": "Intensidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Nanoamperios",
+        "symbol": "(nA)",
+        "value": "1,000,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Intensidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Microamperios",
+        "symbol": "(µA)",
+        "value": "1,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Intensidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Miliamperios",
+        "symbol": "(mA)",
+        "value": "1,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Intensidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Amperios",
+        "symbol": "(A)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Electricidad",
+        "type": "Intensidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Kiloamperios",
+        "symbol": "(kA)",
+        "value": "(10**-3)",
+        "numericValue": 0.001
+    },
+    {
+        "category": "Electricidad",
+        "type": "Intensidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Megamperios",
+        "symbol": "(MA)",
+        "value": "(10**-6)",
+        "numericValue": 0.000001
+    },
+    {
+        "category": "Electricidad",
+        "type": "Intensidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Gigamperios",
+        "symbol": "(GA)",
+        "value": "(10**-9)",
+        "numericValue": 1e-9
+    },
+    {
+        "category": "Electricidad",
+        "type": "Intensidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Abamperios",
+        "symbol": "(aA)",
+        "value": "0.1",
+        "numericValue": 0.1
+    },
+    {
+        "category": "Electricidad",
+        "type": "Intensidad eléctrica",
+        "subtype": "",
+        "unit_measurement": "Culombios por segundo",
+        "symbol": "(C/s)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Electricidad",
+        "type": "Potencial eléctrico",
+        "subtype": "",
+        "unit_measurement": "Nanovoltios",
+        "symbol": "(nV)",
+        "value": "1,000,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Potencial eléctrico",
+        "subtype": "",
+        "unit_measurement": "Microvoltios",
+        "symbol": "(µV)",
+        "value": "1,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Potencial eléctrico",
+        "subtype": "",
+        "unit_measurement": "Milivoltios",
+        "symbol": "(mV)",
+        "value": "1,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Potencial eléctrico",
+        "subtype": "",
+        "unit_measurement": "Voltios",
+        "symbol": "(V)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Electricidad",
+        "type": "Potencial eléctrico",
+        "subtype": "",
+        "unit_measurement": "Kilvoltios",
+        "symbol": "(kV)",
+        "value": "(10**-3)",
+        "numericValue": 0.001
+    },
+    {
+        "category": "Electricidad",
+        "type": "Potencial eléctrico",
+        "subtype": "",
+        "unit_measurement": "Megavoltios",
+        "symbol": "(MV)",
+        "value": "(10**-6)",
+        "numericValue": 0.000001
+    },
+    {
+        "category": "Electricidad",
+        "type": "Potencial eléctrico",
+        "subtype": "",
+        "unit_measurement": "Gigavoltios",
+        "symbol": "(GV)",
+        "value": "(10**-9)",
+        "numericValue": 1e-9
+    },
+    {
+        "category": "Electricidad",
+        "type": "Potencial eléctrico",
+        "subtype": "",
+        "unit_measurement": "Vatios por amperios",
+        "symbol": "(W/A)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Electricidad",
+        "type": "Potencial eléctrico",
+        "subtype": "",
+        "unit_measurement": "Abvoltios",
+        "symbol": "(abV)",
+        "value": "100,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Potencial eléctrico",
+        "subtype": "",
+        "unit_measurement": "Statvoltios",
+        "symbol": "(stV)",
+        "value": "3.34*(10**-3)",
+        "numericValue": 0.00334
+    },
+    {
+        "category": "Electricidad",
+        "type": "Resistencia eléctrica",
+        "subtype": "",
+        "unit_measurement": "Nanoohmios",
+        "symbol": "(nΩ)",
+        "value": "1,000,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Resistencia eléctrica",
+        "subtype": "",
+        "unit_measurement": "Microohmios",
+        "symbol": "(µΩ)",
+        "value": "1,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Resistencia eléctrica",
+        "subtype": "",
+        "unit_measurement": "Miliohmios",
+        "symbol": "(mΩ)",
+        "value": "1,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Resistencia eléctrica",
+        "subtype": "",
+        "unit_measurement": "Ohmios",
+        "symbol": "(Ω)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Electricidad",
+        "type": "Resistencia eléctrica",
+        "subtype": "",
+        "unit_measurement": "Kiloohmios",
+        "symbol": "(kΩ)",
+        "value": "(10**-3)",
+        "numericValue": 0.001
+    },
+    {
+        "category": "Electricidad",
+        "type": "Resistencia eléctrica",
+        "subtype": "",
+        "unit_measurement": "Megaohmios",
+        "symbol": "(MΩ)",
+        "value": "(10**-6)",
+        "numericValue": 0.000001
+    },
+    {
+        "category": "Electricidad",
+        "type": "Resistencia eléctrica",
+        "subtype": "",
+        "unit_measurement": "Gigaohmios",
+        "symbol": "(GΩ)",
+        "value": "(10**-9)",
+        "numericValue": 1e-9
+    },
+    {
+        "category": "Electricidad",
+        "type": "Resistencia eléctrica",
+        "subtype": "",
+        "unit_measurement": "Abohmios",
+        "symbol": "(abΩ)",
+        "value": "1,000,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Electricidad",
+        "type": "Resistencia eléctrica",
+        "subtype": "",
+        "unit_measurement": "Voltios por amperios",
+        "symbol": "(V/A)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Energía",
+        "type": "Consumo de combustible",
+        "subtype": "Métrico",
+        "unit_measurement": "Litros por kilómetro",
+        "symbol": "(l/km)",
+        "value": "2.35",
+        "numericValue": 2.35
+    },
+    {
+        "category": "Energía",
+        "type": "Consumo de combustible",
+        "subtype": "Métrico",
+        "unit_measurement": "Litros por 10 kilómetros",
+        "symbol": "(l/10 km)",
+        "value": "23.52",
+        "numericValue": 23.52
+    },
+    {
+        "category": "Energía",
+        "type": "Consumo de combustible",
+        "subtype": "Métrico",
+        "unit_measurement": "Litros por 100 kilómetros",
+        "symbol": "(l/100km)",
+        "value": "235.21",
+        "numericValue": 235.21
+    },
+    {
+        "category": "Energía",
+        "type": "Consumo de combustible",
+        "subtype": "Métrico",
+        "unit_measurement": "Kilómetros por litro",
+        "symbol": "(km/l)",
+        "value": "0.43",
+        "numericValue": 0.43
+    },
+    {
+        "category": "Energía",
+        "type": "Consumo de combustible",
+        "subtype": "Americano",
+        "unit_measurement": "Millas por galón",
+        "symbol": "(mpg)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Energía",
+        "type": "Consumo de combustible",
+        "subtype": "Americano",
+        "unit_measurement": "Galones por 100 millas",
+        "symbol": null,
+        "value": "100",
+        "numericValue": 100
+    },
+    {
+        "category": "Energía",
+        "type": "Consumo de combustible",
+        "subtype": "Británico",
+        "unit_measurement": "Millas por galón",
+        "symbol": "(mpg)",
+        "value": "1.2",
+        "numericValue": 1.2
+    },
+    {
+        "category": "Energía",
+        "type": "Consumo de combustible",
+        "subtype": "Británico",
+        "unit_measurement": "Millas por litro",
+        "symbol": "(mpl)",
+        "value": "0.26",
+        "numericValue": 0.26
+    },
+    {
+        "category": "Energía",
+        "type": "Consumo de combustible",
+        "subtype": "Británico",
+        "unit_measurement": "Galones por 100 millas",
+        "symbol": null,
+        "value": "83.27",
+        "numericValue": 83.27
+    },
+    {
+        "category": "Energía",
+        "type": "Energía",
+        "subtype": "Métrico",
+        "unit_measurement": "kWh",
+        "symbol": null,
+        "value": "3.77*(10**-7)",
+        "numericValue": 3.77e-7
+    },
+    {
+        "category": "Energía",
+        "type": "Energía",
+        "subtype": "Métrico",
+        "unit_measurement": "MJ",
+        "symbol": null,
+        "value": "1.36*(10**-6)",
+        "numericValue": 0.0000013600000000000001
+    },
+    {
+        "category": "Energía",
+        "type": "Energía",
+        "subtype": "Métrico",
+        "unit_measurement": "kJ",
+        "symbol": null,
+        "value": "1.36*(10**-3)",
+        "numericValue": 0.00136
+    },
+    {
+        "category": "Energía",
+        "type": "Energía",
+        "subtype": "Métrico",
+        "unit_measurement": "J",
+        "symbol": null,
+        "value": "1.36",
+        "numericValue": 1.36
+    },
+    {
+        "category": "Energía",
+        "type": "Energía",
+        "subtype": "Métrico",
+        "unit_measurement": "Ws",
+        "symbol": null,
+        "value": "1.36",
+        "numericValue": 1.36
+    },
+    {
+        "category": "Energía",
+        "type": "Energía",
+        "subtype": "Métrico",
+        "unit_measurement": "eV",
+        "symbol": null,
+        "value": "8.46*(10**18)",
+        "numericValue": 8460000000000001000
+    },
+    {
+        "category": "Energía",
+        "type": "Energía",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Quad",
+        "symbol": null,
+        "value": "1.29*(10**-18)",
+        "numericValue": 1.29e-18
+    },
+    {
+        "category": "Energía",
+        "type": "Energía",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Therm",
+        "symbol": null,
+        "value": "1.29*(10**-8)",
+        "numericValue": 1.2900000000000001e-8
+    },
+    {
+        "category": "Energía",
+        "type": "Energía",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Unidad térmica inglesa",
+        "symbol": "(BTU)",
+        "value": "1.29*(10**-3)",
+        "numericValue": 0.0012900000000000001
+    },
+    {
+        "category": "Energía",
+        "type": "Energía",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Pie-libra",
+        "symbol": null,
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Energía",
+        "type": "Energía",
+        "subtype": "Otro",
+        "unit_measurement": "kcal",
+        "symbol": null,
+        "value": "3.24*(10**-4)",
+        "numericValue": 0.000324
+    },
+    {
+        "category": "Energía",
+        "type": "Energía",
+        "subtype": "Otro",
+        "unit_measurement": "cal",
+        "symbol": null,
+        "value": "0.32",
+        "numericValue": 0.32
+    },
+    {
+        "category": "Energía",
+        "type": "Energía",
+        "subtype": "Otro",
+        "unit_measurement": "Thermie",
+        "symbol": "(th)",
+        "value": "3.24*(10**-7)",
+        "numericValue": 3.24e-7
+    },
+    {
+        "category": "Energía",
+        "type": "Potencia",
+        "subtype": "",
+        "unit_measurement": "Millivatio",
+        "symbol": null,
+        "value": "745,699.87",
+        "numericValue": 699.87
+    },
+    {
+        "category": "Energía",
+        "type": "Potencia",
+        "subtype": "",
+        "unit_measurement": "Vatio",
+        "symbol": "(W)",
+        "value": "745.7",
+        "numericValue": 745.7
+    },
+    {
+        "category": "Energía",
+        "type": "Potencia",
+        "subtype": "",
+        "unit_measurement": "Kilovatio",
+        "symbol": "(kW)",
+        "value": "0.75",
+        "numericValue": 0.75
+    },
+    {
+        "category": "Energía",
+        "type": "Potencia",
+        "subtype": "",
+        "unit_measurement": "Megavatio",
+        "symbol": "(MW)",
+        "value": "7.46*(10**-4)",
+        "numericValue": 0.0007459999999999999
+    },
+    {
+        "category": "Energía",
+        "type": "Potencia",
+        "subtype": "",
+        "unit_measurement": "Julio por segundo",
+        "symbol": "(J/s)",
+        "value": "745.7",
+        "numericValue": 745.7
+    },
+    {
+        "category": "Energía",
+        "type": "Potencia",
+        "subtype": "",
+        "unit_measurement": "Horse Power",
+        "symbol": "(hp)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Energía",
+        "type": "Potencia",
+        "subtype": "",
+        "unit_measurement": "Caballo de vapor métrico",
+        "symbol": null,
+        "value": "1.01",
+        "numericValue": 1.01
+    },
+    {
+        "category": "Energía",
+        "type": "Potencia",
+        "subtype": "",
+        "unit_measurement": "Caballo de vapor eléctrico",
+        "symbol": null,
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Energía",
+        "type": "Potencia",
+        "subtype": "",
+        "unit_measurement": "Caballo de fuerza boiler",
+        "symbol": null,
+        "value": "0.08",
+        "numericValue": 0.08
+    },
+    {
+        "category": "Energía",
+        "type": "Potencia",
+        "subtype": "",
+        "unit_measurement": "Pie-Libra por minuto",
+        "symbol": null,
+        "value": "33,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Energía",
+        "type": "Potencia",
+        "subtype": "",
+        "unit_measurement": "Pie-Libra por segundo",
+        "symbol": null,
+        "value": "550",
+        "numericValue": 550
+    },
+    {
+        "category": "Energía",
+        "type": "Potencia",
+        "subtype": "",
+        "unit_measurement": "dBm",
+        "symbol": "(dBm)",
+        "value": "58.73",
+        "numericValue": 58.73
+    },
+    {
+        "category": "Energía",
+        "type": "Potencia",
+        "subtype": "",
+        "unit_measurement": "Calorias por hora",
+        "symbol": null,
+        "value": "641,186.49",
+        "numericValue": 186.49
+    },
+    {
+        "category": "Energía",
+        "type": "Potencia",
+        "subtype": "",
+        "unit_measurement": "Kilocalorias por hora",
+        "symbol": null,
+        "value": "641.19",
+        "numericValue": 641.19
+    },
+    {
+        "category": "Energía",
+        "type": "Potencia",
+        "subtype": "",
+        "unit_measurement": "Unidad Térmica Británica por hora",
+        "symbol": null,
+        "value": "2,544.43",
+        "numericValue": 544.43
+    },
+    {
+        "category": "Energía",
+        "type": "Potencia",
+        "subtype": "",
+        "unit_measurement": "Unidades Térmicas Británicas por segundo",
+        "symbol": "(BTU/s)",
+        "value": "0.71",
+        "numericValue": 0.71
+    },
+    {
+        "category": "Energía",
+        "type": "Potencia",
+        "subtype": "",
+        "unit_measurement": "Tonelada de refrigeración",
+        "symbol": null,
+        "value": "0.21",
+        "numericValue": 0.21
+    },
+    {
+        "category": "Energía",
+        "type": "Temperatura",
+        "subtype": "",
+        "unit_measurement": "Kelvin",
+        "symbol": "(K)",
+        "value": "255.93",
+        "numericValue": 255.93
+    },
+    {
+        "category": "Energía",
+        "type": "Temperatura",
+        "subtype": "",
+        "unit_measurement": "Celsius",
+        "symbol": "(C)",
+        "value": "-17.22",
+        "numericValue": -17.22
+    },
+    {
+        "category": "Energía",
+        "type": "Temperatura",
+        "subtype": "",
+        "unit_measurement": "Fahrenheit",
+        "symbol": "(F)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Energía",
+        "type": "Temperatura",
+        "subtype": "",
+        "unit_measurement": "Reaumur",
+        "symbol": "(R)",
+        "value": "-13.78",
+        "numericValue": -13.78
+    },
+    {
+        "category": "Energía",
+        "type": "Temperatura",
+        "subtype": "",
+        "unit_measurement": "Rankine",
+        "symbol": null,
+        "value": "460.67",
+        "numericValue": 460.67
+    },
+    {
+        "category": "Fotometría",
+        "type": "Cantidad de luz",
+        "subtype": "",
+        "unit_measurement": "Talbot",
+        "symbol": "(T)",
+        "value": "3,600",
+        "numericValue": 600
+    },
+    {
+        "category": "Fotometría",
+        "type": "Cantidad de luz",
+        "subtype": "",
+        "unit_measurement": "Lumen segundo",
+        "symbol": "(lm·s)",
+        "value": "3,600",
+        "numericValue": 600
+    },
+    {
+        "category": "Fotometría",
+        "type": "Cantidad de luz",
+        "subtype": "",
+        "unit_measurement": "Lumen minuto",
+        "symbol": "(lm·min)",
+        "value": "60",
+        "numericValue": 60
+    },
+    {
+        "category": "Fotometría",
+        "type": "Cantidad de luz",
+        "subtype": "",
+        "unit_measurement": "Lumen hora",
+        "symbol": "(lm·h)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Fotometría",
+        "type": "Flujo luminoso",
+        "subtype": "",
+        "unit_measurement": "Lumen",
+        "symbol": "(lm)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Fotometría",
+        "type": "Flujo luminoso",
+        "subtype": "",
+        "unit_measurement": "Candela estereorradián",
+        "symbol": "(cd·sr)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Fotometría",
+        "type": "Flujo luminoso",
+        "subtype": "",
+        "unit_measurement": "Lux metro cuadrado",
+        "symbol": "(lx·m²)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Fotometría",
+        "type": "Iluminancia",
+        "subtype": "",
+        "unit_measurement": "Microlux",
+        "symbol": "(µlx)",
+        "value": "1,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Fotometría",
+        "type": "Iluminancia",
+        "subtype": "",
+        "unit_measurement": "Mililux",
+        "symbol": "(mlx)",
+        "value": "1,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Fotometría",
+        "type": "Iluminancia",
+        "subtype": "",
+        "unit_measurement": "Lux",
+        "symbol": "(lx)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Fotometría",
+        "type": "Iluminancia",
+        "subtype": "",
+        "unit_measurement": "Kilolux",
+        "symbol": "(klx)",
+        "value": "(10**-3)",
+        "numericValue": 0.001
+    },
+    {
+        "category": "Fotometría",
+        "type": "Iluminancia",
+        "subtype": "",
+        "unit_measurement": "Lumen por metro cuadrado",
+        "symbol": "(lm/m²)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Fotometría",
+        "type": "Iluminancia",
+        "subtype": "",
+        "unit_measurement": "Lumen por centimetro cuadrado",
+        "symbol": "(lm/cm²)",
+        "value": "(10**-4)",
+        "numericValue": 0.00009999999999999999
+    },
+    {
+        "category": "Fotometría",
+        "type": "Iluminancia",
+        "subtype": "",
+        "unit_measurement": "Pié-candle",
+        "symbol": "(fc)",
+        "value": "0.09",
+        "numericValue": 0.09
+    },
+    {
+        "category": "Fotometría",
+        "type": "Iluminancia",
+        "subtype": "",
+        "unit_measurement": "Fot",
+        "symbol": "(ph)",
+        "value": "(10**-4)",
+        "numericValue": 0.00009999999999999999
+    },
+    {
+        "category": "Fotometría",
+        "type": "Iluminancia",
+        "subtype": "",
+        "unit_measurement": "Nox",
+        "symbol": null,
+        "value": "1,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Fotometría",
+        "type": "Intensidad luminosa",
+        "subtype": "",
+        "unit_measurement": "Candela",
+        "symbol": "(cd)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Fotometría",
+        "type": "Intensidad luminosa",
+        "subtype": "",
+        "unit_measurement": "Lumen por estereorradián",
+        "symbol": "(lm/sr)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Fotometría",
+        "type": "Intensidad luminosa",
+        "subtype": "",
+        "unit_measurement": "Hefnerkerze",
+        "symbol": "(HK)",
+        "value": "1.11",
+        "numericValue": 1.11
+    },
+    {
+        "category": "Fotometría",
+        "type": "Intensidad luminosa",
+        "subtype": "",
+        "unit_measurement": "Intensidad lumínica",
+        "symbol": null,
+        "value": "1.02",
+        "numericValue": 1.02
+    },
+    {
+        "category": "Fotometría",
+        "type": "Luminancia",
+        "subtype": "",
+        "unit_measurement": "Candelas por metro cuadrado",
+        "symbol": "(cd/m²)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Fotometría",
+        "type": "Luminancia",
+        "subtype": "",
+        "unit_measurement": "Kilocandela por metro cuadrado",
+        "symbol": "(kcd/m²)",
+        "value": "(10**-3)",
+        "numericValue": 0.001
+    },
+    {
+        "category": "Fotometría",
+        "type": "Luminancia",
+        "subtype": "",
+        "unit_measurement": "Candela por centímetro cuadrado",
+        "symbol": "(cd/cm²)",
+        "value": "(10**-4)",
+        "numericValue": 0.00009999999999999999
+    },
+    {
+        "category": "Fotometría",
+        "type": "Luminancia",
+        "subtype": "",
+        "unit_measurement": "Candela por pie cuadrado",
+        "symbol": "(cd/ft²)",
+        "value": "0.09",
+        "numericValue": 0.09
+    },
+    {
+        "category": "Fotometría",
+        "type": "Luminancia",
+        "subtype": "",
+        "unit_measurement": "Pie-lambert",
+        "symbol": "(fL)",
+        "value": "0.29",
+        "numericValue": 0.29
+    },
+    {
+        "category": "Fotometría",
+        "type": "Luminancia",
+        "subtype": "",
+        "unit_measurement": "Lambert",
+        "symbol": "(L)",
+        "value": "3.14*(10**-4)",
+        "numericValue": 0.000314
+    },
+    {
+        "category": "Fotometría",
+        "type": "Luminancia",
+        "subtype": "",
+        "unit_measurement": "Nit",
+        "symbol": null,
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Fotometría",
+        "type": "Luminancia",
+        "subtype": "",
+        "unit_measurement": "Stilb",
+        "symbol": null,
+        "value": "(10**-4)",
+        "numericValue": 0.00009999999999999999
+    },
+    {
+        "category": "Informática",
+        "type": "Almacenamiento de datos",
+        "subtype": "",
+        "unit_measurement": "Bit",
+        "symbol": null,
+        "value": "1,024",
+        "numericValue": 20
+    },
+    {
+        "category": "Informática",
+        "type": "Almacenamiento de datos",
+        "subtype": "",
+        "unit_measurement": "Nibble",
+        "symbol": null,
+        "value": "256",
+        "numericValue": 256
+    },
+    {
+        "category": "Informática",
+        "type": "Almacenamiento de datos",
+        "subtype": "",
+        "unit_measurement": "Kilobit",
+        "symbol": null,
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Informática",
+        "type": "Almacenamiento de datos",
+        "subtype": "",
+        "unit_measurement": "Megabit",
+        "symbol": null,
+        "value": "9.77*(10**-4)",
+        "numericValue": 0.0009769999999999998
+    },
+    {
+        "category": "Informática",
+        "type": "Almacenamiento de datos",
+        "subtype": "",
+        "unit_measurement": "Gigabit",
+        "symbol": null,
+        "value": "9.54*(10**-7)",
+        "numericValue": 9.539999999999999e-7
+    },
+    {
+        "category": "Informática",
+        "type": "Almacenamiento de datos",
+        "subtype": "",
+        "unit_measurement": "Terabit",
+        "symbol": null,
+        "value": "9.31*(10**-10)",
+        "numericValue": 9.310000000000001e-10
+    },
+    {
+        "category": "Informática",
+        "type": "Almacenamiento de datos",
+        "subtype": "",
+        "unit_measurement": "Petabit",
+        "symbol": null,
+        "value": "9.09*(10**-13)",
+        "numericValue": 9.09e-13
+    },
+    {
+        "category": "Informática",
+        "type": "Almacenamiento de datos",
+        "subtype": "",
+        "unit_measurement": "Exabit",
+        "symbol": null,
+        "value": "8.88*(10**-16)",
+        "numericValue": 8.88e-16
+    },
+    {
+        "category": "Informática",
+        "type": "Almacenamiento de datos",
+        "subtype": "",
+        "unit_measurement": "Byte",
+        "symbol": "(B)",
+        "value": "128",
+        "numericValue": 128
+    },
+    {
+        "category": "Informática",
+        "type": "Almacenamiento de datos",
+        "subtype": "",
+        "unit_measurement": "Kilobyte",
+        "symbol": "(kB)",
+        "value": "0.13",
+        "numericValue": 0.13
+    },
+    {
+        "category": "Informática",
+        "type": "Almacenamiento de datos",
+        "subtype": "",
+        "unit_measurement": "Megabyte",
+        "symbol": "(MB)",
+        "value": "1.22*(10**-4)",
+        "numericValue": 0.00012199999999999998
+    },
+    {
+        "category": "Informática",
+        "type": "Almacenamiento de datos",
+        "subtype": "",
+        "unit_measurement": "Gigabyte",
+        "symbol": "(GB)",
+        "value": "1.19*(10**-7)",
+        "numericValue": 1.19e-7
+    },
+    {
+        "category": "Informática",
+        "type": "Almacenamiento de datos",
+        "subtype": "",
+        "unit_measurement": "Terabyte",
+        "symbol": "(TB)",
+        "value": "1.16*(10**-10)",
+        "numericValue": 1.16e-10
+    },
+    {
+        "category": "Informática",
+        "type": "Almacenamiento de datos",
+        "subtype": "",
+        "unit_measurement": "Petabyte",
+        "symbol": "(PB)",
+        "value": "1.14*(10**-13)",
+        "numericValue": 1.14e-13
+    },
+    {
+        "category": "Informática",
+        "type": "Almacenamiento de datos",
+        "subtype": "",
+        "unit_measurement": "Exabyte",
+        "symbol": "(EB)",
+        "value": "1.11*(10**-16)",
+        "numericValue": 1.11e-16
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por segundo",
+        "unit_measurement": "Bit por segundo",
+        "symbol": "(bit/s)",
+        "value": "1,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por segundo",
+        "unit_measurement": "Kilobit por segundo",
+        "symbol": "(kbit/s)",
+        "value": "1,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por segundo",
+        "unit_measurement": "Megabit por segundo",
+        "symbol": "(Mbit/s)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por segundo",
+        "unit_measurement": "Gigabit por segundo",
+        "symbol": "(Gbit/s)",
+        "value": "(10**-3)",
+        "numericValue": 0.001
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por segundo",
+        "unit_measurement": "Terabit por segundo",
+        "symbol": "(Tbit/s)",
+        "value": "(10**-6)",
+        "numericValue": 0.000001
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por segundo",
+        "unit_measurement": "Kibibit por segundo",
+        "symbol": "(Kibit/s)",
+        "value": "976.56",
+        "numericValue": 976.56
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por segundo",
+        "unit_measurement": "Mebibit por segundo",
+        "symbol": "(Mibit/s)",
+        "value": "0.95",
+        "numericValue": 0.95
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por segundo",
+        "unit_measurement": "Gibibit por segundo",
+        "symbol": "(Gibit/s)",
+        "value": "9.31*(10**-4)",
+        "numericValue": 0.000931
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por segundo",
+        "unit_measurement": "Tebibit por segundo",
+        "symbol": "(Tibit/s)",
+        "value": "9.09*(10**-7)",
+        "numericValue": 9.089999999999999e-7
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por segundo",
+        "unit_measurement": "Byte por segundo",
+        "symbol": "(B/s)",
+        "value": "125,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por segundo",
+        "unit_measurement": "Kilobyte por segundo",
+        "symbol": "(kB/s)",
+        "value": "125",
+        "numericValue": 125
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por segundo",
+        "unit_measurement": "Megabyte por segundo",
+        "symbol": "(MB/s)",
+        "value": "0.13",
+        "numericValue": 0.13
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por segundo",
+        "unit_measurement": "Gigabyte por segundo",
+        "symbol": "(GB/s)",
+        "value": "1.25*(10**-4)",
+        "numericValue": 0.000125
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por segundo",
+        "unit_measurement": "Terabyte por segundo",
+        "symbol": "(TB/s)",
+        "value": "1.25*(10**-7)",
+        "numericValue": 1.25e-7
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por segundo",
+        "unit_measurement": "Kibibyte por segundo",
+        "symbol": "(KiB/s)",
+        "value": "122.07",
+        "numericValue": 122.07
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por segundo",
+        "unit_measurement": "Mebibyte por segundo",
+        "symbol": "(MiB/s)",
+        "value": "0.12",
+        "numericValue": 0.12
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por segundo",
+        "unit_measurement": "Gibibyte por segundo",
+        "symbol": "(GiB/s)",
+        "value": "1.16*(10**-4)",
+        "numericValue": 0.00011599999999999999
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por segundo",
+        "unit_measurement": "Tebibyte por segundo",
+        "symbol": "(TiB/s)",
+        "value": "1.14*(10**-7)",
+        "numericValue": 1.1399999999999999e-7
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por hora",
+        "unit_measurement": "Bit por hora",
+        "symbol": null,
+        "value": "3,600,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por hora",
+        "unit_measurement": "Kilobit por hora",
+        "symbol": null,
+        "value": "3,600,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por hora",
+        "unit_measurement": "Megabit por hora",
+        "symbol": null,
+        "value": "3,600",
+        "numericValue": 600
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por hora",
+        "unit_measurement": "Gigabit por hora",
+        "symbol": null,
+        "value": "3.6",
+        "numericValue": 3.6
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por hora",
+        "unit_measurement": "Terabit por hora",
+        "symbol": null,
+        "value": "3.6*(10**-3)",
+        "numericValue": 0.0036000000000000003
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por hora",
+        "unit_measurement": "Kibibit por hora",
+        "symbol": null,
+        "value": "3,515,625",
+        "numericValue": 625
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por hora",
+        "unit_measurement": "Mebibit por hora",
+        "symbol": null,
+        "value": "3,433.23",
+        "numericValue": 433.23
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por hora",
+        "unit_measurement": "Gibibit por hora",
+        "symbol": null,
+        "value": "3.35",
+        "numericValue": 3.35
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por hora",
+        "unit_measurement": "Tebibit por hora",
+        "symbol": null,
+        "value": "3.27*(10**-3)",
+        "numericValue": 0.00327
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por hora",
+        "unit_measurement": "Byte por hora",
+        "symbol": null,
+        "value": "450,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por hora",
+        "unit_measurement": "Kilobyte por hora",
+        "symbol": null,
+        "value": "450,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por hora",
+        "unit_measurement": "Megabyte por hora",
+        "symbol": null,
+        "value": "450",
+        "numericValue": 450
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por hora",
+        "unit_measurement": "Gigabyte por hora",
+        "symbol": null,
+        "value": "0.45",
+        "numericValue": 0.45
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por hora",
+        "unit_measurement": "Terabyte por hora",
+        "symbol": null,
+        "value": "4.5*(10**-4)",
+        "numericValue": 0.00045
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por hora",
+        "unit_measurement": "Kibibyte por hora",
+        "symbol": null,
+        "value": "439,453.13",
+        "numericValue": 453.13
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por hora",
+        "unit_measurement": "Mebibyte por hora",
+        "symbol": null,
+        "value": "429.15",
+        "numericValue": 429.15
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por hora",
+        "unit_measurement": "Gibibyte por hora",
+        "symbol": null,
+        "value": "0.42",
+        "numericValue": 0.42
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por hora",
+        "unit_measurement": "Tebibyte por hora",
+        "symbol": null,
+        "value": "4.09*(10**-4)",
+        "numericValue": 0.00040899999999999997
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por día",
+        "unit_measurement": "Bit por día",
+        "symbol": null,
+        "value": "86,400,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por día",
+        "unit_measurement": "Kilobit por día",
+        "symbol": null,
+        "value": "86,400,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por día",
+        "unit_measurement": "Megabit por día",
+        "symbol": null,
+        "value": "86,400",
+        "numericValue": 400
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por día",
+        "unit_measurement": "Gigabit por día",
+        "symbol": null,
+        "value": "86.4",
+        "numericValue": 86.4
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por día",
+        "unit_measurement": "Terabit por día",
+        "symbol": null,
+        "value": "0.09",
+        "numericValue": 0.09
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por día",
+        "unit_measurement": "Kibibit por día",
+        "symbol": null,
+        "value": "84,375,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por día",
+        "unit_measurement": "Mebibit por día",
+        "symbol": null,
+        "value": "82,397.46",
+        "numericValue": 397.46
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por día",
+        "unit_measurement": "Gibibit por día",
+        "symbol": null,
+        "value": "80.47",
+        "numericValue": 80.47
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por día",
+        "unit_measurement": "Tebibit por día",
+        "symbol": null,
+        "value": "0.08",
+        "numericValue": 0.08
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por día",
+        "unit_measurement": "Byte por día",
+        "symbol": null,
+        "value": "10,800,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por día",
+        "unit_measurement": "Kilobyte por día",
+        "symbol": null,
+        "value": "10,800,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por día",
+        "unit_measurement": "Megabyte por día",
+        "symbol": null,
+        "value": "10,800",
+        "numericValue": 800
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por día",
+        "unit_measurement": "Gigabyte por día",
+        "symbol": null,
+        "value": "10.8",
+        "numericValue": 10.8
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por día",
+        "unit_measurement": "Terabyte por día",
+        "symbol": null,
+        "value": "0.01",
+        "numericValue": 0.01
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por día",
+        "unit_measurement": "Kibibyte por día",
+        "symbol": null,
+        "value": "10,546,875",
+        "numericValue": 875
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por día",
+        "unit_measurement": "Mebibyte por día",
+        "symbol": null,
+        "value": "10,299.68",
+        "numericValue": 299.68
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por día",
+        "unit_measurement": "Gibibyte por día",
+        "symbol": null,
+        "value": "10.06",
+        "numericValue": 10.06
+    },
+    {
+        "category": "Informática",
+        "type": "Ancho de banda",
+        "subtype": "Por día",
+        "unit_measurement": "Tebibyte por día",
+        "symbol": null,
+        "value": "0.01",
+        "numericValue": 0.01
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Campo magnético",
+        "subtype": "",
+        "unit_measurement": "Amperio por metro",
+        "symbol": "(A/m)",
+        "value": "79.58",
+        "numericValue": 79.58
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Campo magnético",
+        "subtype": "",
+        "unit_measurement": "Amperio-vuelta por metro",
+        "symbol": "(AT/m)",
+        "value": "79.58",
+        "numericValue": 79.58
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Campo magnético",
+        "subtype": "",
+        "unit_measurement": "Oersted",
+        "symbol": "(Oe)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Campo magnético",
+        "subtype": "",
+        "unit_measurement": "Gilbert por metro",
+        "symbol": "(Gi/m)",
+        "value": "100",
+        "numericValue": 100
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Flujo magnético",
+        "subtype": "",
+        "unit_measurement": "Nanoweber",
+        "symbol": "(nWb)",
+        "value": "1,000,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Flujo magnético",
+        "subtype": "",
+        "unit_measurement": "Microweber",
+        "symbol": "(μWb)",
+        "value": "1,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Flujo magnético",
+        "subtype": "",
+        "unit_measurement": "Miliweber",
+        "symbol": "(mWb)",
+        "value": "1,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Flujo magnético",
+        "subtype": "",
+        "unit_measurement": "Weber",
+        "symbol": "(Wb)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Flujo magnético",
+        "subtype": "",
+        "unit_measurement": "Voltio-segundo",
+        "symbol": "(Vs)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Flujo magnético",
+        "subtype": "",
+        "unit_measurement": "Tesla metro cuadrado",
+        "symbol": "(T×m²)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Flujo magnético",
+        "subtype": "",
+        "unit_measurement": "Maxwell",
+        "symbol": "(Mw)",
+        "value": "100,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Flujo magnético",
+        "subtype": "",
+        "unit_measurement": "Gauss centímetro cuadrado",
+        "symbol": "(G×cm²)",
+        "value": "100,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Flujo magnético",
+        "subtype": "",
+        "unit_measurement": "Cuanto de flujo magnético",
+        "symbol": null,
+        "value": "4.84*(10**14)",
+        "numericValue": 484000000000000
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Fuerza magnetomotriz",
+        "subtype": "",
+        "unit_measurement": "Ampere-vuelta",
+        "symbol": "(AT)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Fuerza magnetomotriz",
+        "subtype": "",
+        "unit_measurement": "Gilbert",
+        "symbol": "(Gi)",
+        "value": "1.26",
+        "numericValue": 1.26
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Inducción magnética",
+        "subtype": "",
+        "unit_measurement": "Picotesla",
+        "symbol": "(pT)",
+        "value": "(10**12)",
+        "numericValue": 1000000000000
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Inducción magnética",
+        "subtype": "",
+        "unit_measurement": "Nanotesla",
+        "symbol": "(nT)",
+        "value": "1,000,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Inducción magnética",
+        "subtype": "",
+        "unit_measurement": "Microtesla",
+        "symbol": "(µT)",
+        "value": "1,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Inducción magnética",
+        "subtype": "",
+        "unit_measurement": "Militesla",
+        "symbol": "(mT)",
+        "value": "1,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Inducción magnética",
+        "subtype": "",
+        "unit_measurement": "Tesla",
+        "symbol": "(T)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Inducción magnética",
+        "subtype": "",
+        "unit_measurement": "Kilotesla",
+        "symbol": "(kT)",
+        "value": "(10**-3)",
+        "numericValue": 0.001
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Inducción magnética",
+        "subtype": "",
+        "unit_measurement": "Megatesla",
+        "symbol": null,
+        "value": "(10**-6)",
+        "numericValue": 0.000001
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Inducción magnética",
+        "subtype": "",
+        "unit_measurement": "Weber por centimetro cuadrado",
+        "symbol": "(Wb/m²)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Inducción magnética",
+        "subtype": "",
+        "unit_measurement": "Gauss",
+        "symbol": "(G)",
+        "value": "10,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Inducción magnética",
+        "subtype": "",
+        "unit_measurement": "Maxwell por centimetro cuadrado",
+        "symbol": "(Mw/cm²)",
+        "value": "10,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Inducción magnética",
+        "subtype": "",
+        "unit_measurement": "Linea por centimetro cuadrado",
+        "symbol": null,
+        "value": "10,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Magnetismo",
+        "type": "Inducción magnética",
+        "subtype": "",
+        "unit_measurement": "Gama",
+        "symbol": "(γ)",
+        "value": "1,000,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "Nanonewton",
+        "symbol": "(nN)",
+        "value": "1,000,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "Micronewton",
+        "symbol": "(µN)",
+        "value": "1,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "Milinewton",
+        "symbol": "(mN)",
+        "value": "1,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "Newton",
+        "symbol": "(N)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "Kilonewton",
+        "symbol": "(kN)",
+        "value": "(10**-3)",
+        "numericValue": 0.001
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "Meganewton",
+        "symbol": null,
+        "value": "(10**-6)",
+        "numericValue": 0.000001
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "Giganewton",
+        "symbol": "(GN)",
+        "value": "(10**-9)",
+        "numericValue": 1e-9
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "Dina",
+        "symbol": "(dyn)",
+        "value": "100,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "Poundal",
+        "symbol": "(pdl)",
+        "value": "7.23",
+        "numericValue": 7.23
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "Julio por metro",
+        "symbol": "(J/m)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "Pascal por metro cuadrado",
+        "symbol": "(Pa/m²)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "Kilopondio",
+        "symbol": "(kp)",
+        "value": "0.1",
+        "numericValue": 0.1
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "Sthène",
+        "symbol": "(sn)",
+        "value": "(10**-3)",
+        "numericValue": 0.001
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "KIP",
+        "symbol": "(kip)",
+        "value": "2.25*(10**-4)",
+        "numericValue": 0.000225
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "Kilogramo fuerza",
+        "symbol": "(kgf)",
+        "value": "0.1",
+        "numericValue": 0.1
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "Tonelada fuerza",
+        "symbol": "(tnf)",
+        "value": "1.02*(10**-4)",
+        "numericValue": 0.000102
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "Libra fuerza",
+        "symbol": "(lbf)",
+        "value": "0.22",
+        "numericValue": 0.22
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "Tonelada corta fuerza",
+        "symbol": null,
+        "value": "1.12*(10**-4)",
+        "numericValue": 0.000112
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "Tonelada larga fuerza",
+        "symbol": null,
+        "value": "(10**-4)",
+        "numericValue": 0.00009999999999999999
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "Onza Fuerza",
+        "symbol": "(ozf)",
+        "value": "3.6",
+        "numericValue": 3.6
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "Fuerza gravet",
+        "symbol": null,
+        "value": "101.97",
+        "numericValue": 101.97
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "Fuerza miligrave",
+        "symbol": "(mGf)",
+        "value": "101.97",
+        "numericValue": 101.97
+    },
+    {
+        "category": "Mecánica",
+        "type": "Fuerza",
+        "subtype": "",
+        "unit_measurement": "Grave-force",
+        "symbol": "(Gf)",
+        "value": "0.1",
+        "numericValue": 0.1
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Métrico",
+        "unit_measurement": "Tonelada",
+        "symbol": "(t)",
+        "value": "4.54*(10**-4)",
+        "numericValue": 0.000454
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Métrico",
+        "unit_measurement": "Kilonewton",
+        "symbol": "(kN)",
+        "value": "4.45*(10**-3)",
+        "numericValue": 0.00445
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Métrico",
+        "unit_measurement": "Kilogramo",
+        "symbol": "(kg)",
+        "value": "0.45",
+        "numericValue": 0.45
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Métrico",
+        "unit_measurement": "Hectogramo",
+        "symbol": "(hg)",
+        "value": "4.54",
+        "numericValue": 4.54
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Métrico",
+        "unit_measurement": "Decagramo",
+        "symbol": "(dag)",
+        "value": "45.36",
+        "numericValue": 45.36
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Métrico",
+        "unit_measurement": "Gramo",
+        "symbol": "(g)",
+        "value": "453.59",
+        "numericValue": 453.59
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Métrico",
+        "unit_measurement": "Quilate",
+        "symbol": null,
+        "value": "2,267.96",
+        "numericValue": 267.96
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Métrico",
+        "unit_measurement": "Centigramo",
+        "symbol": null,
+        "value": "45,359.24",
+        "numericValue": 359.24
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Métrico",
+        "unit_measurement": "Miligramo",
+        "symbol": "(mg)",
+        "value": "453,592.37",
+        "numericValue": 592.37
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Métrico",
+        "unit_measurement": "Microgramo",
+        "symbol": "(µg)",
+        "value": "453,592,370",
+        "numericValue": 370
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Métrico",
+        "unit_measurement": "Nanogramo",
+        "symbol": "(ng)",
+        "value": "453,592,370,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Métrico",
+        "unit_measurement": "Unidad de masa atómica",
+        "symbol": "(u)",
+        "value": "2.73*(10**26)",
+        "numericValue": 2.7299999999999996e+26
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Avoirdupois (EE.UU.)",
+        "unit_measurement": "Tonelada larga",
+        "symbol": null,
+        "value": "4.46*(10**-4)",
+        "numericValue": 0.00044599999999999994
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Avoirdupois (EE.UU.)",
+        "unit_measurement": "Tonelada corta",
+        "symbol": null,
+        "value": "5*(10**-4)",
+        "numericValue": 0.0005
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Avoirdupois (EE.UU.)",
+        "unit_measurement": "Quintal largo",
+        "symbol": null,
+        "value": "0.01",
+        "numericValue": 0.01
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Avoirdupois (EE.UU.)",
+        "unit_measurement": "Quintal corto",
+        "symbol": null,
+        "value": "0.01",
+        "numericValue": 0.01
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Avoirdupois (EE.UU.)",
+        "unit_measurement": "Piedra",
+        "symbol": null,
+        "value": "0.07",
+        "numericValue": 0.07
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Avoirdupois (EE.UU.)",
+        "unit_measurement": "Libra",
+        "symbol": "(lb)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Avoirdupois (EE.UU.)",
+        "unit_measurement": "Onza",
+        "symbol": null,
+        "value": "16",
+        "numericValue": 16
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Avoirdupois (EE.UU.)",
+        "unit_measurement": "Dram",
+        "symbol": "(dr)",
+        "value": "256",
+        "numericValue": 256
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Avoirdupois (EE.UU.)",
+        "unit_measurement": "Grano",
+        "symbol": "(gr)",
+        "value": "7,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Troy",
+        "unit_measurement": "Pound",
+        "symbol": null,
+        "value": "1.22",
+        "numericValue": 1.22
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Troy",
+        "unit_measurement": "Onza",
+        "symbol": null,
+        "value": "14.58",
+        "numericValue": 14.58
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Troy",
+        "unit_measurement": "Pennyweight",
+        "symbol": null,
+        "value": "291.64",
+        "numericValue": 291.64
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Troy",
+        "unit_measurement": "Quilate",
+        "symbol": null,
+        "value": "2,212.42",
+        "numericValue": 212.42
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Troy",
+        "unit_measurement": "Grain",
+        "symbol": null,
+        "value": "7,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Troy",
+        "unit_measurement": "Mite",
+        "symbol": null,
+        "value": "139,986.04",
+        "numericValue": 986.04
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Troy",
+        "unit_measurement": "Doite",
+        "symbol": null,
+        "value": "3,359,666.15",
+        "numericValue": 666.15
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Japonés",
+        "unit_measurement": "Koku",
+        "symbol": null,
+        "value": "2.51*(10**-3)",
+        "numericValue": 0.0025099999999999996
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Japonés",
+        "unit_measurement": "Kann",
+        "symbol": null,
+        "value": "0.12",
+        "numericValue": 0.12
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Japonés",
+        "unit_measurement": "Kinn",
+        "symbol": null,
+        "value": "0.76",
+        "numericValue": 0.76
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Japonés",
+        "unit_measurement": "Monnme",
+        "symbol": null,
+        "value": "120.95",
+        "numericValue": 120.95
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Chino",
+        "unit_measurement": "Tael",
+        "symbol": null,
+        "value": "12",
+        "numericValue": 12
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Chino",
+        "unit_measurement": "Ku ping",
+        "symbol": null,
+        "value": "12.16",
+        "numericValue": 12.16
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Sueco viejo",
+        "unit_measurement": "Skeppspund",
+        "symbol": null,
+        "value": "2.67*(10**-3)",
+        "numericValue": 0.00267
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Sueco viejo",
+        "unit_measurement": "Lispund",
+        "symbol": null,
+        "value": "0.05",
+        "numericValue": 0.05
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Sueco viejo",
+        "unit_measurement": "Skålpund",
+        "symbol": null,
+        "value": "1.07",
+        "numericValue": 1.07
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Sueco viejo",
+        "unit_measurement": "Mark",
+        "symbol": null,
+        "value": "2.13",
+        "numericValue": 2.13
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Sueco viejo",
+        "unit_measurement": "Onus",
+        "symbol": null,
+        "value": "16.26",
+        "numericValue": 16.26
+    },
+    {
+        "category": "Mecánica",
+        "type": "Masa",
+        "subtype": "Sueco viejo",
+        "unit_measurement": "Lod",
+        "symbol": null,
+        "value": "34.1",
+        "numericValue": 34.1
+    },
+    {
+        "category": "Mecánica",
+        "type": "Momento de fuerza",
+        "subtype": "",
+        "unit_measurement": "Micronewton metro",
+        "symbol": "(µN·m)",
+        "value": "1,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Mecánica",
+        "type": "Momento de fuerza",
+        "subtype": "",
+        "unit_measurement": "Milinewton metro",
+        "symbol": null,
+        "value": "1,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Mecánica",
+        "type": "Momento de fuerza",
+        "subtype": "",
+        "unit_measurement": "Newton metro",
+        "symbol": "(Nm)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Mecánica",
+        "type": "Momento de fuerza",
+        "subtype": "",
+        "unit_measurement": "Kilonewton metro",
+        "symbol": "(kN·m)",
+        "value": "(10**-3)",
+        "numericValue": 0.001
+    },
+    {
+        "category": "Mecánica",
+        "type": "Momento de fuerza",
+        "subtype": "",
+        "unit_measurement": "Meganewton metro",
+        "symbol": "(MN·m)",
+        "value": "(10**-6)",
+        "numericValue": 0.000001
+    },
+    {
+        "category": "Mecánica",
+        "type": "Momento de fuerza",
+        "subtype": "",
+        "unit_measurement": "Libra-fuerza pie",
+        "symbol": null,
+        "value": "0.74",
+        "numericValue": 0.74
+    },
+    {
+        "category": "Mecánica",
+        "type": "Momento de fuerza",
+        "subtype": "",
+        "unit_measurement": "Libra-fuerza pulgada",
+        "symbol": "(lbf·in)",
+        "value": "8.85",
+        "numericValue": 8.85
+    },
+    {
+        "category": "Mecánica",
+        "type": "Momento de fuerza",
+        "subtype": "",
+        "unit_measurement": "Onza-fuerza pie",
+        "symbol": "(ozf·ft)",
+        "value": "11.8",
+        "numericValue": 11.8
+    },
+    {
+        "category": "Mecánica",
+        "type": "Momento de fuerza",
+        "subtype": "",
+        "unit_measurement": "Onza-fuerza pulgada",
+        "symbol": "(ozf·in)",
+        "value": "141.61",
+        "numericValue": 141.61
+    },
+    {
+        "category": "Mecánica",
+        "type": "Momento de fuerza",
+        "subtype": "",
+        "unit_measurement": "Kilogramo-fuerza metro",
+        "symbol": "(kgf·m)",
+        "value": "0.1",
+        "numericValue": 0.1
+    },
+    {
+        "category": "Mecánica",
+        "type": "Momento de fuerza",
+        "subtype": "",
+        "unit_measurement": "Kilopondio metro",
+        "symbol": "(kp·m)",
+        "value": "0.1",
+        "numericValue": 0.1
+    },
+    {
+        "category": "Mecánica",
+        "type": "Momento de fuerza",
+        "subtype": "",
+        "unit_measurement": "Gramo-fuerza centimetro",
+        "symbol": "(gf·cm)",
+        "value": "10,197.2",
+        "numericValue": 197.2
+    },
+    {
+        "category": "Mecánica",
+        "type": "Momento de fuerza",
+        "subtype": "",
+        "unit_measurement": "Metro kilogramo-fuerza",
+        "symbol": null,
+        "value": "0.1",
+        "numericValue": 0.1
+    },
+    {
+        "category": "Mecánica",
+        "type": "Momento de fuerza",
+        "subtype": "",
+        "unit_measurement": "Pie-libra fuuerza",
+        "symbol": "(ft·lb)",
+        "value": "0.74",
+        "numericValue": 0.74
+    },
+    {
+        "category": "Mecánica",
+        "type": "Momento de fuerza",
+        "subtype": "",
+        "unit_measurement": "Centimetro kilogramo-fuerza",
+        "symbol": null,
+        "value": "10.2",
+        "numericValue": 10.2
+    },
+    {
+        "category": "Mecánica",
+        "type": "Momento de fuerza",
+        "subtype": "",
+        "unit_measurement": "Pulgada onza-fuerza",
+        "symbol": null,
+        "value": "141.61",
+        "numericValue": 141.61
+    },
+    {
+        "category": "Mecánica",
+        "type": "Momento de fuerza",
+        "subtype": "",
+        "unit_measurement": "Dina centimetro",
+        "symbol": "(dyn cm)",
+        "value": "10,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Movimiento",
+        "type": "Aceleración",
+        "subtype": "",
+        "unit_measurement": "Metros por segundo cuadrado",
+        "symbol": "(m/s²)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Movimiento",
+        "type": "Aceleración",
+        "subtype": "",
+        "unit_measurement": "Pies por segundo cuadrado",
+        "symbol": "(ft/s²)",
+        "value": "3.28",
+        "numericValue": 3.28
+    },
+    {
+        "category": "Movimiento",
+        "type": "Aceleración",
+        "subtype": "",
+        "unit_measurement": "Gal",
+        "symbol": null,
+        "value": "100",
+        "numericValue": 100
+    },
+    {
+        "category": "Movimiento",
+        "type": "Aceleración",
+        "subtype": "",
+        "unit_measurement": "Miligal",
+        "symbol": null,
+        "value": "100,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Movimiento",
+        "type": "Aceleración",
+        "subtype": "",
+        "unit_measurement": "Gravedad estándar",
+        "symbol": null,
+        "value": "0.1",
+        "numericValue": 0.1
+    },
+    {
+        "category": "Movimiento",
+        "type": "Aceleración",
+        "subtype": "",
+        "unit_measurement": "Fuerza G",
+        "symbol": "(g)",
+        "value": "0.1",
+        "numericValue": 0.1
+    },
+    {
+        "category": "Movimiento",
+        "type": "Velocidad",
+        "subtype": "Métrico",
+        "unit_measurement": "km/s",
+        "symbol": null,
+        "value": "4.47*(10**-4)",
+        "numericValue": 0.0004469999999999999
+    },
+    {
+        "category": "Movimiento",
+        "type": "Velocidad",
+        "subtype": "Métrico",
+        "unit_measurement": "m/s",
+        "symbol": null,
+        "value": "0.45",
+        "numericValue": 0.45
+    },
+    {
+        "category": "Movimiento",
+        "type": "Velocidad",
+        "subtype": "Métrico",
+        "unit_measurement": "km/h",
+        "symbol": null,
+        "value": "1.61",
+        "numericValue": 1.61
+    },
+    {
+        "category": "Movimiento",
+        "type": "Velocidad",
+        "subtype": "Métrico",
+        "unit_measurement": "Milimetro por segundo",
+        "symbol": "(mm/s)",
+        "value": "447.04",
+        "numericValue": 447.04
+    },
+    {
+        "category": "Movimiento",
+        "type": "Velocidad",
+        "subtype": "Métrico",
+        "unit_measurement": "Micrometro por segundo",
+        "symbol": "(µm/s)",
+        "value": "447,040",
+        "numericValue": 32
+    },
+    {
+        "category": "Movimiento",
+        "type": "Velocidad",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Milla por segundo",
+        "symbol": null,
+        "value": "2.78*(10**-4)",
+        "numericValue": 0.000278
+    },
+    {
+        "category": "Movimiento",
+        "type": "Velocidad",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Milla por hora",
+        "symbol": "(mph)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Movimiento",
+        "type": "Velocidad",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Pie por segundo",
+        "symbol": null,
+        "value": "1.47",
+        "numericValue": 1.47
+    },
+    {
+        "category": "Movimiento",
+        "type": "Velocidad",
+        "subtype": "Náutico",
+        "unit_measurement": "Nudo",
+        "symbol": null,
+        "value": "0.87",
+        "numericValue": 0.87
+    },
+    {
+        "category": "Movimiento",
+        "type": "Velocidad",
+        "subtype": "Otro",
+        "unit_measurement": "Velocidad de la luz",
+        "symbol": null,
+        "value": "1.49*(10**-9)",
+        "numericValue": 1.49e-9
+    },
+    {
+        "category": "Movimiento",
+        "type": "Velocidad",
+        "subtype": "Otro",
+        "unit_measurement": "Velocidad del sonido",
+        "symbol": null,
+        "value": "1.3*(10**-3)",
+        "numericValue": 0.0013000000000000002
+    },
+    {
+        "category": "Movimiento",
+        "type": "Velocidad",
+        "subtype": "Otro",
+        "unit_measurement": "Una caminata rápida",
+        "symbol": null,
+        "value": "0.26",
+        "numericValue": 0.26
+    },
+    {
+        "category": "Movimiento",
+        "type": "Velocidad",
+        "subtype": "Otro",
+        "unit_measurement": "Velocidad del caracol de jardín",
+        "symbol": null,
+        "value": "447.04",
+        "numericValue": 447.04
+    },
+    {
+        "category": "Química",
+        "type": "Cantidad de sustancia",
+        "subtype": "",
+        "unit_measurement": "Milimol",
+        "symbol": "(mmol)",
+        "value": "1,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Química",
+        "type": "Cantidad de sustancia",
+        "subtype": "",
+        "unit_measurement": "Mol",
+        "symbol": "(mol)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Química",
+        "type": "Cantidad de sustancia",
+        "subtype": "",
+        "unit_measurement": "Kilomol",
+        "symbol": "(kmol)",
+        "value": "(10**-3)",
+        "numericValue": 0.001
+    },
+    {
+        "category": "Química",
+        "type": "Cantidad de sustancia",
+        "subtype": "",
+        "unit_measurement": "Libra mol",
+        "symbol": "(lb-mol)",
+        "value": "2.2*(10**-3)",
+        "numericValue": 0.0022
+    },
+    {
+        "category": "Química",
+        "type": "Densidad",
+        "subtype": "Métrico",
+        "unit_measurement": "Gramo por centímetro cúbico",
+        "symbol": "(g/cm³)",
+        "value": "(10**-3)",
+        "numericValue": 0.001
+    },
+    {
+        "category": "Química",
+        "type": "Densidad",
+        "subtype": "Métrico",
+        "unit_measurement": "Kilogramo por metro cúbico",
+        "symbol": "(kg/m³)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Química",
+        "type": "Densidad",
+        "subtype": "Métrico",
+        "unit_measurement": "Gramo por metro cúbico",
+        "symbol": "(g/m³)",
+        "value": "1,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Química",
+        "type": "Densidad",
+        "subtype": "Métrico",
+        "unit_measurement": "Miligramo por metro cúbico",
+        "symbol": "(mg/m³)",
+        "value": "1,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Química",
+        "type": "Densidad",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Onza por galón",
+        "symbol": "(oz/gal)",
+        "value": "0.13",
+        "numericValue": 0.13
+    },
+    {
+        "category": "Química",
+        "type": "Densidad",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Libra por pie cúbico",
+        "symbol": "(lb/ft³)",
+        "value": "0.06",
+        "numericValue": 0.06
+    },
+    {
+        "category": "Química",
+        "type": "Densidad",
+        "subtype": "Británico/Americano",
+        "unit_measurement": "Libra por pulgada cúbica",
+        "symbol": "(lb/in³)",
+        "value": "3.61*(10**-5)",
+        "numericValue": 0.000036099999999999997
+    },
+    {
+        "category": "Química",
+        "type": "Masa molar",
+        "subtype": "Unidades de masa molar",
+        "unit_measurement": "Gramos por mol",
+        "symbol": "(g/mol)",
+        "value": "1.01",
+        "numericValue": 1.01
+    },
+    {
+        "category": "Química",
+        "type": "Masa molar",
+        "subtype": "Unidades de masa molar",
+        "unit_measurement": "Kilogramos por mol",
+        "symbol": "(kg/mol)",
+        "value": "1.01*(10**-3)",
+        "numericValue": 0.00101
+    },
+    {
+        "category": "Química",
+        "type": "Masa molar",
+        "subtype": "Masa atómica",
+        "unit_measurement": "Hidrógeno",
+        "symbol": "(H)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Química",
+        "type": "Masa molar",
+        "subtype": "Masa atómica",
+        "unit_measurement": "Oxígeno",
+        "symbol": "(O)",
+        "value": "0.06",
+        "numericValue": 0.06
+    },
+    {
+        "category": "Química",
+        "type": "Masa molar",
+        "subtype": "Masa atómica",
+        "unit_measurement": "Azufre",
+        "symbol": "(S)",
+        "value": "0.03",
+        "numericValue": 0.03
+    },
+    {
+        "category": "Química",
+        "type": "Masa molar",
+        "subtype": "Masa atómica",
+        "unit_measurement": "Cloro",
+        "symbol": "(Cl)",
+        "value": "0.03",
+        "numericValue": 0.03
+    },
+    {
+        "category": "Química",
+        "type": "Masa molar",
+        "subtype": "Masa atómica",
+        "unit_measurement": "Hierro",
+        "symbol": "(Fe)",
+        "value": "0.02",
+        "numericValue": 0.02
+    },
+    {
+        "category": "Química",
+        "type": "Masa molar",
+        "subtype": "Masa molecular",
+        "unit_measurement": "Molécula de hidrógeno",
+        "symbol": "(H2)",
+        "value": "0.5",
+        "numericValue": 0.5
+    },
+    {
+        "category": "Química",
+        "type": "Masa molar",
+        "subtype": "Masa molecular",
+        "unit_measurement": "Molécula de agua",
+        "symbol": "(H2O)",
+        "value": "0.06",
+        "numericValue": 0.06
+    },
+    {
+        "category": "Química",
+        "type": "Masa molar",
+        "subtype": "Masa molecular",
+        "unit_measurement": "Sal de mesa",
+        "symbol": "(cloruro de sodio) (NaCl)",
+        "value": "0.02",
+        "numericValue": 0.02
+    },
+    {
+        "category": "Química",
+        "type": "Masa molar",
+        "subtype": "Masa molecular",
+        "unit_measurement": "Molécula de cloro",
+        "symbol": "(Cl2)",
+        "value": "0.01",
+        "numericValue": 0.01
+    },
+    {
+        "category": "Química",
+        "type": "Masa molar",
+        "subtype": "Masa molecular",
+        "unit_measurement": "Molécula de azufre",
+        "symbol": "(S8)",
+        "value": "3.93*(10**-3)",
+        "numericValue": 0.00393
+    },
+    {
+        "category": "Química",
+        "type": "Masa molar",
+        "subtype": "Masa molecular",
+        "unit_measurement": "Azúcar común",
+        "symbol": "(sacarosa) (C12H22O11)",
+        "value": "2.94*(10**-3)",
+        "numericValue": 0.00294
+    },
+    {
+        "category": "Radiactividad",
+        "type": "Dosis absorbida",
+        "subtype": "",
+        "unit_measurement": "Gris",
+        "symbol": "(Gy)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Radiactividad",
+        "type": "Dosis absorbida",
+        "subtype": "",
+        "unit_measurement": "Julio de ionización radioactiva por un kilogramo de materia",
+        "symbol": "(J/kg)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Radiactividad",
+        "type": "Dosis absorbida",
+        "subtype": "",
+        "unit_measurement": "Rad",
+        "symbol": "(rad)",
+        "value": "100",
+        "numericValue": 100
+    },
+    {
+        "category": "Radiactividad",
+        "type": "Dosis equivalente",
+        "subtype": "",
+        "unit_measurement": "Sievert",
+        "symbol": "(Sv)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Radiactividad",
+        "type": "Dosis equivalente",
+        "subtype": "",
+        "unit_measurement": "Milisievert",
+        "symbol": "(mSv)",
+        "value": "1,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Radiactividad",
+        "type": "Dosis equivalente",
+        "subtype": "",
+        "unit_measurement": "Microsievert",
+        "symbol": "(μSv)",
+        "value": "1,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Radiactividad",
+        "type": "Dosis equivalente",
+        "subtype": "",
+        "unit_measurement": "Rem",
+        "symbol": "(rem)",
+        "value": "100",
+        "numericValue": 100
+    },
+    {
+        "category": "Radiactividad",
+        "type": "Dosis equivalente",
+        "subtype": "",
+        "unit_measurement": "Milirem",
+        "symbol": "(mrem)",
+        "value": "100,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Radiactividad",
+        "type": "Dosis equivalente",
+        "subtype": "",
+        "unit_measurement": "Radiografía dental",
+        "symbol": null,
+        "value": "200,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Radiactividad",
+        "type": "Dosis equivalente",
+        "subtype": "",
+        "unit_measurement": "Dosis promedio individual  de radiación por hora",
+        "symbol": null,
+        "value": "4,347,826.09",
+        "numericValue": 826.09
+    },
+    {
+        "category": "Radiactividad",
+        "type": "Dosis equivalente",
+        "subtype": "",
+        "unit_measurement": "Alrededores del núcleo del reactor después de la catástrofe de Chernobyl por hora",
+        "symbol": null,
+        "value": "3.33*(10**-3)",
+        "numericValue": 0.00333
+    },
+    {
+        "category": "Radiactividad",
+        "type": "Radioactividad",
+        "subtype": "",
+        "unit_measurement": "Becquerel",
+        "symbol": "(Bq)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Radiactividad",
+        "type": "Radioactividad",
+        "subtype": "",
+        "unit_measurement": "Kilobecquerel",
+        "symbol": "(kBq)",
+        "value": "(10**-3)",
+        "numericValue": 0.001
+    },
+    {
+        "category": "Radiactividad",
+        "type": "Radioactividad",
+        "subtype": "",
+        "unit_measurement": "Megabecquerel",
+        "symbol": "(MBq)",
+        "value": "(10**-6)",
+        "numericValue": 0.000001
+    },
+    {
+        "category": "Radiactividad",
+        "type": "Radioactividad",
+        "subtype": "",
+        "unit_measurement": "Gigabecquerel",
+        "symbol": "(GBq)",
+        "value": "(10**-9)",
+        "numericValue": 1e-9
+    },
+    {
+        "category": "Radiactividad",
+        "type": "Radioactividad",
+        "subtype": "",
+        "unit_measurement": "Terabecquerel",
+        "symbol": "(TBq)",
+        "value": "10*(10**-13)",
+        "numericValue": 1e-12
+    },
+    {
+        "category": "Radiactividad",
+        "type": "Radioactividad",
+        "subtype": "",
+        "unit_measurement": "Curie",
+        "symbol": "(Ci)",
+        "value": "2.7*(10**-11)",
+        "numericValue": 2.7e-11
+    },
+    {
+        "category": "Radiactividad",
+        "type": "Radioactividad",
+        "subtype": "",
+        "unit_measurement": "Desintegraciones por minuto",
+        "symbol": "(dpm)",
+        "value": "60",
+        "numericValue": 60
+    },
+    {
+        "category": "Radiactividad",
+        "type": "Radioactividad",
+        "subtype": "",
+        "unit_measurement": "Rutherford",
+        "symbol": "(Rd)",
+        "value": "(10**-6)",
+        "numericValue": 0.000001
+    },
+    {
+        "category": "Tiempo",
+        "type": null,
+        "subtype": "",
+        "unit_measurement": "Años",
+        "symbol": null,
+        "value": "3.17*(10**-11)",
+        "numericValue": 3.17e-11
+    },
+    {
+        "category": "Tiempo",
+        "type": null,
+        "subtype": "",
+        "unit_measurement": "Meses",
+        "symbol": null,
+        "value": "3.8*(10**-10)",
+        "numericValue": 3.8e-10
+    },
+    {
+        "category": "Tiempo",
+        "type": null,
+        "subtype": "",
+        "unit_measurement": "Semanas",
+        "symbol": null,
+        "value": "1.65*(10**-9)",
+        "numericValue": 1.65e-9
+    },
+    {
+        "category": "Tiempo",
+        "type": null,
+        "subtype": "",
+        "unit_measurement": "Días",
+        "symbol": null,
+        "value": "1.16*(10**-8)",
+        "numericValue": 1.16e-8
+    },
+    {
+        "category": "Tiempo",
+        "type": null,
+        "subtype": "",
+        "unit_measurement": "Horas",
+        "symbol": null,
+        "value": "2.78*(10**-7)",
+        "numericValue": 2.78e-7
+    },
+    {
+        "category": "Tiempo",
+        "type": null,
+        "subtype": "",
+        "unit_measurement": "Minutos",
+        "symbol": "(minute)",
+        "value": "1.67*(10**-5)",
+        "numericValue": 0.0000167
+    },
+    {
+        "category": "Tiempo",
+        "type": null,
+        "subtype": "",
+        "unit_measurement": "Segundos",
+        "symbol": "(s)",
+        "value": "(10**-3)",
+        "numericValue": 0.001
+    },
+    {
+        "category": "Tiempo",
+        "type": null,
+        "subtype": "",
+        "unit_measurement": "Milisegundos",
+        "symbol": "(ms)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Tiempo",
+        "type": null,
+        "subtype": "",
+        "unit_measurement": "Microsegundos",
+        "symbol": "(µs)",
+        "value": "1,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Tiempo",
+        "type": null,
+        "subtype": "",
+        "unit_measurement": "Nanosegundos",
+        "symbol": "(ns)",
+        "value": "1,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por segundo",
+        "unit_measurement": "Kilómetros cúbicos por segundo",
+        "symbol": "(km³/s)",
+        "value": "(10**-9)",
+        "numericValue": 1e-9
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por segundo",
+        "unit_measurement": "Metros cúbicos por segundo",
+        "symbol": "(m³/s)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por segundo",
+        "unit_measurement": "Decimetres cúbicos por segundo",
+        "symbol": "(dm³/s)",
+        "value": "1,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por segundo",
+        "unit_measurement": "Centímetros cúbicos por segundo",
+        "symbol": "(cm³/s)",
+        "value": "1,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por segundo",
+        "unit_measurement": "Milímetros cúbicos por segundo",
+        "symbol": "(mm³/s)",
+        "value": "1,000,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por segundo",
+        "unit_measurement": "Pulgadas cúbicas por segundo",
+        "symbol": "(in³/s)",
+        "value": "61,023.74",
+        "numericValue": null
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por segundo",
+        "unit_measurement": "Pies cúbicos por segundo",
+        "symbol": "(ft³/s)",
+        "value": "35.31",
+        "numericValue": 35.31
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por segundo",
+        "unit_measurement": "Galones por el segundo",
+        "symbol": "(líquido E.E.U.U.)",
+        "value": "264.17",
+        "numericValue": 264.17
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por segundo",
+        "unit_measurement": "Galones por segundo",
+        "symbol": "(Imperial)",
+        "value": "219.97",
+        "numericValue": 219.97
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por segundo",
+        "unit_measurement": "Litros por segundo",
+        "symbol": "(l/s)",
+        "value": "1,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por segundo",
+        "unit_measurement": "Millas cúbicas por segundo",
+        "symbol": null,
+        "value": "2.4*(10**-10)",
+        "numericValue": 2.4e-10
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por segundo",
+        "unit_measurement": "Acre-pies por segundo",
+        "symbol": null,
+        "value": "8.11*(10**-4)",
+        "numericValue": 0.0008109999999999999
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por segundo",
+        "unit_measurement": "Bushels por segundo",
+        "symbol": "(EE.UU)",
+        "value": "28.38",
+        "numericValue": 28.38
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por segundo",
+        "unit_measurement": "Bushels por segundo",
+        "symbol": "(Imperial)",
+        "value": "27.5",
+        "numericValue": 27.5
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por minuto",
+        "unit_measurement": "Kilómetros cúbicos por minuto",
+        "symbol": "(km³/min)",
+        "value": "6*(10**-8)",
+        "numericValue": 6.000000000000001e-8
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por minuto",
+        "unit_measurement": "Metros cúbicos por minuto",
+        "symbol": "(m³/min)",
+        "value": "60",
+        "numericValue": 60
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por minuto",
+        "unit_measurement": "Decimetres cúbicos por minuto",
+        "symbol": "(dm³/min)",
+        "value": "60,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por minuto",
+        "unit_measurement": "Centímetros cúbicos por minuto",
+        "symbol": "(cm³/min)",
+        "value": "60,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por minuto",
+        "unit_measurement": "Milímetros cúbicos por minuto",
+        "symbol": "(mm³/min)",
+        "value": "60,000,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por minuto",
+        "unit_measurement": "Pulgadas cúbicas por minuto",
+        "symbol": "(in³/min)",
+        "value": "3,661,424.65",
+        "numericValue": 424.65
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por minuto",
+        "unit_measurement": "Pies cúbicos por minuto",
+        "symbol": "(ft³/min)",
+        "value": "2,118.88",
+        "numericValue": 118.88
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por minuto",
+        "unit_measurement": "Galones por el minuto",
+        "symbol": "(Líquido E.E.U.U.)",
+        "value": "15,850.32",
+        "numericValue": 850.32
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por minuto",
+        "unit_measurement": "Galones por minuto",
+        "symbol": "(Imperial)",
+        "value": "13,198.15",
+        "numericValue": 198.15
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por minuto",
+        "unit_measurement": "Litros por minuto",
+        "symbol": "(l/min)",
+        "value": "60,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por minuto",
+        "unit_measurement": "Millas cúbicas por minuto",
+        "symbol": null,
+        "value": "1.44*(10**-8)",
+        "numericValue": 1.44e-8
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por minuto",
+        "unit_measurement": "Acre-pies por minuto",
+        "symbol": null,
+        "value": "0.05",
+        "numericValue": 0.05
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por minuto",
+        "unit_measurement": "Bushels por minuto",
+        "symbol": "(EE.UU)",
+        "value": "1,702.66",
+        "numericValue": 702.66
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por minuto",
+        "unit_measurement": "Bushels por minuto",
+        "symbol": "(Imperial)",
+        "value": "1,649.77",
+        "numericValue": 649.77
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por hora",
+        "unit_measurement": "Kilómetros cúbicos por hora",
+        "symbol": "(km³/h)",
+        "value": "3.6*(10**-6)",
+        "numericValue": 0.0000036
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por hora",
+        "unit_measurement": "Metros cúbicos por hora",
+        "symbol": "(m³/h)",
+        "value": "3,600",
+        "numericValue": 600
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por hora",
+        "unit_measurement": "Decimetres cúbicos por hora",
+        "symbol": "(dm³/h)",
+        "value": "3,600,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por hora",
+        "unit_measurement": "Centímetros cúbicos por hora",
+        "symbol": "(cm³/h)",
+        "value": "3,600,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por hora",
+        "unit_measurement": "Milímetros cúbicos por hora",
+        "symbol": "(mm³/h)",
+        "value": "3.6*(10**12)",
+        "numericValue": 3600000000000
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por hora",
+        "unit_measurement": "Pulgadas cúbicas por hora",
+        "symbol": "(in³/h)",
+        "value": "219,685,478.74",
+        "numericValue": 478.74
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por hora",
+        "unit_measurement": "Pies cúbicos por hora",
+        "symbol": "(ft³/h)",
+        "value": "127,132.8",
+        "numericValue": 132.8
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por hora",
+        "unit_measurement": "Galones por la hora",
+        "symbol": "(Líquido E.E.U.U.)",
+        "value": "951,019.39",
+        "numericValue": 19.39
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por hora",
+        "unit_measurement": "Galones por hora",
+        "symbol": "(Imperial)",
+        "value": "791,889.29",
+        "numericValue": 889.29
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por hora",
+        "unit_measurement": "Litros por hora",
+        "symbol": "(l/h)",
+        "value": "3,600,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por hora",
+        "unit_measurement": "Millas cúbicas por hora",
+        "symbol": null,
+        "value": "8.64*(10**-7)",
+        "numericValue": 8.64e-7
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por hora",
+        "unit_measurement": "Acre-pies por hora",
+        "symbol": null,
+        "value": "2.92",
+        "numericValue": 2.92
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por hora",
+        "unit_measurement": "Bushels por hora",
+        "symbol": "(EE.UU)",
+        "value": "102,159.34",
+        "numericValue": 159.34
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por hora",
+        "unit_measurement": "Bushels por hora",
+        "symbol": "(Imperial)",
+        "value": "98,986.16",
+        "numericValue": 986.16
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por día",
+        "unit_measurement": "Kilómetros cúbicos por día",
+        "symbol": null,
+        "value": "8.64*(10**-5)",
+        "numericValue": 0.0000864
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por día",
+        "unit_measurement": "Metros cúbicos por día",
+        "symbol": null,
+        "value": "86,400",
+        "numericValue": 400
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por día",
+        "unit_measurement": "Decimetres cúbicos por día",
+        "symbol": null,
+        "value": "86,400,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por día",
+        "unit_measurement": "Centímetros cúbicos por día",
+        "symbol": null,
+        "value": "86,400,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por día",
+        "unit_measurement": "Milímetros cúbicos por día",
+        "symbol": null,
+        "value": "8.64*(10**13)",
+        "numericValue": 86400000000000
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por día",
+        "unit_measurement": "Pulgadas cúbicas por día",
+        "symbol": null,
+        "value": "5.27*(10**9)",
+        "numericValue": 5270000000
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por día",
+        "unit_measurement": "Pies cúbicos por día",
+        "symbol": null,
+        "value": "3,051,187.2",
+        "numericValue": 187.2
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por día",
+        "unit_measurement": "Millones de galones por día",
+        "symbol": "(EE.UU)",
+        "value": "22.82",
+        "numericValue": 22.82
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por día",
+        "unit_measurement": "Galones por día",
+        "symbol": "(Líquido E.E.U.U.)",
+        "value": "22,824,465.32",
+        "numericValue": 465.32
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por día",
+        "unit_measurement": "Millones de galones por día",
+        "symbol": "(Imperial)",
+        "value": "19.01",
+        "numericValue": 19.01
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por día",
+        "unit_measurement": "Galones por día",
+        "symbol": "(Imperial)",
+        "value": "19,005,343.05",
+        "numericValue": 343.05
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por día",
+        "unit_measurement": "Litros por día",
+        "symbol": null,
+        "value": "86,400,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por día",
+        "unit_measurement": "Millas cúbicas por día",
+        "symbol": null,
+        "value": "2.07*(10**-5)",
+        "numericValue": 0.000020699999999999995
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por día",
+        "unit_measurement": "Acre-pies por día",
+        "symbol": null,
+        "value": "70.05",
+        "numericValue": 70.05
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por día",
+        "unit_measurement": "Bushels por día",
+        "symbol": "(EE.UU)",
+        "value": "2,451,824.06",
+        "numericValue": 824.06
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por día",
+        "unit_measurement": "Bushels por día",
+        "symbol": "(Imperial)",
+        "value": "2,375,667.88",
+        "numericValue": 667.88
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por año",
+        "unit_measurement": "Kilómetros cúbicos por año",
+        "symbol": null,
+        "value": "0.03",
+        "numericValue": 0.03
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por año",
+        "unit_measurement": "Metros cúbicos por año",
+        "symbol": null,
+        "value": "31,536,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por año",
+        "unit_measurement": "Decimetres cúbicos por año",
+        "symbol": null,
+        "value": "31,536,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por año",
+        "unit_measurement": "Centímetros cúbicos por año",
+        "symbol": null,
+        "value": "3.15*(10**13)",
+        "numericValue": 31500000000000
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por año",
+        "unit_measurement": "Milímetros cúbicos por año",
+        "symbol": null,
+        "value": "3.15*(10**16)",
+        "numericValue": 31500000000000000
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por año",
+        "unit_measurement": "Pulgadas cúbicas por año",
+        "symbol": null,
+        "value": "1.92*(10**12)",
+        "numericValue": 1920000000000
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por año",
+        "unit_measurement": "Pies cúbicos por año",
+        "symbol": null,
+        "value": "1.11*(10**9)",
+        "numericValue": 1110000000
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por año",
+        "unit_measurement": "Galones por el año",
+        "symbol": "(Líquido E.E.U.U.)",
+        "value": "8.33*(10**9)",
+        "numericValue": 8330000000
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por año",
+        "unit_measurement": "Galones por año",
+        "symbol": "(Imperial)",
+        "value": "6.94*(10**9)",
+        "numericValue": 6940000000
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por año",
+        "unit_measurement": "Litros por año",
+        "symbol": null,
+        "value": "31,536,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por año",
+        "unit_measurement": "Millas cúbicas por año",
+        "symbol": null,
+        "value": "0.01",
+        "numericValue": 0.01
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por año",
+        "unit_measurement": "Acre-pies por año",
+        "symbol": null,
+        "value": "25,566.65",
+        "numericValue": 566.65
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por año",
+        "unit_measurement": "Bushels por año",
+        "symbol": "(EE.UU)",
+        "value": "894,915,781",
+        "numericValue": 781
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Caudal volumétrico",
+        "subtype": "Por año",
+        "unit_measurement": "Bushels por año",
+        "symbol": "(Imperial)",
+        "value": "867,118,776.8",
+        "numericValue": 776.8
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por segundo",
+        "unit_measurement": "Miligramo por segundo",
+        "symbol": "(mg/s)",
+        "value": "1,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por segundo",
+        "unit_measurement": "Gramo por segundo",
+        "symbol": "(g/s)",
+        "value": "1,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por segundo",
+        "unit_measurement": "Kilogramo por segundo",
+        "symbol": "(kg/s)",
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por segundo",
+        "unit_measurement": "Tonelada por segundo",
+        "symbol": "(t/s)",
+        "value": "(10**-3)",
+        "numericValue": 0.001
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por segundo",
+        "unit_measurement": "Onza por segundo",
+        "symbol": null,
+        "value": "35.27",
+        "numericValue": 35.27
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por segundo",
+        "unit_measurement": "Libra por segundo",
+        "symbol": "(lb/s)",
+        "value": "2.2",
+        "numericValue": 2.2
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por segundo",
+        "unit_measurement": "Tonelada corta por segundo",
+        "symbol": null,
+        "value": "1.1*(10**-3)",
+        "numericValue": 0.0011
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por segundo",
+        "unit_measurement": "Tonelada larga por segundo",
+        "symbol": null,
+        "value": "9.84*(10**-4)",
+        "numericValue": 0.0009839999999999998
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por minuto",
+        "unit_measurement": "Miligramo por minuto",
+        "symbol": "(mg/min)",
+        "value": "60,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por minuto",
+        "unit_measurement": "Gramo por minuto",
+        "symbol": "(g/min)",
+        "value": "60,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por minuto",
+        "unit_measurement": "Kilogramo por minuto",
+        "symbol": "(kg/min)",
+        "value": "60",
+        "numericValue": 60
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por minuto",
+        "unit_measurement": "Tonelada por minuto",
+        "symbol": "(t/min)",
+        "value": "0.06",
+        "numericValue": 0.06
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por minuto",
+        "unit_measurement": "Onza por minuto",
+        "symbol": null,
+        "value": "2,116.44",
+        "numericValue": 116.44
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por minuto",
+        "unit_measurement": "Libra por minuto",
+        "symbol": "(lb/min)",
+        "value": "132.28",
+        "numericValue": 132.28
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por minuto",
+        "unit_measurement": "Tonelada corta por minuto",
+        "symbol": null,
+        "value": "0.07",
+        "numericValue": 0.07
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por minuto",
+        "unit_measurement": "Tonelada larga por minuto",
+        "symbol": null,
+        "value": "0.06",
+        "numericValue": 0.06
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por hora",
+        "unit_measurement": "Miligramo por hora",
+        "symbol": "(mg/h)",
+        "value": "3,600,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por hora",
+        "unit_measurement": "Gramo por hora",
+        "symbol": "(g/h)",
+        "value": "3,600,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por hora",
+        "unit_measurement": "Kilogramo por hora",
+        "symbol": "(kg/h)",
+        "value": "3,600",
+        "numericValue": 600
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por hora",
+        "unit_measurement": "Tonelada por hora",
+        "symbol": "(t/h)",
+        "value": "3.6",
+        "numericValue": 3.6
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por hora",
+        "unit_measurement": "Onza por hora",
+        "symbol": null,
+        "value": "126,986.26",
+        "numericValue": 986.26
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por hora",
+        "unit_measurement": "Libra por hora",
+        "symbol": "(lb/h)",
+        "value": "7,936.64",
+        "numericValue": 936.64
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por hora",
+        "unit_measurement": "Tonelada corta por hora",
+        "symbol": null,
+        "value": "3.97",
+        "numericValue": 3.97
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por hora",
+        "unit_measurement": "Tonelada larga por hora",
+        "symbol": null,
+        "value": "3.54",
+        "numericValue": 3.54
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por día",
+        "unit_measurement": "Miligramo por día",
+        "symbol": null,
+        "value": "86,400,000,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por día",
+        "unit_measurement": "Gramo por día",
+        "symbol": null,
+        "value": "86,400,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por día",
+        "unit_measurement": "Kilogramo por día",
+        "symbol": null,
+        "value": "86,400",
+        "numericValue": 400
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por día",
+        "unit_measurement": "Tonelada por día",
+        "symbol": null,
+        "value": "86.4",
+        "numericValue": 86.4
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por día",
+        "unit_measurement": "Onza por día",
+        "symbol": null,
+        "value": "3,047,670.31",
+        "numericValue": 670.31
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por día",
+        "unit_measurement": "Libra por día",
+        "symbol": null,
+        "value": "190,479.37",
+        "numericValue": 479.37
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por día",
+        "unit_measurement": "Tonelada corta por día",
+        "symbol": null,
+        "value": "95.24",
+        "numericValue": 95.24
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por día",
+        "unit_measurement": "Tonelada larga por día",
+        "symbol": null,
+        "value": "85.04",
+        "numericValue": 85.04
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por año",
+        "unit_measurement": "Miligramo por año",
+        "symbol": null,
+        "value": "3.16*(10**13)",
+        "numericValue": 31600000000000
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por año",
+        "unit_measurement": "Gramo por año",
+        "symbol": null,
+        "value": "31,557,600,000",
+        "numericValue": 0
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por año",
+        "unit_measurement": "KIlogramo por año",
+        "symbol": null,
+        "value": "31,557,600",
+        "numericValue": 600
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por año",
+        "unit_measurement": "Tonelada por año",
+        "symbol": null,
+        "value": "31,557.6",
+        "numericValue": 557.6
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por año",
+        "unit_measurement": "Onza por año",
+        "symbol": null,
+        "value": "1.11*(10**9)",
+        "numericValue": 1110000000
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por año",
+        "unit_measurement": "Libra por año",
+        "symbol": null,
+        "value": "69,572,589.96",
+        "numericValue": 589.96
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por año",
+        "unit_measurement": "Tonelada corta por año",
+        "symbol": null,
+        "value": "34,786.29",
+        "numericValue": 786.29
+    },
+    {
+        "category": "Velocidad de flujo",
+        "type": "Flujo de masa",
+        "subtype": "Por año",
+        "unit_measurement": "Tonelada larga por año",
+        "symbol": null,
+        "value": "31,059.2",
+        "numericValue": 59.2
+    },
+    {
+        "category": "Ropa",
+        "type": "Vestido y traje",
+        "subtype": "Ropa mujeres",
+        "unit_measurement": "Europa",
+        "symbol": "(mujeres)",
+        "value": "44",
+        "numericValue": 44
+    },
+    {
+        "category": "Ropa",
+        "type": "Vestido y traje",
+        "subtype": "Ropa mujeres",
+        "unit_measurement": "Estados Unidos",
+        "symbol": "(mujeres)",
+        "value": "14",
+        "numericValue": 14
+    },
+    {
+        "category": "Ropa",
+        "type": "Vestido y traje",
+        "subtype": "Ropa mujeres",
+        "unit_measurement": "Gran Bretaña",
+        "symbol": "(mujeres)",
+        "value": "16",
+        "numericValue": 16
+    },
+    {
+        "category": "Ropa",
+        "type": "Vestido y traje",
+        "subtype": "Ropa mujeres",
+        "unit_measurement": "Japón",
+        "symbol": "(mujeres)",
+        "value": "17",
+        "numericValue": 17
+    },
+    {
+        "category": "Ropa",
+        "type": "Vestido y traje",
+        "subtype": "Ropa hombres",
+        "unit_measurement": "Europa",
+        "symbol": "(hombres)",
+        "value": "54",
+        "numericValue": 54
+    },
+    {
+        "category": "Ropa",
+        "type": "Vestido y traje",
+        "subtype": "Ropa hombres",
+        "unit_measurement": "Estados Unidos y Gran Bretaña",
+        "symbol": "(hombres)",
+        "value": "46",
+        "numericValue": 46
+    },
+    {
+        "category": "Ropa",
+        "type": "Vestido y traje",
+        "subtype": "Ropa hombres",
+        "unit_measurement": "Japón",
+        "symbol": "(hombres)",
+        "value": "LL",
+        "numericValue": null
+    },
+    {
+        "category": "Ropa",
+        "type": "Vestido y traje",
+        "subtype": "Tamaño letra",
+        "unit_measurement": "Tamaño letra",
+        "symbol": null,
+        "value": "L",
+        "numericValue": null
+    },
+    {
+        "category": null,
+        "type": "Ángulo",
+        "subtype": "",
+        "unit_measurement": "Grado sexagesimal",
+        "symbol": null,
+        "value": "360",
+        "numericValue": 360
+    },
+    {
+        "category": null,
+        "type": "Ángulo",
+        "subtype": "",
+        "unit_measurement": "Radián",
+        "symbol": null,
+        "value": "6.28",
+        "numericValue": 6.28
+    },
+    {
+        "category": null,
+        "type": "Ángulo",
+        "subtype": "",
+        "unit_measurement": "Círculo",
+        "symbol": null,
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": null,
+        "type": "Ángulo",
+        "subtype": "",
+        "unit_measurement": "Giro",
+        "symbol": null,
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": null,
+        "type": "Ángulo",
+        "subtype": "",
+        "unit_measurement": "Ciclo",
+        "symbol": null,
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": null,
+        "type": "Ángulo",
+        "subtype": "",
+        "unit_measurement": "Rotación",
+        "symbol": null,
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": null,
+        "type": "Ángulo",
+        "subtype": "",
+        "unit_measurement": "Revolución",
+        "symbol": null,
+        "value": "1",
+        "numericValue": 1
+    },
+    {
+        "category": null,
+        "type": "Ángulo",
+        "subtype": "",
+        "unit_measurement": "Ángulo recto",
+        "symbol": null,
+        "value": "4",
+        "numericValue": 4
+    },
+    {
+        "category": null,
+        "type": "Ángulo",
+        "subtype": "",
+        "unit_measurement": "Milesimal",
+        "symbol": "(OTAN)",
+        "value": "6,400",
+        "numericValue": 400
+    },
+    {
+        "category": null,
+        "type": "Ángulo",
+        "subtype": "",
+        "unit_measurement": "Milesimal",
+        "symbol": "(Unión Soviética)",
+        "value": "6,000",
+        "numericValue": 0
+    },
+    {
+        "category": null,
+        "type": "Ángulo",
+        "subtype": "",
+        "unit_measurement": "Milesimal",
+        "symbol": "(Suecia)",
+        "value": "6,300",
+        "numericValue": 300
+    },
+    {
+        "category": null,
+        "type": "Ángulo",
+        "subtype": "",
+        "unit_measurement": "Grado centesimal",
+        "symbol": null,
+        "value": "400",
+        "numericValue": 400
+    },
+    {
+        "category": null,
+        "type": "Ángulo",
+        "subtype": "",
+        "unit_measurement": "Gon",
+        "symbol": null,
+        "value": "400",
+        "numericValue": 400
+    },
+    {
+        "category": null,
+        "type": "Ángulo",
+        "subtype": "",
+        "unit_measurement": "Punto",
+        "symbol": null,
+        "value": "32",
+        "numericValue": 32
+    },
+    {
+        "category": null,
+        "type": "Ángulo",
+        "subtype": "",
+        "unit_measurement": "Ángulo horario",
+        "symbol": null,
+        "value": "24",
+        "numericValue": 24
+    }
+]
