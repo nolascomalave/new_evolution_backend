@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, InternalServerErrorException, NotFoundException, Param, Post, Query, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, InternalServerErrorException, NotFoundException, Param, Post, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import Files from 'src/Util/Files';
 import { JSONParser, getAllFlatValuesOfDataAsArray } from 'src/util/formats';
@@ -8,8 +8,10 @@ import { AddOrUpdateDto, GetByIdDto } from './dto/entity.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import HandlerErrors from 'src/util/HandlerErrors';
+import { AuthGuard } from '../auth/guards/auth.guard';
 
 @Controller('entity')
+@UseGuards(AuthGuard)
 export class EntityController {
     constructor(
         private prisma: PrismaService,

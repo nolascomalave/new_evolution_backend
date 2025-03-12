@@ -1,22 +1,19 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, UnauthorizedException, InternalServerErrorException, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
-import { system_subscription_user } from '@prisma/client';
-import { hashSync, compareSync } from 'bcryptjs';
-import { escape } from 'querystring';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards, Query, Session, UnprocessableEntityException, InternalServerErrorException } from '@nestjs/common';
+import { hashSync } from 'bcryptjs';
 import { PrismaService } from 'src/prisma.service';
-import { LoginDto } from './dto/auth.dto';
+import { LoginDto, LoginOptionsDto } from './dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { RefreshJwtGuard } from './guards/refresh.guard';
-import { FullUser, SystemSubscriptionUserService } from '../system_subscription_user/system_subscription_user.service';
-import { JSONParser } from 'src/util/formats';
+import { SystemSubscriptionUserService } from '../system_subscription_user/system_subscription_user.service';
+import { AuthService } from './auth.service';
 
-const EXPIRE_TIME = 20 * 1000;
+export const EXPIRE_TIME = 1000 * 60 * 60 * 24;
 
 @Controller('auth')
 export class AuthController {
     constructor(
-        private prisma: PrismaService,
         private jwtService: JwtService,
-        private systemSubscriptionUserService: SystemSubscriptionUserService
+        private service: AuthService
     ) {}
 
     @Post('hash-password')
@@ -31,54 +28,20 @@ export class AuthController {
     // Posible status code: 200, 400, 401, 500
     @HttpCode(HttpStatus.OK)
     // @UsePipes(new ValidationPipe())
-    async login(@Body() credentials: LoginDto) {
-        const user: FullUser | system_subscription_user | undefined = await this.prisma.findOneUnsafe(`SELECT
-            *
-        FROM system_subscription_user ssu
-        WHERE COALESCE(ssu.annulled_at, ssu.inactivated_at) IS NULL
-            AND ssu.username = '${escape(credentials.username)}'
-            AND EXISTS(
-                SELECT
-                    *
-                FROM system_subscription ss
-                INNER JOIN \`system\` sys
-                    ON sys.id = ss.id_system
-                WHERE ss.id = ssu.id_system_subscription
-                    AND COALESCE(sys.annulled_at, ss.annulled_at, sys.inactivated_at, ss.inactivated_at) IS NULL
-                    AND ss.id = ${credentials.id_system_subscription}
-                    AND sys.id = ${credentials.id_system}
-            )`);
+    async login(
+        @Body() credentials: LoginDto,
+        @Session() session: Record<string, any>,
+        @Query() options?: LoginOptionsDto
+    ) {
+        /* await (new Promise((resolve) => setTimeout(resolve, 1000)));
+        throw new UnprocessableEntityException(); */
+        const cookieSessionOpt = "cookie-session";
 
-        if(!user || !compareSync(credentials.password, user.password)) {
-            throw new UnauthorizedException();
+        if(!!options && (cookieSessionOpt in options) && options[cookieSessionOpt] === true) {
+            return this.service.loginWithCookieSession(credentials, session);
+        } else {
+            return this.service.loginWithToken(credentials);
         }
-
-        const userData = await this.systemSubscriptionUserService.getUserEntityById({id: user.id});
-
-        if(!userData) {
-            throw new InternalServerErrorException();
-        }
-
-        if('password' in userData) {
-            delete userData.password;
-        }
-
-        delete user.password;
-
-        return {
-            user: JSONParser(userData),
-            backendTokens: {
-                accessToken: await this.jwtService.signAsync(user, {
-                    expiresIn: '1d',
-                    secret: process.env.jwtSecretKey,
-                }),
-                refreshToken: await this.jwtService.signAsync(user, {
-                    expiresIn: '7d',
-                    secret: process.env.jwtRefreshTokenKey,
-                }),
-                expiresIn: new Date().setTime(new Date().getTime() + EXPIRE_TIME),
-            },
-        };
     }
 
     @UseGuards(RefreshJwtGuard)
@@ -98,5 +61,33 @@ export class AuthController {
             }),
             expiresIn: new Date().setTime(new Date().getTime() + EXPIRE_TIME)
         };
+    }
+
+    @Get('check-session')
+    @HttpCode(HttpStatus.OK)
+    checkSession(@Session() session: Record<string, any>,) {
+      if (!!session.user) {
+        return { isAuthenticated: true, user: session.user };
+      } else {
+        return { isAuthenticated: false };
+      }
+    }
+
+    @Post('logout')
+    @HttpCode(HttpStatus.OK)
+    logout(@Session() session: Record<string, any>) {
+        const okResponse = { message: 'Closed session' };
+
+        if(!session.user) {
+            return okResponse;
+        }
+
+        // Destruye la sesión
+        return session.destroy((err) => {
+            if (err) {
+                throw new InternalServerErrorException('Error al cerrar sesión');
+            }
+            return okResponse;
+        });
     }
 }

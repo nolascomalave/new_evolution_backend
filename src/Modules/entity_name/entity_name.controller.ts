@@ -1,7 +1,9 @@
-import { Controller, Get, Req, Res } from '@nestjs/common';
+import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
+import { AuthGuard } from '../auth/guards/auth.guard';
 
 @Controller('names')
+@UseGuards(AuthGuard)
 export class EntityNameController {
     constructor(private prisma: PrismaService) {}
 

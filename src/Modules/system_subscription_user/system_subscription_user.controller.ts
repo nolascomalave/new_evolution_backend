@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, ForbiddenException, Get, HttpCode, HttpStatus, InternalServerErrorException, NotFoundException, Param, Patch, Post, Query, Req, UnauthorizedException, UploadedFile, UploadedFiles, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Body, Controller, ForbiddenException, Get, HttpCode, HttpStatus, InternalServerErrorException, NotFoundException, Param, Patch, Post, Query, Req, UnauthorizedException, UploadedFile, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AddOrUpdateDto, ChangePasswordDto, ChangeStatusDto, GetByIdDto, GetByIdQueryDto, ResetPasswordDto } from './dto/system_subscription_user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AddPipe } from './pipes/system_subscription_user.pipe';
@@ -9,8 +9,10 @@ import Files from 'src/Util/Files';
 import { RequestSession } from '../auth/middlewares/auth.middleware';
 import { JSONParser, getAllFlatValuesOfDataAsArray } from 'src/util/formats';
 import HandlerErrors from 'src/util/HandlerErrors';
+import { AuthGuard } from '../auth/guards/auth.guard';
 
 @Controller('system-subscription-users')
+@UseGuards(AuthGuard)
 export class SystemSubscriptionUserController {
     constructor(
         private prisma: PrismaService,
@@ -56,9 +58,7 @@ export class SystemSubscriptionUserController {
             throw new NotFoundException(undefined, 'User not found!');
         }
 
-        const data = JSONParser(result)
-
-        console.log(data);
+        const data = JSONParser(result);
 
         return data;
     }

@@ -12,8 +12,8 @@ import { SystemSubscriptionUserModule } from '../system_subscription_user/system
     imports: [SystemSubscriptionUserModule]
     /* [PrismaService] */
 })
-export class AuthModule implements NestModule {
-    configure(consumer: MiddlewareConsumer) {
+export class AuthModule/*  implements NestModule */ {
+    /* configure(consumer: MiddlewareConsumer) {
       consumer
         .apply(VerifyTokenMiddleware)
         .exclude(
@@ -23,5 +23,5 @@ export class AuthModule implements NestModule {
             'static/*'
         )
         .forRoutes('*');
-    }
+    } */
 }
