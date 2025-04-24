@@ -14,9 +14,9 @@ import {
 } from '../../util/validators';
 
 type ProcessNameType = {
-    id_entity?: number;
-    id_entity_name: number;
-    id_entity_name_type: number;
+    entity_id?: number;
+    entity_name_id: number;
+    entity_name_type_id: number;
     name: any;
     created_by: number;
     order?: number;
@@ -25,25 +25,25 @@ type ProcessNameType = {
 
 type GetBelonginSystemType = {
     NotEqualEntityID?: boolean;
-    id_entity?: number;
-    id_entity_name?: number;
-    id_entity_name_type?: number;
-    id_system_subscription?: number;
+    entity_id?: number;
+    entity_name_id?: number;
+    entity_name_type_id?: number;
+    system_subscription_id?: number;
 } | any;
 
 type ChangeNameOrderParams = {
-    id_entity_name: number;
-    id_entity: number;
+    entity_name_id: number;
+    entity_id: number;
     order: number;
-    id_entity_name_type: number;
+    entity_name_type_id: number;
     name_type?: string;
     // type: entity_name_by_entity_type;
 };
 
 type ProcessMultipleNamesType = {
-    id_entity?: number;
+    entity_id?: number;
     names: string[];
-    id_entity_name_type?: number;
+    entity_name_type_id?: number;
     created_by: number;
     name_type?: string;
     initialIndex: number;
@@ -74,13 +74,13 @@ export class EntityNameService {
         } else {
             params.name_type ??= 'name';
 
-            errors.set('id_entity', validateId(params.id_entity, params.name_type + ' entity ID'));
+            errors.set('entity_id', validateId(params.entity_id, params.name_type + ' entity ID'));
             errors.set('created_by', validateId(params.created_by, params.name_type + ' processing user ID', true));
-            errors.set('id_entity_name_type', validateId(params.id_entity_name_type, params.name_type + ' Type Name ID', true));
-            errors.set('id_entity_name', validateId(params.id_entity_name, params.name_type + ' ID'));
-            // errors.set('name', validateName(params.id_entity_name, true));
+            errors.set('entity_name_type_id', validateId(params.entity_name_type_id, params.name_type + ' Type Name ID', true));
+            errors.set('entity_name_id', validateId(params.entity_name_id, params.name_type + ' ID'));
+            // errors.set('name', validateName(params.entity_name_id, true));
 
-            if(!errors.exists('id_entity') && (params.id_entity ?? null) !== null) {
+            if(!errors.exists('entity_id') && (params.entity_id ?? null) !== null) {
                 errors.set('order', validateCuantity({
                     num: params.order,
                     name: params.name_type + ' order',
@@ -102,9 +102,9 @@ export class EntityNameService {
             prisma ??= await this.prisma.beginTransaction();
 
             try {
-                const entity = (params.id_entity ?? null) === null ? null : await prisma.entity.findUnique({ where: { id: params.id_entity } }),
+                const entity = (params.entity_id ?? null) === null ? null : await prisma.entity.findUnique({ where: { id: params.entity_id } }),
                     user = (params.created_by ?? null) === null ? null : await prisma.system_subscription_user.findUnique({ where: { id: params.created_by } }),
-                    ent_name_type = await prisma.entity_name_type.findUnique({where: {id: params.id_entity_name_type}});
+                    ent_name_type = await prisma.entity_name_type.findUnique({where: {id: params.entity_name_type_id}});
                 let name_by_entity: entity_name_by_entity | null = null;
 
                 if(!ent_name_type) {
@@ -113,11 +113,11 @@ export class EntityNameService {
                     // errors.set(params.name_type, validateName(params.name, ent_name_type.type, true));
 
                     // if(!errors.exists(params.name_type)) {
-                        if(params.id_entity_name) {
-                            name = await prisma.entity_name.findUnique({ where: { id: params.id_entity_name } });
+                        if(params.entity_name_id) {
+                            name = await prisma.entity_name.findUnique({ where: { id: params.entity_name_id } });
 
                             if(!name) {
-                                errors.set('id_entity_name', params.name_type + ' not found!');
+                                errors.set('entity_name_id', params.name_type + ' not found!');
                             }
                         } else {
                             name = await prisma.entity_name.findUnique({ where: { name: params.name.toString().trim().toLowerCase() } });
@@ -125,8 +125,8 @@ export class EntityNameService {
                     // }
                 }
 
-                if(params.id_entity && !entity) {
-                    errors.set('id_entity', params.name_type + ' entity not found!');
+                if(params.entity_id && !entity) {
+                    errors.set('entity_id', params.name_type + ' entity not found!');
                 } else if(entity && ent_name_type) {
                     errors.set(params.name_type, (entity.is_natural && (['name', 'surname']).includes(ent_name_type.type.toLowerCase())) ? validateName(params.name, params.name_type, Number(params.order) === 1) : validateSimpleText(params.name, params.name_type, 2, 250, Number(params.order) === 1))
                 }
@@ -138,15 +138,15 @@ export class EntityNameService {
                 // Vefifying if the name is used by another entity:
                 /* if(user && ent_name_type && entity && name && (params.order ?? null) !== null && params.order == 1) {
                     const exisingNameByEntity = await this.getBelongingSystem({
-                        id_entity: entity.id,
-                        id_system_subscription: user.id_system_subscription,
-                        id_entity_name: name.id,
-                        id_entity_name_type: ent_name_type.id,
+                        entity_id: entity.id,
+                        system_subscription_id: user.system_subscription_id,
+                        entity_name_id: name.id,
+                        entity_name_type_id: ent_name_type.id,
                         NotEqualEntityID: true
                     }, prisma);
 
                     if(exisingNameByEntity) {
-                        errors.set('id_entity_email', 'Name already exists!');
+                        errors.set('entity_email_id', 'Name already exists!');
                     }
                 } */
 
@@ -157,9 +157,9 @@ export class EntityNameService {
                 /* if(entity && name) {
                     name_by_entity = await prisma.entity_name_by_entity.findUnique({
                         where: {
-                            id_entity_id_entity_name: {
-                                id_entity: entity.id,
-                                id_entity_name: name.id
+                            entity_entity_name_id: {
+                                entity_id: entity.id,
+                                entity_name_id: name.id
                             }
                         }
                     });
@@ -189,10 +189,10 @@ export class EntityNameService {
                             created_by: user?.id ?? 0
                         }
                     });
-                } else if(existingName) { // Solo pasa por aquí si name es el registro encontrado por la variable params.id_entity_name y existe un teléfono que tiene el número buscado y es diferente del teléfono a editar.
+                } else if(existingName) { // Solo pasa por aquí si name es el registro encontrado por la variable params.entity_name_id y existe un teléfono que tiene el número buscado y es diferente del teléfono a editar.
                     oldName = name;
                     name = existingName;
-                } else if(params.id_entity_name) {
+                } else if(params.entity_name_id) {
                     name = await prisma.entity_name.update({
                         where: {
                             id: name.id
@@ -206,10 +206,10 @@ export class EntityNameService {
                 if(entity) {
                     name_by_entity = await prisma.entity_name_by_entity.findUnique({
                         where: {
-                            id_entity_id_entity_name_id_entity_name_type: {
-                                id_entity_name_type: (ent_name_type?.id ?? 0),
-                                id_entity: entity.id,
-                                id_entity_name: name.id
+                            entity_id_entity_name_id_entity_name_type_id: {
+                                entity_name_type_id: (ent_name_type?.id ?? 0),
+                                entity_id: entity.id,
+                                entity_name_id: name.id
                             }
                         }
                     });
@@ -217,9 +217,9 @@ export class EntityNameService {
                     if(!name_by_entity) {
                         name_by_entity = await prisma.entity_name_by_entity.create({
                             data: {
-                                id_entity: entity.id,
-                                id_entity_name: name.id,
-                                id_entity_name_type: (ent_name_type?.id ?? 0),
+                                entity_id: entity.id,
+                                entity_name_id: name.id,
+                                entity_name_type_id: (ent_name_type?.id ?? 0),
                                 created_by: user?.id ?? 0,
                                 order: params.order ?? 0
                             }
@@ -227,10 +227,10 @@ export class EntityNameService {
                     } else {
                         name_by_entity = await prisma.entity_name_by_entity.update({
                             where: {
-                                id_entity_id_entity_name_id_entity_name_type: {
-                                    id_entity_name_type: (ent_name_type?.id ?? 0),
-                                    id_entity: entity.id,
-                                    id_entity_name: name.id
+                                entity_id_entity_name_id_entity_name_type_id: {
+                                    entity_name_type_id: (ent_name_type?.id ?? 0),
+                                    entity_id: entity.id,
+                                    entity_name_id: name.id
                                 }
                             },
                             data: {
@@ -254,10 +254,10 @@ export class EntityNameService {
                     if(oldName) {
                         const name_by_entity2 = await prisma.entity_name_by_entity.findUnique({
                             where: {
-                                id_entity_id_entity_name_id_entity_name_type: {
-                                    id_entity_name_type: (ent_name_type?.id ?? 0),
-                                    id_entity: entity.id,
-                                    id_entity_name: oldName.id
+                                entity_id_entity_name_id_entity_name_type_id: {
+                                    entity_name_type_id: (ent_name_type?.id ?? 0),
+                                    entity_id: entity.id,
+                                    entity_name_id: oldName.id
                                 }
                             }
                         });
@@ -265,10 +265,10 @@ export class EntityNameService {
                         if(name_by_entity2 && !name_by_entity2.annulled_at) {
                             await prisma.entity_name_by_entity.update({
                                 where: {
-                                    id_entity_id_entity_name_id_entity_name_type: {
-                                        id_entity_name_type: (ent_name_type?.id ?? 0),
-                                        id_entity: entity.id,
-                                        id_entity_name: oldName.id
+                                    entity_id_entity_name_id_entity_name_type_id: {
+                                        entity_name_type_id: (ent_name_type?.id ?? 0),
+                                        entity_id: entity.id,
+                                        entity_name_id: oldName.id
                                     }
                                 },
                                 data: {
@@ -281,9 +281,9 @@ export class EntityNameService {
                     }
 
                     const changedNameOrder = await this.changeNameOrder({
-                        id_entity_name_type: (ent_name_type?.id ?? 0),
-                        id_entity: entity.id,
-                        id_entity_name: name.id,
+                        entity_name_type_id: Number(ent_name_type?.id ?? 0),
+                        entity_id: Number(entity.id),
+                        entity_name_id: Number(name.id),
                         order: params.order ?? 0,
                         name_type: params.name_type
                     }, prisma);
@@ -298,6 +298,7 @@ export class EntityNameService {
                     await prisma.commit();
                 }
             } catch(e: any) {
+                console.log(params)
                 if(isPosibleTransaction && 'commit' in prisma) {
                     await prisma.rollback();
                 }
@@ -340,8 +341,8 @@ export class EntityNameService {
             params.name_type ??= 'names';
             initialIndex = params.initialIndex ?? initialIndex;
 
-            errors.set('id_entity', validateId(params.id_entity, params.name_type + ' entity ID'));
-            errors.set('id_entity_name_type', validateId(params.id_entity_name_type, params.name_type + ' Type Name ID', true));
+            errors.set('entity_id', validateId(params.entity_id, params.name_type + ' entity ID'));
+            errors.set('entity_name_type_id', validateId(params.entity_name_type_id, params.name_type + ' Type Name ID', true));
             errors.set('created_by', validateId(params.created_by, params.name_type + ' processing user ID', true));
 
             if(!Array.isArray(params.names)) {
@@ -362,16 +363,16 @@ export class EntityNameService {
             prisma ??= await this.prisma.beginTransaction();
 
             try {
-                const entity = (params.id_entity ?? null) === null ? null : await prisma.entity.findUnique({ where: { id: params.id_entity } }),
+                const entity = (params.entity_id ?? null) === null ? null : await prisma.entity.findUnique({ where: { id: params.entity_id } }),
                     user = (params.created_by ?? null) === null ? null : await prisma.system_subscription_user.findUnique({ where: { id: params.created_by } }),
-                    ent_name_type = await prisma.entity_name_type.findUnique({where: {id: params.id_entity_name_type}});
+                    ent_name_type = await prisma.entity_name_type.findUnique({where: {id: params.entity_name_type_id}});
 
                 if(!ent_name_type) {
                     errors.set('name_by_entity', params.name_type + ' Type Name not found!');
                 }
 
-                if(params.id_entity && !entity) {
-                    errors.set('id_entity', params.name_type + ' entity not found!');
+                if(params.entity_id && !entity) {
+                    errors.set('entity_id', params.name_type + ' entity not found!');
                 }
 
                 if(!user) {
@@ -381,8 +382,8 @@ export class EntityNameService {
                 if(!errors.existsErrors()) {
                     for(let i = 0; i < params.names.length; i++) {
                         const nameResult = await this.processName({
-                            id_entity: params.id_entity,
-                            id_entity_name_type: params.id_entity_name_type,
+                            entity_id: params.entity_id,
+                            entity_name_type_id: params.entity_name_type_id,
                             name: params.names[i],
                             created_by: params.created_by,
                             order: i + 1,
@@ -407,10 +408,10 @@ export class EntityNameService {
                                 annulled_at: new Date()
                             },
                             where: {
-                                id_entity: entity?.id,
-                                id_entity_name_type: ent_name_type.id,
+                                entity_id: entity?.id,
+                                entity_name_type_id: ent_name_type.id,
                                 NOT: {
-                                    id_entity_name: {
+                                    entity_name_id: {
                                         in: names.map(el => el.id)
                                     }
                                 }
@@ -418,9 +419,9 @@ export class EntityNameService {
                         });
 
                         const changedNameOrder = await this.changeNameOrder({
-                            id_entity_name_type: (ent_name_type?.id ?? 0),
-                            id_entity: (entity?.id ?? 0),
-                            id_entity_name: names[0].id,
+                            entity_name_type_id: Number(ent_name_type?.id ?? 0),
+                            entity_id: Number(entity?.id ?? 0),
+                            entity_name_id: Number(names[0].id),
                             order: params.order ?? 0,
                             name_type: params.name_type + '.0'
                         }, prisma);
@@ -479,21 +480,21 @@ export class EntityNameService {
             try {
                 name = await prisma.entity_name.findUnique({
                     where: {
-                        id: params.id_entity_name
+                        id: params.entity_name_id
                     }
                 });
 
                 ent = await prisma.entity.findUnique({
                     where: {
-                        id: params.id_entity
+                        id: params.entity_id
                     }
                 });
 
                 name_by_ent = !(ent && name) ? null : await prisma.entity_name_by_entity.findFirst({
                     where: {
-                        id_entity: ent.id,
-                        id_entity_name: name.id,
-                        id_entity_name_type: params.id_entity_name_type
+                        entity_id: ent.id,
+                        entity_name_id: name.id,
+                        entity_name_type_id: params.entity_name_type_id
                     }
                 });
 
@@ -515,26 +516,26 @@ export class EntityNameService {
 
                 await prisma.$queryRawUnsafe(`UPDATE entity_name_by_entity ne
                 INNER JOIN entity_name_type ent
-                    ON ent.id = ne.id_entity_name_type
+                    ON ent.id = ne.entity_name_type_id
                 INNER JOIN (
                     SELECT
-                        ne.id_entity,
-                        ne.id_entity_name,
+                        ne.entity_id,
+                        ne.entity_name_id,
                         -- ent.type,
-                        ne.id_entity_name_type,
-                        ROW_NUMBER() OVER(PARTITION BY ne.id_entity, ent.type ORDER BY CONVERT(CONCAT(IF(ne.id_entity = ${ent.id} AND ne.id_entity_name = ${name.id}, ${params.order}, ne.order), '.', CONCAT(IF(ne.id_entity = ${ent.id} AND ne.id_entity_name = ${name.id}, 0, 1))), DECIMAL(18, 1)) ASC) AS real_order
+                        ne.entity_name_type_id,
+                        ROW_NUMBER() OVER(PARTITION BY ne.entity_id, ent.type ORDER BY CONVERT(CONCAT(IF(ne.entity_id = ${ent.id} AND ne.entity_name_id = ${name.id}, ${params.order}, ne.order), '.', CONCAT(IF(ne.entity_id = ${ent.id} AND ne.entity_name_id = ${name.id}, 0, 1))), DECIMAL(18, 1)) ASC) AS real_order
                     FROM entity_name_by_entity ne
                     INNER JOIN entity_name_type ent
-                        ON ent.id = ne.id_entity_name_type
+                        ON ent.id = ne.entity_name_type_id
                     WHERE COALESCE(ne.annulled_at, ent.annulled_at) IS NULL
-                        AND ne.id_entity = ${ent.id}
-                        AND ent.id = '${name_by_ent.id_entity_name_type}'
+                        AND ne.entity_id = ${ent.id}
+                        AND ent.id = '${name_by_ent.entity_name_type_id}'
                 ) ne_order
-                    ON ne_order.id_entity = ne.id_entity
-                    AND ne_order.id_entity_name = ne.id_entity_name
-                    AND ne_order.id_entity_name_type = ent.type
+                    ON ne_order.entity_id = ne.entity_id
+                    AND ne_order.entity_name_id = ne.entity_name_id
+                    AND ne_order.entity_name_type_id = ent.type
                 SET
-                    \`order\` = ne_order.real_order`);
+                    "order" = ne_order.real_order`);
 
                 const maxNotNullOrder = await prisma.entity_name_by_entity.aggregate({
                     _max: {
@@ -542,8 +543,8 @@ export class EntityNameService {
                     },
 
                     where: {
-                        id_entity: ent.id,
-                        id_entity_name_type: params.id_entity_name_type,
+                        entity_id: ent.id,
+                        entity_name_type_id: params.entity_name_type_id,
                         NOT: {
                             annulled_at: null
                         }
@@ -552,26 +553,26 @@ export class EntityNameService {
 
                 await prisma.$queryRawUnsafe(`UPDATE entity_name_by_entity ne
                 INNER JOIN entity_name_type ent
-                    ON ent.id = ne.id_entity_name_type
+                    ON ent.id = ne.entity_name_type_id
                 INNER JOIN (
                     SELECT
-                        ne.id_entity,
-                        ne.id_entity_name,
+                        ne.entity_id,
+                        ne.entity_name_id,
                         -- ent.type,
-                        ne.id_entity_name_type,
-                        ROW_NUMBER() OVER(PARTITION BY ne.id_entity, ent.type ORDER BY CONVERT(CONCAT(IF(ne.id_entity = ${ent.id} AND ne.id_entity_name = ${name.id}, ${params.order}, ne.order), '.', CONCAT(IF(ne.id_entity = ${ent.id} AND ne.id_entity_name = ${name.id}, 0, 1))), DECIMAL(18, 1)) ASC) AS real_order
+                        ne.entity_name_type_id,
+                        ROW_NUMBER() OVER(PARTITION BY ne.entity_id, ent.type ORDER BY CONVERT(CONCAT(IF(ne.entity_id = ${ent.id} AND ne.entity_name_id = ${name.id}, ${params.order}, ne.order), '.', CONCAT(IF(ne.entity_id = ${ent.id} AND ne.entity_name_id = ${name.id}, 0, 1))), DECIMAL(18, 1)) ASC) AS real_order
                     FROM entity_name_by_entity ne
                     INNER JOIN entity_name_type ent
-                        ON ent.id = ne.id_entity_name_type
+                        ON ent.id = ne.entity_name_type_id
                     WHERE COALESCE(ne.annulled_at, ent.annulled_at) IS NOT NULL
-                        AND ne.id_entity = ${ent.id}
-                        AND ent.id = '${name_by_ent.id_entity_name_type}'
+                        AND ne.entity_id = ${ent.id}
+                        AND ent.id = '${name_by_ent.entity_name_type_id}'
                 ) ne_order
-                    ON ne_order.id_entity = ne.id_entity
-                    AND ne_order.id_entity_name = ne.id_entity_name
-                    AND ne_order.id_entity_name_type = ent.type
+                    ON ne_order.entity_id = ne.entity_id
+                    AND ne_order.entity_name_id = ne.entity_name_id
+                    AND ne_order.entity_name_type_id = ent.type
                 SET
-                    \`order\` = (ne_order.real_order + ${maxNotNullOrder._max.order ?? 0})`);
+                    "order" = (ne_order.real_order + ${maxNotNullOrder._max.order ?? 0})`);
 
                 if(isPosibleTransaction && 'commit' in prisma) {
                     await prisma.commit();
@@ -604,20 +605,20 @@ export class EntityNameService {
     async getBelongingSystem(params: GetBelonginSystemType, prisma: Prisma.TransactionClient | PrismaClient | TransactionPrisma = this.prisma) {
         let AND: string[] | string = [];
 
-        if('id_entity' in params) {
-            AND.push(`ent.id ${params.NotEqualEntityID === true ? '<>' : '='} ${params.id_entity}`);
+        if('entity_id' in params) {
+            AND.push(`ent.id ${params.NotEqualEntityID === true ? '<>' : '='} ${params.entity_id}`);
         }
 
-        if('id_entity_name_type' in params) {
-            AND.push(`ene.id_entity_name_type = ${params.id_entity_name_type}`);
+        if('entity_name_type_id' in params) {
+            AND.push(`ene.entity_name_type_id = ${params.entity_name_type_id}`);
         }
 
-        if('id_entity_name' in params) {
-            AND.push(`en.id = ${params.id_entity_name}`);
+        if('entity_name_id' in params) {
+            AND.push(`en.id = ${params.entity_name_id}`);
         }
 
-        if('id_system_subscription' in params) {
-            AND.push(`ssu.id_system_subscription = ${params.id_system_subscription}`);
+        if('system_subscription_id' in params) {
+            AND.push(`ssu.system_subscription_id = ${params.system_subscription_id}`);
         }
 
         AND = AND.length < 1 ? '' : `AND ${AND.join("\nAND ")}`;
@@ -626,18 +627,18 @@ export class EntityNameService {
             en.*
         FROM entity_name en
         INNER JOIN entity_name_by_entity ene
-            ON ene.id_entity_name = en.id
+            ON ene.entity_name_id = en.id
         INNER JOIN entity ent
-            ON ent.id = ene.id_entity
+            ON ent.id = ene.entity_id
         INNER JOIN system_subscription_user_complete_info ssu
             ON (
                 (
                     ent.created_by IS NOT NULL
-                    AND ssu.id_system_subscription_user = ent.created_by
+                    AND ssu.system_subscription_user_id = ent.created_by
                 )
                 OR (
                     ent.created_by IS NULL
-                    AND ssu.id_entity = ent.id
+                    AND ssu.entity_id = ent.id
                 )
             )
         WHERE COALESCE(ent.annulled_at, ene.annulled_at) IS NULL

@@ -5,11 +5,11 @@ import { booleanFormat } from 'src/util/formats';
 export class LoginDto {
     @IsNumber()
     @IsInt()
-    id_system: number;
+    system_id: number;
 
     @IsNumber()
     @IsInt()
-    id_system_subscription: number;
+    system_subscription_id: number;
 
     @IsString()
     @MinLength(5)

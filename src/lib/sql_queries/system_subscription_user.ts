@@ -1,17 +1,17 @@
 type GetAllUsersParams = {
-    id_user?: number | string | null,
-    id_system?: number | string | null,
-    id_system_subscription?: number | string | null,
-    id_system_subscription_user?: number | string | null,
+    user_id?: number | string | null,
+    system_id?: number | string | null,
+    system_subscription_id?: number | string | null,
+    system_subscription_user_id?: number | string | null,
     annulled?: boolean | null,
 }
 
 export type User = {
     id: number;
-    id_system: number;
-    id_system_subscription: number;
-    id_entity: number;
-    id_system_subscription_user: number;
+    system_id: number;
+    system_subscription_id: number;
+    entity_id: number;
+    system_subscription_user_id: number;
     username: string;
     password: string;
     name?: string | null;
@@ -40,16 +40,16 @@ export function getAllUsers({params = {}, __limit, __page}: {params?: GetAllUser
         limitString = (!(test.test(__limit.toString())) && !(test.test(__page.toString()))) ? `LIMIT ${__limit} offset ${(Number(__page) - 1) * Number(__limit)}` : '';
     }
 
-    if((params.id_user ?? params.id_system_subscription_user ?? null) !== null) {
-        where.push(`ssu.id = ${params.id_user ?? params.id_system_subscription_user}`);
+    if((params.user_id ?? params.system_subscription_user_id ?? null) !== null) {
+        where.push(`ssu.id = ${params.user_id ?? params.system_subscription_user_id}`);
     }
 
-    if((params.id_system ?? null) !== null) {
-        where.push(`sys.id = ${params.id_system}`);
+    if((params.system_id ?? null) !== null) {
+        where.push(`sys.id = ${params.system_id}`);
     }
 
-    if((params.id_system_subscription ?? null) !== null) {
-        where.push(`ss.id = ${params.id_system_subscription}`);
+    if((params.system_subscription_id ?? null) !== null) {
+        where.push(`ss.id = ${params.system_subscription_id}`);
     }
 
     if((params.annulled ?? null) !== null) {
@@ -60,10 +60,10 @@ export function getAllUsers({params = {}, __limit, __page}: {params?: GetAllUser
 
     return `SELECT
         ssu.id,
-        ss.id_system,
-        ssu.id_system_subscription,
-        ssu.id_entity,
-        ssu.id AS id_system_subscription_user,
+        ss.system_id,
+        ssu.system_subscription_id,
+        ssu.entity_id,
+        ssu.id AS system_subscription_user_id,
         ssu.username,
         ssu.password,
         ent.name,
@@ -87,23 +87,23 @@ export function getAllUsers({params = {}, __limit, __page}: {params?: GetAllUser
         END AS annulled_by
     FROM system_subscription_user ssu
     INNER JOIN system_subscription ss
-        ON ss.id = ssu.id_system_subscription
-    INNER JOIN \`system\` sys
-        ON sys.id = ss.id_system
+        ON ss.id = ssu.system_subscription_id
+    INNER JOIN "system" sys
+        ON sys.id = ss.system_id
     INNER JOIN entity ent
-        ON ent.id = ssu.id_entity
+        ON ent.id = ssu.entity_id
     LEFT JOIN entity_documents_by_entity ede
-        ON ede.id_entity = ssu.id_entity
+        ON ede.entity_id = ssu.entity_id
     LEFT JOIN entity_names_concat_by_type names
-        ON names.id_entity = ent.id
+        ON names.entity_id = ent.id
         AND names.type = 'Name'
     LEFT JOIN entity_names_concat_by_type surnames
-        ON surnames.id_entity = ent.id
+        ON surnames.entity_id = ent.id
         AND surnames.type = 'Surname'
     LEFT JOIN entity_phones_concat epc
-        ON epc.id_entity = ent.id
+        ON epc.entity_id = ent.id
     LEFT JOIN entity_emails_concat eec
-        ON eec.id_entity = ent.id
+        ON eec.entity_id = ent.id
     WHERE COALESCE(ss.annulled_at, sys.annulled_at, ssu.annulled_at, ent.annulled_at) IS NULL
         AND COALESCE(names.name, surnames.name) IS NOT NULL
         ${where}

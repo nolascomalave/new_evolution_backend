@@ -21,7 +21,7 @@ export class UnitMeasurementService {
         // private resendService: ResendService
     ) {}
 
-    async processUnitMeasurement(um: UnitMeasurementDef, prisma?: TransactionPrisma) {
+    /* async processUnitMeasurement(um: UnitMeasurementDef, prisma?: TransactionPrisma) {
         const isPosibleTransaction = !prisma,
             errors = new HandlerErrors(),
             isUpdating = 'id_unit_measurement' in um,
@@ -63,5 +63,5 @@ export class UnitMeasurementService {
 
             }
         }
-    }
+    } */
 }

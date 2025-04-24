@@ -20,7 +20,7 @@ class NameDto {
 
     @IsNumber()
     @IsInt()
-    id_entity_name_type: number
+    entity_name_type_id: number
 }
 
 class DocumentDto {
@@ -36,7 +36,7 @@ class DocumentDto {
 
     @IsNumber()
     @IsInt()
-    id_entity_document_category: number
+    entity_document_category_id: number
 }
 
 
@@ -57,7 +57,7 @@ const transformJSON = ({ value }) => {
 export class AddOrUpdateDto {
     @IsOptional()
     @IsInt()
-    id_entity?: number;
+    entity_id?: number;
 
     @Transform(({value}) => booleanFormat(value))
     @IsBoolean()

@@ -4,419 +4,400 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model entity {
-  id                                                                    Int                        @id @default(autoincrement())
-  id_entity_parent                                                      Int?
-  id_document                                                           Int?
-  is_natural                                                            Boolean                    @default(dbgenerated("b'1'")) @db.Bit(1)
-  name                                                                  String                     @db.VarChar(2000)
-  gender                                                                entity_gender?
-  date_birth                                                            DateTime?                  @db.DateTime(0)
-  address                                                               String?                    @db.VarChar(2000)
-  photo                                                                 String?                    @db.VarChar(2000)
-  created_at                                                            DateTime                   @default(now()) @db.DateTime(0)
-  created_by                                                            Int?
-  updated_at                                                            DateTime?                  @db.DateTime(0)
-  updated_by                                                            Int?
-  inactivated_at                                                        DateTime?                  @db.DateTime(0)
-  inactivated_by                                                        Int?
-  annulled_at                                                           DateTime?                  @db.DateTime(0)
-  annulled_by                                                           Int?
-  entity                                                                entity?                    @relation("entityToentity", fields: [id_entity_parent], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_ibfk_1")
-  other_entity                                                          entity[]                   @relation("entityToentity")
-  system_subscription_user_entity_created_byTosystem_subscription_user  system_subscription_user?  @relation("entity_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_ibfk_2")
-  system_subscription_user_entity_updated_byTosystem_subscription_user  system_subscription_user?  @relation("entity_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_ibfk_3")
-  system_subscription_user_entity_annulled_byTosystem_subscription_user system_subscription_user?  @relation("entity_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_ibfk_4")
-  entity_document                                                       entity_document[]
-  system_subscription                                                   system_subscription[]
-  system_subscription_user_system_subscription_user_id_entityToentity   system_subscription_user[] @relation("system_subscription_user_id_entityToentity")
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model TEMP_unit_measurement {
+  id                           Int  @id @default(autoincrement())
+  category                     String? @db.VarChar(50)
+  type                         String? @db.VarChar(50)
+  subtype                      String? @db.VarChar(50)
+  unit_measurement             String? @db.VarChar(250)
+  symbol                       String? @db.VarChar(250)
+  value                        String? @db.VarChar(250)
+  numericValue                 String? @db.VarChar(250)
+  category_id                  Int?
+  type_id                      Int?
+  subtype_id                   Int?
+  unit_measurement_category_id Int?
+}
 
-  @@index([annulled_by], map: "annulled_by")
-  @@index([created_by], map: "created_by")
-  @@index([id_entity_parent], map: "id_entity_parent")
-  @@index([updated_by], map: "updated_by")
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model TEMP_unit_measurement_category {
+  id                           Int                     @id @default(autoincrement())
+  unit_measurement_category_id Int?
+  category                     String                     @db.VarChar(100)
+  annulled_at                  DateTime?                  @db.Timestamp(6)
+  annulled_by                  Int?
+  unit_measurement_category    unit_measurement_category? @relation(fields: [unit_measurement_category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "TEMP_unit_measurement_categor_unit_measurement_category_id_fkey")
+  system_subscription_user     system_subscription_user?  @relation(fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([unit_measurement_category_id, category], map: "unit_measurement_category_pk1")
+}
+
+model entity {
+  id                                                                       Int                      @id @default(autoincrement())
+  entity_parent_id                                                         Int?
+  document_id                                                              Int?
+  is_natural                                                               String                      @default("1") @db.Bit(1)
+  name                                                                     String                      @db.VarChar(2000)
+  gender                                                                   entity_gender_enum?
+  date_birth                                                               DateTime?                   @db.Timestamp(6)
+  address                                                                  String?                     @db.VarChar(2000)
+  photo                                                                    String?                     @db.VarChar(2000)
+  created_at                                                               DateTime                    @default(now()) @db.Timestamp(6)
+  created_by                                                               Int?
+  inactivated_at                                                           DateTime?                   @db.Timestamp(6)
+  inactivated_by                                                           Int?
+  updated_at                                                               DateTime?                   @db.Timestamp(6)
+  updated_by                                                               Int?
+  annulled_at                                                              DateTime?                   @db.Timestamp(6)
+  annulled_by                                                              Int?
+  annullator_user                                                          system_subscription_user?   @relation("entity_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator_user                                                             system_subscription_user?   @relation("entity_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity                                                                   entity?                     @relation("entityToentity", fields: [entity_parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  other_entity                                                             entity[]                    @relation("entityToentity")
+  inactivator_user                                                         system_subscription_user?   @relation("entity_inactivated_byTosystem_subscription_user", fields: [inactivated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  updater_user                                                             system_subscription_user?   @relation("entity_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity_document                                                          entity_document[]
+  entity_document_by_entity                                                entity_document_by_entity[]
+  entity_email_by_entity                                                   entity_email_by_entity[]
+  entity_name_by_entity                                                    entity_name_by_entity[]
+  entity_phone_by_entity                                                   entity_phone_by_entity[]
+  system_subscription                                                      system_subscription[]
+  system_subscription_user                                                 system_subscription_user[]  @relation("system_subscription_user_entity_idToentity")
 }
 
 model entity_document {
-  id                                                                             Int                       @id @default(autoincrement())
-  id_entity_document_category                                                    Int?
-  id_entity                                                                      Int?
-  document                                                                       String?                   @db.VarChar(250)
-  order                                                                          Int                       @default(0)
-  created_at                                                                     DateTime                  @default(now()) @db.DateTime(0)
+  id                                                                             Int                      @id @default(autoincrement())
+  entity_document_category_id                                                    Int?
+  entity_id                                                                      Int?
+  document                                                                       String?                     @db.VarChar(250)
+  order                                                                          Int                         @default(0)
+  created_at                                                                     DateTime                    @default(now()) @db.Timestamp(6)
   created_by                                                                     Int
-  annulled_at                                                                    DateTime?                 @db.DateTime(0)
+  annulled_at                                                                    DateTime?                   @db.Timestamp(6)
   annulled_by                                                                    Int?
-  entity_document_category                                                       entity_document_category? @relation(fields: [id_entity_document_category], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_document_ibfk_1")
-  entity                                                                         entity?                   @relation(fields: [id_entity], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_document_ibfk_2")
-  system_subscription_user_entity_document_created_byTosystem_subscription_user  system_subscription_user  @relation("entity_document_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_document_ibfk_3")
-  system_subscription_user_entity_document_annulled_byTosystem_subscription_user system_subscription_user? @relation("entity_document_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_document_ibfk_4")
-
-  @@index([annulled_by], map: "annulled_by")
-  @@index([created_by], map: "created_by")
-  @@index([id_entity], map: "id_entity")
-  @@index([id_entity_document_category], map: "id_entity_document_category")
+  annullator_user                                                                 system_subscription_user?   @relation("entity_document_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator_user                                                                   system_subscription_user    @relation("entity_document_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity_document_category                                                       entity_document_category?   @relation(fields: [entity_document_category_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity                                                                         entity?                     @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity_document_by_entity                                                      entity_document_by_entity[]
 }
 
 model entity_document_by_entity {
-  id_entity          Int
-  id_entity_document Int
-  order              Int       @default(0)
-  created_at         DateTime  @default(now()) @db.DateTime(0)
-  created_by         Int
-  annulled_at        DateTime? @db.DateTime(0)
-  annulled_by        Int?
+  entity_id                                                                                Int
+  entity_document_id                                                                       Int
+  order                                                                                    Int                       @default(0)
+  created_at                                                                               DateTime                  @default(now()) @db.Timestamp(6)
+  created_by                                                                               Int
+  annulled_at                                                                              DateTime?                 @db.Timestamp(6)
+  annulled_by                                                                              Int?
+  annullator_user                                                                           system_subscription_user? @relation("entity_document_by_entity_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator_user                                                                             system_subscription_user  @relation("entity_document_by_entity_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity_document                                                                          entity_document           @relation(fields: [entity_document_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity                                                                                   entity                    @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([id_entity, id_entity_document])
+  @@id([entity_id, entity_document_id])
 }
 
 model entity_document_category {
-  id                                                                                      Int                        @id @default(autoincrement())
-  id_parent                                                                               Int?
-  id_city                                                                                 Int?
-  id_state                                                                                Int?
-  id_country                                                                              Int?
+  id                                                                                      Int                     @id @default(autoincrement())
+  parent_id                                                                               Int?
+  city_id                                                                                 Int?
+  state_id                                                                                Int?
+  country_id                                                                              Int?
   category                                                                                String                     @db.VarChar(250)
   symbol                                                                                  String?                    @db.VarChar(50)
-  created_at                                                                              DateTime                   @default(now()) @db.DateTime(0)
+  created_at                                                                              DateTime                   @default(now()) @db.Timestamp(6)
   created_by                                                                              Int
-  annulled_at                                                                             DateTime?                  @db.DateTime(0)
+  annulled_at                                                                             DateTime?                  @db.Timestamp(6)
   annulled_by                                                                             Int?
   entity_document                                                                         entity_document[]
-  entity_document_category                                                                entity_document_category?  @relation("entity_document_categoryToentity_document_category", fields: [id_parent], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_document_category_ibfk_1")
+  annullator_user                                                                          system_subscription_user?  @relation("entity_document_category_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator_user                                                                            system_subscription_user   @relation("entity_document_category_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity_document_category                                                                entity_document_category?  @relation("entity_document_categoryToentity_document_category", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   other_entity_document_category                                                          entity_document_category[] @relation("entity_document_categoryToentity_document_category")
-  system_subscription_user_entity_document_category_created_byTosystem_subscription_user  system_subscription_user   @relation("entity_document_category_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_document_category_ibfk_2")
-  system_subscription_user_entity_document_category_annulled_byTosystem_subscription_user system_subscription_user?  @relation("entity_document_category_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_document_category_ibfk_3")
-
-  @@index([annulled_by], map: "annulled_by")
-  @@index([created_by], map: "created_by")
-  @@index([id_parent], map: "id_parent")
 }
 
 model entity_email {
-  id                                                                          Int                       @id @default(autoincrement())
+  id                                                                          Int                    @id @default(autoincrement())
   email                                                                       String                    @unique(map: "email") @db.VarChar(250)
-  created_at                                                                  DateTime                  @default(now()) @db.DateTime(0)
+  created_at                                                                  DateTime                  @default(now()) @db.Timestamp(6)
   created_by                                                                  Int
-  updated_at                                                                  DateTime?                 @db.DateTime(0)
+  updated_at                                                                  DateTime?                 @db.Timestamp(6)
   updated_by                                                                  Int?
-  annulled_at                                                                 DateTime?                 @db.DateTime(0)
+  annulled_at                                                                 DateTime?                 @db.Timestamp(6)
   annulled_by                                                                 Int?
-  system_subscription_user_entity_email_created_byTosystem_subscription_user  system_subscription_user  @relation("entity_email_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_email_ibfk_1")
-  system_subscription_user_entity_email_updated_byTosystem_subscription_user  system_subscription_user? @relation("entity_email_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_email_ibfk_2")
-  system_subscription_user_entity_email_annulled_byTosystem_subscription_user system_subscription_user? @relation("entity_email_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_email_ibfk_3")
-
-  @@index([annulled_by], map: "annulled_by")
-  @@index([created_by], map: "created_by")
-  @@index([updated_by], map: "updated_by")
+  annullator_user                                                              system_subscription_user? @relation("entity_email_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator_user                                                                system_subscription_user  @relation("entity_email_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  updater_user                                                                system_subscription_user? @relation("entity_email_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity_email_by_entity                                                      entity_email_by_entity[]
 }
 
 model entity_email_by_entity {
-  id_entity                                                                             Int
-  id_entity_email                                                                       Int
+  entity_id                                                                             Int
+  entity_email_id                                                                       Int
   order                                                                                 Int                       @default(0)
-  created_at                                                                            DateTime                  @default(now()) @db.DateTime(0)
+  created_at                                                                            DateTime                  @default(now()) @db.Timestamp(6)
   created_by                                                                            Int
-  annulled_at                                                                           DateTime?                 @db.DateTime(0)
+  annulled_at                                                                           DateTime?                 @db.Timestamp(6)
   annulled_by                                                                           Int?
-  system_subscription_user_entity_email_by_entity_created_byTosystem_subscription_user  system_subscription_user  @relation("entity_email_by_entity_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_email_by_entity_ibfk_1")
-  system_subscription_user_entity_email_by_entity_annulled_byTosystem_subscription_user system_subscription_user? @relation("entity_email_by_entity_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_email_by_entity_ibfk_2")
+  annullator_user                                                                        system_subscription_user? @relation("entity_email_by_entity_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator_user                                                                          system_subscription_user  @relation("entity_email_by_entity_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity_email                                                                          entity_email              @relation(fields: [entity_email_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity                                                                                entity                    @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([id_entity, id_entity_email])
-  @@index([annulled_by], map: "annulled_by")
-  @@index([created_by], map: "created_by")
+  @@id([entity_id, entity_email_id])
 }
 
 model entity_name {
-  id                                                                         Int                       @id @default(autoincrement())
+  id                                                                         Int                    @id @default(autoincrement())
   name                                                                       String                    @unique(map: "name") @db.VarChar(250)
-  created_at                                                                 DateTime                  @default(now()) @db.DateTime(0)
+  created_at                                                                 DateTime                  @default(now()) @db.Timestamp(6)
   created_by                                                                 Int
-  updated_at                                                                 DateTime?                 @db.DateTime(0)
+  updated_at                                                                 DateTime?                 @db.Timestamp(6)
   updated_by                                                                 Int?
-  annulled_at                                                                DateTime?                 @db.DateTime(0)
+  annulled_at                                                                DateTime?                 @db.Timestamp(6)
   annulled_by                                                                Int?
-  system_subscription_user_entity_name_created_byTosystem_subscription_user  system_subscription_user  @relation("entity_name_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_name_ibfk_1")
-  system_subscription_user_entity_name_updated_byTosystem_subscription_user  system_subscription_user? @relation("entity_name_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_name_ibfk_2")
-  system_subscription_user_entity_name_annulled_byTosystem_subscription_user system_subscription_user? @relation("entity_name_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_name_ibfk_3")
-
-  @@index([annulled_by], map: "annulled_by")
-  @@index([created_by], map: "created_by")
-  @@index([updated_by], map: "updated_by")
+  annullator_user                                                             system_subscription_user? @relation("entity_name_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator_user                                                               system_subscription_user  @relation("entity_name_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  updater_user                                                               system_subscription_user? @relation("entity_name_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity_name_by_entity                                                      entity_name_by_entity[]
 }
 
 model entity_name_by_entity {
-  id_entity                                                                            Int
-  id_entity_name                                                                       Int
-  id_entity_name_type                                                                  Int
+  entity_id                                                                            Int
+  entity_name_id                                                                       Int
+  entity_name_type_id                                                                  Int
   order_type                                                                           Int                       @default(0)
   order                                                                                Int                       @default(0)
-  created_at                                                                           DateTime                  @default(now()) @db.DateTime(0)
+  created_at                                                                           DateTime                  @default(now()) @db.Timestamp(6)
   created_by                                                                           Int
-  annulled_at                                                                          DateTime?                 @db.DateTime(0)
+  annulled_at                                                                          DateTime?                 @db.Timestamp(6)
   annulled_by                                                                          Int?
-  entity_name_type                                                                     entity_name_type          @relation(fields: [id_entity_name_type], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_name_by_entity_ibfk_1")
-  system_subscription_user_entity_name_by_entity_created_byTosystem_subscription_user  system_subscription_user  @relation("entity_name_by_entity_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_name_by_entity_ibfk_2")
-  system_subscription_user_entity_name_by_entity_annulled_byTosystem_subscription_user system_subscription_user? @relation("entity_name_by_entity_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_name_by_entity_ibfk_3")
+  annullator_user                                                                       system_subscription_user? @relation("entity_name_by_entity_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator_user                                                                         system_subscription_user  @relation("entity_name_by_entity_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity                                                                               entity                    @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity_name                                                                          entity_name               @relation(fields: [entity_name_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity_name_type                                                                     entity_name_type          @relation(fields: [entity_name_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([id_entity, id_entity_name, id_entity_name_type])
-  @@index([annulled_by], map: "annulled_by")
-  @@index([created_by], map: "created_by")
-  @@index([id_entity_name_type], map: "id_entity_name_type")
+  @@id([entity_id, entity_name_id, entity_name_type_id])
 }
 
 model entity_name_type {
-  id                                                                              Int                       @id @default(autoincrement())
-  type                                                                            entity_name_type_type?    @unique(map: "type")
-  apply_to_natural                                                                Int                       @default(0)
-  apply_to_legal                                                                  Int                       @default(0)
-  created_at                                                                      DateTime                  @default(now()) @db.DateTime(0)
+  id                                                                              Int                      @id @default(autoincrement())
+  type                                                                            entity_name_type_type_enum? @unique(map: "type")
+  apply_to_natural                                                                Int                         @default(0)
+  apply_to_legal                                                                  Int                         @default(0)
+  created_at                                                                      DateTime                    @default(now()) @db.Timestamp(6)
   created_by                                                                      Int?
-  updated_at                                                                      DateTime?                 @db.DateTime(0)
+  updated_at                                                                      DateTime?                   @db.Timestamp(6)
   updated_by                                                                      Int?
-  annulled_at                                                                     DateTime?                 @db.DateTime(0)
+  annulled_at                                                                     DateTime?                   @db.Timestamp(6)
   annulled_by                                                                     Int?
   entity_name_by_entity                                                           entity_name_by_entity[]
-  system_subscription_user_entity_name_type_created_byTosystem_subscription_user  system_subscription_user? @relation("entity_name_type_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_name_type_ibfk_1")
-  system_subscription_user_entity_name_type_updated_byTosystem_subscription_user  system_subscription_user? @relation("entity_name_type_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_name_type_ibfk_2")
-  system_subscription_user_entity_name_type_annulled_byTosystem_subscription_user system_subscription_user? @relation("entity_name_type_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_name_type_ibfk_3")
-
-  @@index([annulled_by], map: "annulled_by")
-  @@index([created_by], map: "created_by")
-  @@index([updated_by], map: "updated_by")
+  annullator_user                                                                  system_subscription_user?   @relation("entity_name_type_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator_user                                                                    system_subscription_user?   @relation("entity_name_type_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  updater_user                                                                    system_subscription_user?   @relation("entity_name_type_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model entity_phone {
-  id                                                                          Int                       @id @default(autoincrement())
+  id                                                                          Int                    @id @default(autoincrement())
   phone                                                                       String                    @unique(map: "phone") @db.VarChar(250)
-  created_at                                                                  DateTime                  @default(now()) @db.DateTime(0)
+  created_at                                                                  DateTime                  @default(now()) @db.Timestamp(6)
   created_by                                                                  Int
-  updated_at                                                                  DateTime?                 @db.DateTime(0)
+  updated_at                                                                  DateTime?                 @db.Timestamp(6)
   updated_by                                                                  Int?
-  annulled_at                                                                 DateTime?                 @db.DateTime(0)
+  annulled_at                                                                 DateTime?                 @db.Timestamp(6)
   annulled_by                                                                 Int?
-  system_subscription_user_entity_phone_created_byTosystem_subscription_user  system_subscription_user  @relation("entity_phone_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_phone_ibfk_1")
-  system_subscription_user_entity_phone_updated_byTosystem_subscription_user  system_subscription_user? @relation("entity_phone_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_phone_ibfk_2")
-  system_subscription_user_entity_phone_annulled_byTosystem_subscription_user system_subscription_user? @relation("entity_phone_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_phone_ibfk_3")
-
-  @@index([annulled_by], map: "annulled_by")
-  @@index([created_by], map: "created_by")
-  @@index([updated_by], map: "updated_by")
+  annullator_user                                                              system_subscription_user? @relation("entity_phone_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator_user                                                                system_subscription_user  @relation("entity_phone_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  updater_user                                                                system_subscription_user? @relation("entity_phone_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity_phone_by_entity                                                      entity_phone_by_entity[]
 }
 
 model entity_phone_by_entity {
-  id_entity                                                                             Int
-  id_entity_phone                                                                       Int
+  entity_id                                                                             Int
+  entity_phone_id                                                                       Int
   order                                                                                 Int                       @default(0)
-  created_at                                                                            DateTime                  @default(now()) @db.DateTime(0)
+  created_at                                                                            DateTime                  @default(now()) @db.Timestamp(6)
   created_by                                                                            Int
-  annulled_at                                                                           DateTime?                 @db.DateTime(0)
+  annulled_at                                                                           DateTime?                 @db.Timestamp(6)
   annulled_by                                                                           Int?
-  system_subscription_user_entity_phone_by_entity_created_byTosystem_subscription_user  system_subscription_user  @relation("entity_phone_by_entity_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_phone_by_entity_ibfk_1")
-  system_subscription_user_entity_phone_by_entity_annulled_byTosystem_subscription_user system_subscription_user? @relation("entity_phone_by_entity_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "entity_phone_by_entity_ibfk_2")
+  annullator_user                                                                        system_subscription_user? @relation("entity_phone_by_entity_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator_user                                                                          system_subscription_user  @relation("entity_phone_by_entity_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity                                                                                entity                    @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity_phone                                                                          entity_phone              @relation(fields: [entity_phone_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([id_entity, id_entity_phone])
-  @@index([annulled_by], map: "annulled_by")
-  @@index([created_by], map: "created_by")
+  @@id([entity_id, entity_phone_id])
 }
 
 model system {
-  id                  Int                   @id @default(autoincrement())
-  key_name            String                @unique(map: "key_name") @db.VarChar(250)
-  name                String                @db.VarChar(250)
-  logo                String?               @db.VarChar(2000)
-  created_at          DateTime              @default(now()) @db.DateTime(0)
-  inactivated_at      DateTime              @default(now()) @db.DateTime(0)
-  updated_at          DateTime?             @db.DateTime(0)
-  annulled_at         DateTime?             @db.DateTime(0)
-  system_subscription system_subscription[]
+  id                       Int                    @id @default(autoincrement())
+  key_name                 String                    @unique(map: "key_name") @db.VarChar(250)
+  name                     String                    @db.VarChar(250)
+  logo                     String?                   @db.VarChar(2000)
+  created_at               DateTime                  @default(now()) @db.Timestamp(6)
+  inactivated_at           DateTime?                 @db.Timestamp(6)
+  inactivated_by           Int?
+  updated_at               DateTime?                 @db.Timestamp(6)
+  annulled_at              DateTime?                 @db.Timestamp(6)
+  system_subscription_user system_subscription_user? @relation(fields: [inactivated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  system_subscription      system_subscription[]
 }
 
 model system_subscription {
-  id                                                                                            Int                        @id @default(autoincrement())
-  id_system                                                                                     Int
-  id_entity                                                                                     Int
-  created_at                                                                                    DateTime                   @default(now()) @db.DateTime(0)
+  id                                                                                            Int                      @id @default(autoincrement())
+  system_id                                                                                     Int
+  entity_id                                                                                     Int
+  created_at                                                                                    DateTime                    @default(now()) @db.Timestamp(6)
   created_by                                                                                    Int?
-  updated_at                                                                                    DateTime?                  @db.DateTime(0)
-  updated_by                                                                                    Int?
-  inactivated_at                                                                                DateTime?                  @db.DateTime(0)
+  inactivated_at                                                                                DateTime?                   @db.Timestamp(6)
   inactivated_by                                                                                Int?
-  annulled_at                                                                                   DateTime?                  @db.DateTime(0)
+  updated_at                                                                                    DateTime?                   @db.Timestamp(6)
+  updated_by                                                                                    Int?
+  annulled_at                                                                                   DateTime?                   @db.Timestamp(6)
   annulled_by                                                                                   Int?
-  system                                                                                        system                     @relation(fields: [id_system], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "system_subscription_ibfk_1")
-  system_subscription_user_system_subscription_annulled_byTosystem_subscription_user            system_subscription_user?  @relation("system_subscription_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "system_subscription_ibfk_5")
-  entity                                                                                        entity                     @relation(fields: [id_entity], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "system_subscription_ibfk_2")
-  system_subscription_user_system_subscription_created_byTosystem_subscription_user             system_subscription_user?  @relation("system_subscription_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "system_subscription_ibfk_3")
-  system_subscription_user_system_subscription_updated_byTosystem_subscription_user             system_subscription_user?  @relation("system_subscription_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "system_subscription_ibfk_4")
-  system_subscription_user_system_subscription_user_id_system_subscriptionTosystem_subscription system_subscription_user[] @relation("system_subscription_user_id_system_subscriptionTosystem_subscription")
+  annullator_user                                                                                system_subscription_user?   @relation("system_subscription_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator_user                                                                                  system_subscription_user?   @relation("system_subscription_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity                                                                                        entity                      @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Inactivating_user                                                                             system_subscription_user?   @relation("system_subscription_inactivated_byTosystem_subscription_user", fields: [inactivated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  system                                                                                        system                      @relation(fields: [system_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  updater_user                                                                                  system_subscription_user?   @relation("system_subscription_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  system_subscription_user                                                                      system_subscription_user[]  @relation("system_subscription_user_system_subscription_idTosystem_subscription")
+  unit_measurement_category                                                                     unit_measurement_category[]
 
-  @@unique([id_system, id_entity], map: "system_subscription_index_0")
-  @@index([annulled_by], map: "annulled_by")
-  @@index([created_by], map: "created_by")
-  @@index([id_entity], map: "id_entity")
-  @@index([updated_by], map: "updated_by")
+  @@unique([system_id, entity_id], map: "system_subscription_index_0")
 }
 
 model system_subscription_user {
-  id                                                                                            Int                        @id @default(autoincrement())
-  id_system_subscription                                                                        Int
-  id_entity                                                                                     Int
-  username                                                                                      String                     @db.VarChar(250)
-  password                                                                                      String                     @db.VarChar(2500)
-  created_at                                                                                    DateTime                   @default(now()) @db.DateTime(0)
-  created_by                                                                                    Int?
-  inactivated_at                                                                                DateTime?                  @db.DateTime(0)
-  inactivated_by                                                                                Int?
-  annulled_at                                                                                   DateTime?                  @db.DateTime(0)
-  annulled_by                                                                                   Int?
-  entity_entity_created_byTosystem_subscription_user                                            entity[]                   @relation("entity_created_byTosystem_subscription_user")
-  entity_entity_updated_byTosystem_subscription_user                                            entity[]                   @relation("entity_updated_byTosystem_subscription_user")
-  entity_entity_annulled_byTosystem_subscription_user                                           entity[]                   @relation("entity_annulled_byTosystem_subscription_user")
-  entity_document_entity_document_created_byTosystem_subscription_user                          entity_document[]          @relation("entity_document_created_byTosystem_subscription_user")
-  entity_document_entity_document_annulled_byTosystem_subscription_user                         entity_document[]          @relation("entity_document_annulled_byTosystem_subscription_user")
-  entity_document_category_entity_document_category_created_byTosystem_subscription_user        entity_document_category[] @relation("entity_document_category_created_byTosystem_subscription_user")
-  entity_document_category_entity_document_category_annulled_byTosystem_subscription_user       entity_document_category[] @relation("entity_document_category_annulled_byTosystem_subscription_user")
-  entity_email_entity_email_created_byTosystem_subscription_user                                entity_email[]             @relation("entity_email_created_byTosystem_subscription_user")
-  entity_email_entity_email_updated_byTosystem_subscription_user                                entity_email[]             @relation("entity_email_updated_byTosystem_subscription_user")
-  entity_email_entity_email_annulled_byTosystem_subscription_user                               entity_email[]             @relation("entity_email_annulled_byTosystem_subscription_user")
-  entity_email_by_entity_entity_email_by_entity_created_byTosystem_subscription_user            entity_email_by_entity[]   @relation("entity_email_by_entity_created_byTosystem_subscription_user")
-  entity_email_by_entity_entity_email_by_entity_annulled_byTosystem_subscription_user           entity_email_by_entity[]   @relation("entity_email_by_entity_annulled_byTosystem_subscription_user")
-  entity_name_entity_name_created_byTosystem_subscription_user                                  entity_name[]              @relation("entity_name_created_byTosystem_subscription_user")
-  entity_name_entity_name_updated_byTosystem_subscription_user                                  entity_name[]              @relation("entity_name_updated_byTosystem_subscription_user")
-  entity_name_entity_name_annulled_byTosystem_subscription_user                                 entity_name[]              @relation("entity_name_annulled_byTosystem_subscription_user")
-  entity_name_by_entity_entity_name_by_entity_created_byTosystem_subscription_user              entity_name_by_entity[]    @relation("entity_name_by_entity_created_byTosystem_subscription_user")
-  entity_name_by_entity_entity_name_by_entity_annulled_byTosystem_subscription_user             entity_name_by_entity[]    @relation("entity_name_by_entity_annulled_byTosystem_subscription_user")
-  entity_name_type_entity_name_type_created_byTosystem_subscription_user                        entity_name_type[]         @relation("entity_name_type_created_byTosystem_subscription_user")
-  entity_name_type_entity_name_type_updated_byTosystem_subscription_user                        entity_name_type[]         @relation("entity_name_type_updated_byTosystem_subscription_user")
-  entity_name_type_entity_name_type_annulled_byTosystem_subscription_user                       entity_name_type[]         @relation("entity_name_type_annulled_byTosystem_subscription_user")
-  entity_phone_entity_phone_created_byTosystem_subscription_user                                entity_phone[]             @relation("entity_phone_created_byTosystem_subscription_user")
-  entity_phone_entity_phone_updated_byTosystem_subscription_user                                entity_phone[]             @relation("entity_phone_updated_byTosystem_subscription_user")
-  entity_phone_entity_phone_annulled_byTosystem_subscription_user                               entity_phone[]             @relation("entity_phone_annulled_byTosystem_subscription_user")
-  entity_phone_by_entity_entity_phone_by_entity_created_byTosystem_subscription_user            entity_phone_by_entity[]   @relation("entity_phone_by_entity_created_byTosystem_subscription_user")
-  entity_phone_by_entity_entity_phone_by_entity_annulled_byTosystem_subscription_user           entity_phone_by_entity[]   @relation("entity_phone_by_entity_annulled_byTosystem_subscription_user")
-  system_subscription_system_subscription_annulled_byTosystem_subscription_user                 system_subscription[]      @relation("system_subscription_annulled_byTosystem_subscription_user")
-  system_subscription_system_subscription_created_byTosystem_subscription_user                  system_subscription[]      @relation("system_subscription_created_byTosystem_subscription_user")
-  system_subscription_system_subscription_updated_byTosystem_subscription_user                  system_subscription[]      @relation("system_subscription_updated_byTosystem_subscription_user")
-  system_subscription_system_subscription_user_id_system_subscriptionTosystem_subscription      system_subscription        @relation("system_subscription_user_id_system_subscriptionTosystem_subscription", fields: [id_system_subscription], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "system_subscription_user_ibfk_1")
-  entity_system_subscription_user_id_entityToentity                                             entity                     @relation("system_subscription_user_id_entityToentity", fields: [id_entity], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "system_subscription_user_ibfk_2")
-  system_subscription_user_system_subscription_user_created_byTosystem_subscription_user        system_subscription_user?  @relation("system_subscription_user_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "system_subscription_user_ibfk_3")
-  other_system_subscription_user_system_subscription_user_created_byTosystem_subscription_user  system_subscription_user[] @relation("system_subscription_user_created_byTosystem_subscription_user")
-  system_subscription_user_system_subscription_user_annulled_byTosystem_subscription_user       system_subscription_user?  @relation("system_subscription_user_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "system_subscription_user_ibfk_4")
-  other_system_subscription_user_system_subscription_user_annulled_byTosystem_subscription_user system_subscription_user[] @relation("system_subscription_user_annulled_byTosystem_subscription_user")
+  id                                                                                               Int                           @id @default(autoincrement())
+  system_subscription_id                                                                           Int
+  entity_id                                                                                        Int
+  username                                                                                         String?                          @db.VarChar(255)
+  password                                                                                         String                           @db.VarChar(2500)
+  created_at                                                                                       DateTime                         @default(now()) @db.Timestamp(6)
+  created_by                                                                                       Int?
+  inactivated_at                                                                                   DateTime?                        @db.Timestamp(6)
+  inactivated_by                                                                                   Int?
+  annulled_at                                                                                      DateTime?                        @db.Timestamp(6)
+  annulled_by                                                                                      Int?
 
-  @@unique([id_system_subscription, id_entity], map: "system_subscription_user_index_0")
-  @@unique([id_system_subscription, username], map: "system_subscription_user_index_1")
-  @@index([annulled_by], map: "annulled_by")
-  @@index([created_by], map: "created_by")
-  @@index([id_entity], map: "id_entity")
+  TEMP_unit_measurement_category                                                                   TEMP_unit_measurement_category[]
+  annulled_entity                                                                                  entity[]                         @relation("entity_annulled_byTosystem_subscription_user")
+  created_entity                                                                                   entity[]                         @relation("entity_created_byTosystem_subscription_user")
+  inactivated_entity                                                                               entity[]                         @relation("entity_inactivated_byTosystem_subscription_user")
+  updated_entity                                                                                   entity[]                         @relation("entity_updated_byTosystem_subscription_user")
+  annulled_entity_document                                                                         entity_document[]                @relation("entity_document_annulled_byTosystem_subscription_user")
+  created_entity_document                                                                          entity_document[]                @relation("entity_document_created_byTosystem_subscription_user")
+  annulled_entity_document_by_entity                                                               entity_document_by_entity[]      @relation("entity_document_by_entity_annulled_byTosystem_subscription_user")
+  created_entity_document_by_entity                                                                entity_document_by_entity[]      @relation("entity_document_by_entity_created_byTosystem_subscription_user")
+  annulled_entity_document_category                                                                entity_document_category[]       @relation("entity_document_category_annulled_byTosystem_subscription_user")
+  created_entity_document_category                                                                 entity_document_category[]       @relation("entity_document_category_created_byTosystem_subscription_user")
+  annulled_entity_email                                                                            entity_email[]                   @relation("entity_email_annulled_byTosystem_subscription_user")
+  created_entity_email                                                                             entity_email[]                   @relation("entity_email_created_byTosystem_subscription_user")
+  updated_entity_email                                                                             entity_email[]                   @relation("entity_email_updated_byTosystem_subscription_user")
+  annulled_entity_email_by_entity                                                                  entity_email_by_entity[]         @relation("entity_email_by_entity_annulled_byTosystem_subscription_user")
+  created_entity_email_by_entity                                                                   entity_email_by_entity[]         @relation("entity_email_by_entity_created_byTosystem_subscription_user")
+  annulled_entity_name                                                                             entity_name[]                    @relation("entity_name_annulled_byTosystem_subscription_user")
+  created_entity_name                                                                              entity_name[]                    @relation("entity_name_created_byTosystem_subscription_user")
+  updated_entity_name                                                                              entity_name[]                    @relation("entity_name_updated_byTosystem_subscription_user")
+  annulled_entity_name_by_entity                                                                   entity_name_by_entity[]          @relation("entity_name_by_entity_annulled_byTosystem_subscription_user")
+  created_entity_name_by_entity                                                                    entity_name_by_entity[]          @relation("entity_name_by_entity_created_byTosystem_subscription_user")
+  annulled_entity_name_type                                                                        entity_name_type[]               @relation("entity_name_type_annulled_byTosystem_subscription_user")
+  created_entity_name_type                                                                         entity_name_type[]               @relation("entity_name_type_created_byTosystem_subscription_user")
+  updated_entity_name_type                                                                         entity_name_type[]               @relation("entity_name_type_updated_byTosystem_subscription_user")
+  annulled_entity_phone                                                                            entity_phone[]                   @relation("entity_phone_annulled_byTosystem_subscription_user")
+  created_entity_phone                                                                             entity_phone[]                   @relation("entity_phone_created_byTosystem_subscription_user")
+  updated_entity_phone                                                                             entity_phone[]                   @relation("entity_phone_updated_byTosystem_subscription_user")
+  annulled_entity_phone_by_entity                                                                  entity_phone_by_entity[]         @relation("entity_phone_by_entity_annulled_byTosystem_subscription_user")
+  created_entity_phone_by_entity                                                                   entity_phone_by_entity[]         @relation("entity_phone_by_entity_created_byTosystem_subscription_user")
+  system                                                                                           system[]
+  annulled_system_subscription                                                                     system_subscription[]            @relation("system_subscription_annulled_byTosystem_subscription_user")
+  created_system_subscription                                                                      system_subscription[]            @relation("system_subscription_created_byTosystem_subscription_user")
+  inactivated_system_subscription                                                                  system_subscription[]            @relation("system_subscription_inactivated_byTosystem_subscription_user")
+  updated_system_subscription                                                                      system_subscription[]            @relation("system_subscription_updated_byTosystem_subscription_user")
+  annulator_user                                                                                   system_subscription_user?        @relation("system_subscription_user_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  annulator_users                                                                                  system_subscription_user[]       @relation("system_subscription_user_annulled_byTosystem_subscription_user")
+  creator_user                                                                                     system_subscription_user?        @relation("system_subscription_user_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator_users                                                                                    system_subscription_user[]       @relation("system_subscription_user_created_byTosystem_subscription_user")
+  entity                                                                                           entity                           @relation("system_subscription_user_entity_idToentity", fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  inactivator_user                                                                                 system_subscription_user?        @relation("system_subscription_user_inactivated_byTosystem_subscription_user", fields: [inactivated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  inactivator_users                                                                                system_subscription_user[]       @relation("system_subscription_user_inactivated_byTosystem_subscription_user")
+  system_subscription                                                                              system_subscription              @relation("system_subscription_user_system_subscription_idTosystem_subscription", fields: [system_subscription_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  annulled_unit_measurement                                                                        unit_measurement[]               @relation("unit_measurement_annulled_byTosystem_subscription_user")
+  created_unit_measurement                                                                         unit_measurement[]               @relation("unit_measurement_created_byTosystem_subscription_user")
+  updated_unit_measurement                                                                         unit_measurement[]               @relation("unit_measurement_updated_byTosystem_subscription_user")
+  annulled_unit_measurement_category                                                               unit_measurement_category[]      @relation("unit_measurement_category_annulled_byTosystem_subscription_user")
+  created_unit_measurement_category                                                                unit_measurement_category[]      @relation("unit_measurement_category_created_byTosystem_subscription_user")
+  updated_unit_measurement_category                                                                unit_measurement_category[]      @relation("unit_measurement_category_updated_byTosystem_subscription_user")
+
+  @@unique([system_subscription_id, entity_id], map: "system_subscription_user_index_0")
+  @@unique([system_subscription_id, username], map: "system_subscription_user_index_1")
 }
 
-enum entity_name_type_type {
+model unit_measurement {
+  id                                                                              Int                    @id @default(autoincrement())
+  unit_measurement_category_id                                                    Int
+  unit_measurement_base_id                                                        Int?
+  unit_measurement                                                                String                    @db.VarChar(250)
+  symbol                                                                          String?                   @db.VarChar(50)
+  value                                                                           String                    @db.VarChar(250)
+  numeric_value                                                                   String?                   @db.VarChar(250)
+  created_at                                                                      DateTime                  @default(now()) @db.Timestamp(6)
+  created_by                                                                      Int?
+  updated_at                                                                      DateTime?                 @db.Timestamp(6)
+  updated_by                                                                      Int?
+  annulled_at                                                                     DateTime?                 @db.Timestamp(6)
+  annulled_by                                                                     Int?
+  annullator_user                                                                  system_subscription_user? @relation("unit_measurement_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator_user                                                                    system_subscription_user? @relation("unit_measurement_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  unit_measurement_base                                                           unit_measurement?         @relation("unit_measurementTounit_measurement", fields: [unit_measurement_base_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  other_unit_measurement                                                          unit_measurement[]        @relation("unit_measurementTounit_measurement")
+  unit_measurement_category                                                       unit_measurement_category @relation(fields: [unit_measurement_category_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  updater_user                                                                    system_subscription_user? @relation("unit_measurement_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([unit_measurement_category_id, unit_measurement, symbol], map: "unit_measurement_index_0")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model unit_measurement_category {
+  id                                                                                       Int                           @id @default(autoincrement())
+  system_subscription_id                                                                   Int?
+  parent_id                                                                                Int?
+  category                                                                                 String                           @db.VarChar(250)
+  created_at                                                                               DateTime                         @default(now()) @db.Timestamp(6)
+  created_by                                                                               Int?
+  updated_at                                                                               DateTime?                        @db.Timestamp(6)
+  updated_by                                                                               Int?
+  annulled_at                                                                              DateTime?                        @db.Timestamp(6)
+  annulled_by                                                                              Int?
+  old_parent_id                                                                            Int?
+  old_id                                                                                   Int
+  TEMP_unit_measurement_category                                                           TEMP_unit_measurement_category[]
+  unit_measurement                                                                         unit_measurement[]
+  annullator_user                                                                          system_subscription_user?        @relation("unit_measurement_category_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator_user                                                                             system_subscription_user?        @relation("unit_measurement_category_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  unit_measurement_category                                                                unit_measurement_category?       @relation("unit_measurement_categoryTounit_measurement_category", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  other_unit_measurement_category                                                          unit_measurement_category[]      @relation("unit_measurement_categoryTounit_measurement_category")
+  system_subscription                                                                      system_subscription?             @relation(fields: [system_subscription_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  updater_user                                                                             system_subscription_user?        @relation("unit_measurement_category_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([system_subscription_id, parent_id, category], map: "unit_measurement_category_unique_1")
+}
+
+enum entity_gender_enum {
+  Male
+  Female
+}
+
+enum entity_name_type_type_enum {
   Name
   Surname
   Alias
   Business_Name         @map("Business Name")
   Comercial_Designation @map("Comercial Designation")
-}
-
-enum entity_gender {
-  Male
-  Female
-}
-
-model unit_measurement_type {
-  id              Int           @id @default(autoincrement())
-  type            String        @unique(map: "type") @db.VarChar(100)
-  created_at      DateTime      @default(now()) @db.DateTime(0)
-  created_by      Int
-  annulled_at     DateTime?     @db.DateTime(0)
-  annulled_by     Int?
-
-  @@index([annulled_by], map: "annulled_by")
-  @@index([created_by], map: "created_by")
-}
-
-model unit_measurement {
-  id                            Int           @id @default(autoincrement())
-  id_unit_measurement_type      Int
-  id_unit_measurement_base      Int
-  unit_measurement              String        @unique(map: "unit_measurement") @db.VarChar(250)
-  anglo_saxon                   Boolean       @default(dbgenerated("b'1'")) @db.Bit(1)
-  value                         Decimal
-  created_at                    DateTime      @default(now()) @db.DateTime(0)
-  created_by                    Int
-  annulled_at                   DateTime?     @db.DateTime(0)
-  annulled_by                   Int?
-
-  @@index([id_unit_measurement_type], map: "id_unit_measurement_type")
-  @@index([id_unit_measurement_base], map: "id_unit_measurement_base")
-  @@index([annulled_by], map: "annulled_by")
-  @@index([created_by], map: "created_by")
-}
-
-model unit_measurement_symbol {
-  id              Int           @id @default(autoincrement())
-  symbol          String        @unique(map: "symbol") @db.VarChar(250)
-  created_at      DateTime      @default(now()) @db.DateTime(0)
-  created_by      Int
-  annulled_at     DateTime?     @db.DateTime(0)
-  annulled_by     Int?
-
-  @@index([annulled_by], map: "annulled_by")
-  @@index([created_by], map: "created_by")
-}
-
-model symbol_by_unit_measurement {
-  id                            Int           @id @default(autoincrement())
-  id_unit_measurement_symbol    Int
-  id_unit_measurement           Int
-  ordering                      Int
-  symbol                        String        @unique(map: "symbol") @db.VarChar(250)
-  created_at                    DateTime      @default(now()) @db.DateTime(0)
-  created_by                    Int
-  annulled_at                   DateTime?     @db.DateTime(0)
-  annulled_by                   Int?
-
-  @@index([id_unit_measurement_symbol], map: "id_unit_measurement_symbol")
-  @@index([id_unit_measurement], map: "id_unit_measurement")
-  @@index([annulled_by], map: "annulled_by")
-  @@index([created_by], map: "created_by")
-  @@unique([id_unit_measurement_symbol, id_unit_measurement], map: "symbol_by_unit_measurement_index_1")
-}
-
-model unit_measurement_by_system_subscription {
-  id                            Int           @id @default(autoincrement())
-  id_unit_measurement           Int
-  id_system_subscription        Int
-  created_at                    DateTime      @default(now()) @db.DateTime(0)
-  created_by                    Int
-  annulled_at                   DateTime?     @db.DateTime(0)
-  annulled_by                   Int?
-
-  @@index([id_unit_measurement], map: "id_unit_measurement")
-  @@index([id_system_subscription], map: "id_system_subscription")
-  @@index([annulled_by], map: "annulled_by")
-  @@index([created_by], map: "created_by")
-  @@unique([id_unit_measurement, id_system_subscription], map: "unit_measurement_by_system_subscription_index_1")
-}
-
-model sym_by_unit_meas_by_sys_subsc {
-  id_unit_measurement_by_system_subscription    Int
-  id_symbol_by_unit_measurement                 Int
-  Ordering                                      Int
-  created_at                                    DateTime      @default(now()) @db.DateTime(0)
-  created_by                                    Int
-  annulled_at                                   DateTime?     @db.DateTime(0)
-  annulled_by                                   Int?
-
-  @@index([id_unit_measurement_by_system_subscription], map: "id_unit_measurement_by_system_subscription")
-  @@index([id_symbol_by_unit_measurement], map: "id_symbol_by_unit_measurement")
-  @@index([annulled_by], map: "annulled_by")
-  @@index([created_by], map: "created_by")
-  @@unique([id_unit_measurement_by_system_subscription, id_symbol_by_unit_measurement], map: "sym_by_unit_meas_by_sys_subsc_index_1")
 }

@@ -45,10 +45,10 @@ export class EntityController {
     //      401 Unauthorized.
     //      404 Not found.
     //      500 Error in server.
-    async getById(@Req() { user: { id_system_subscription } }: RequestSession, @Param() { id }: GetByIdDto) {
+    async getById(@Req() { user: { system_subscription_id } }: RequestSession, @Param() { id }: GetByIdDto) {
         const result = await this.service.getById({
             id,
-            id_system_subscription
+            system_subscription_id: Number(system_subscription_id)
         });
 
         return JSONParser(result);
@@ -82,7 +82,7 @@ export class EntityController {
             const entityResult = await this.service.addOrUpdate({
                 ...data,
                 photo,
-                id_system_subscription_user_moderator: req.user.id
+                system_subscription_user_moderator_id: Number(req.user.id)
             }, prisma);
 
             if(entityResult.errors.existsErrors()) {
@@ -141,8 +141,8 @@ export class EntityController {
             const entityResult = await this.service.addOrUpdate({
                 ...data,
                 photo,
-                id_entity: id,
-                id_system_subscription_user_moderator: req.user.id
+                entity_id: id,
+                system_subscription_user_moderator_id: Number(req.user.id)
             }, prisma);
 
             if(entityResult.errors.existsErrors()) {
@@ -165,7 +165,7 @@ export class EntityController {
             }
 
             if(e === 'error') {
-                if(errorsInProcess.get('id_entity') === 404) {
+                if(errorsInProcess.get('entity_id') === 404) {
                     throw new NotFoundException(undefined, 'Entiy not found!');
                 }
 

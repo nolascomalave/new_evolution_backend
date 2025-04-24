@@ -46,10 +46,10 @@ export class SystemSubscriptionUserController {
     //      401 Unauthorized.
     //      404 Not found.
     //      500 Error in server.
-    async getById(@Req() { user: { id_system_subscription } }: RequestSession, @Param() { id }: GetByIdDto, @Query() { allEntityInfo = false }: GetByIdQueryDto) {
+    async getById(@Req() { user: { system_subscription_id } }: RequestSession, @Param() { id }: GetByIdDto, @Query() { allEntityInfo = false }: GetByIdQueryDto) {
         const result = await this.service[allEntityInfo === true ? 'getUserEntityById' : 'getById']({
             id,
-            id_system_subscription
+            system_subscription_id: Number(system_subscription_id)
         });
 
         if(result !== null) {
@@ -91,7 +91,7 @@ export class SystemSubscriptionUserController {
             const user = await this.service.addOrUpdate({
                 ...data,
                 photo,
-                id_system_subscription_user_moderator: req.user.id,
+                system_subscription_user_moderator_id: Number(req.user.id),
                 is_natural: true
             }, prisma);
 
@@ -154,8 +154,8 @@ export class SystemSubscriptionUserController {
             const entityResult = await this.service.addOrUpdate({
                 ...data,
                 photo,
-                id_system_subscription_user: id,
-                id_system_subscription_user_moderator: req.user.id,
+                system_subscription_user_id: id,
+                system_subscription_user_moderator_id: Number(req.user.id),
                 is_natural: true
             }, prisma);
 
@@ -182,7 +182,7 @@ export class SystemSubscriptionUserController {
             }
 
             if(e === 'error') {
-                if(errorsInProcess.get('id_system_subscription_user') === 404) {
+                if(errorsInProcess.get('system_subscription_user_id') === 404) {
                     throw new NotFoundException(undefined, 'User not found!');
                 }
 
@@ -203,7 +203,7 @@ export class SystemSubscriptionUserController {
         try {
             const result = await this.service.changeStatus({
                 ...data,
-                id_system_subscription_user_moderator: moderator.id
+                system_subscription_user_moderator_id: Number(moderator.id)
             }, prisma);
 
             if(result.errors.existsErrors()) {
@@ -233,12 +233,12 @@ export class SystemSubscriptionUserController {
 
     @Patch('/reset-password')
     @HttpCode(HttpStatus.OK)
-    async resetPassword(@Body() { id_system_subscription_user }: ResetPasswordDto) {
+    async resetPassword(@Body() { system_subscription_user_id }: ResetPasswordDto) {
         const prisma = await this.prisma.beginTransaction();
 
         try {
             const { user, warning } = await this.service.resetUserPassword({
-                id: id_system_subscription_user,
+                id: system_subscription_user_id,
                 sendEmail: true
             }, prisma);
 
@@ -262,7 +262,7 @@ export class SystemSubscriptionUserController {
         const prisma = await this.prisma.beginTransaction();
 
         try {
-            const { warning } = await this.service.changeUserPassword({id_system_subscription_user: moderator.id, ...data}, prisma);
+            const { warning } = await this.service.changeUserPassword({system_subscription_user_id: Number(moderator.id), ...data}, prisma);
 
             await prisma.commit();
 

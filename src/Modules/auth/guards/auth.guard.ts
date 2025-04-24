@@ -5,20 +5,41 @@ import {
     UnauthorizedException,
   } from '@nestjs/common';
   import { JwtService } from '@nestjs/jwt';
-import { system_subscription_user } from '@prisma/client';
   import { Request } from 'express';
+import { system_subscription_user } from '@prisma/client';
 import { type SessionData } from 'express-session';
 import { FullUser } from 'src/Modules/system_subscription_user/system_subscription_user.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
+    constructor(private jwtService: JwtService) {}
+
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest<Request>();
 
-        if(((request.session as (Partial<SessionData> & { user?: FullUser | system_subscription_user })).user ?? null) == null) {
-            throw new UnauthorizedException();
+        if(((request.session as (Partial<SessionData> & { user?: FullUser | system_subscription_user })).user ?? null) != null) {
+          return true;
+        } else {
+          const request = context.switchToHttp().getRequest();
+          const token = this.extractTokenFromHeader(request);
+
+          if (!token) throw new UnauthorizedException();
+
+          try {
+              const payload = await this.jwtService.verifyAsync(token, {
+                  secret: process.env.jwtSecretKey,
+              });
+              request['user'] = payload;
+          } catch {
+              throw new UnauthorizedException();
+          }
         }
 
         return true;
+    }
+
+    private extractTokenFromHeader(request: Request) {
+        const [type, token] = request.headers.authorization?.split(' ') ?? [];
+        return type === 'Bearer' ? token : undefined;
     }
 }

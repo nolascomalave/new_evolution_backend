@@ -8,7 +8,7 @@ export function validateId(id: any, type: string, required?: boolean): ReturnVal
 	if(!id && !required) return null;
 	if(!id) return `${type} id is required!`;
 
-	if((typeof id !== 'string') && typeof id !== 'number') return (type+' must be defined in text or number format!');
+	if((typeof id !== 'string') && typeof id !== 'number' && typeof id !== 'bigint') return (type+' must be defined in text or number format!');
 
 	if(!(/^[1-9]([0-9]+)?$/.test(id.toString()))) return (type+' id must be a natural number in text or number format greater than 0!');
 

@@ -11,8 +11,8 @@ import {
 import HandlerErrors from "../../util/HandlerErrors";
 
 type ProcessEmailType = {
-    id_entity?: number;
-    id_entity_email: number;
+    entity_id?: number;
+    entity_email_id: number;
     email: any;
     created_by: number;
     order?: number;
@@ -20,7 +20,7 @@ type ProcessEmailType = {
 } | any;
 
 type ProcessMultipleEmailsType = {
-    id_entity?: number;
+    entity_id?: number;
     emails: string[];
     order: number;
     created_by: number;
@@ -28,17 +28,17 @@ type ProcessMultipleEmailsType = {
 } | any;
 
 export type ChangeEmailOrderType = {
-    id_entity_email: number;
-    id_entity: number;
+    entity_email_id: number;
+    entity_id: number;
     order: number;
     name?: string;
 } | any;
 
 type GetBelongingSystemType = {
     NotEqualEntityID?: boolean;
-    id_entity?: number;
-    id_entity_email?: number;
-    id_system_subscription?: number;
+    entity_id?: number;
+    entity_email_id?: number;
+    system_subscription_id?: number;
 }
 
 export class EntityEmailService {
@@ -65,12 +65,12 @@ export class EntityEmailService {
         } else {
             params.name ??= 'email';
 
-            errors.set('id_entity', validateId(params.id_entity, params.name + ' entity ID'));
+            errors.set('entity_id', validateId(params.entity_id, params.name + ' entity ID'));
             errors.set('created_by', validateId(params.created_by, params.name + ' processing user ID', true));
-            errors.set('id_entity_email', validateId(params.id_entity_email, params.name + ' ID'));
+            errors.set('entity_email_id', validateId(params.entity_email_id, params.name + ' ID'));
             errors.set(params.name, validateEmail(params.email, params.name, true));
 
-            if(!errors.exists('id_entity') && (params.id_entity ?? null) !== null) {
+            if(!errors.exists('entity_id') && (params.entity_id ?? null) !== null) {
                 errors.set('order', validateCuantity({
                     num: params.order,
                     name: params.name + ' order',
@@ -92,22 +92,22 @@ export class EntityEmailService {
             prisma ??= await this.prisma.beginTransaction();
 
             try {
-                const entity = (params.id_entity ?? null) === null ? null : await prisma.entity.findUnique({ where: { id: params.id_entity } }),
+                const entity = (params.entity_id ?? null) === null ? null : await prisma.entity.findUnique({ where: { id: params.entity_id } }),
                     user = (params.created_by ?? null) === null ? null : await prisma.system_subscription_user.findUnique({ where: { id: params.created_by } });
                 let email_by_entity: entity_email_by_entity | null = null;
 
-                if(params.id_entity_email) {
-                    email = await prisma.entity_email.findUnique({ where: { id: params.id_entity_email } });
+                if(params.entity_email_id) {
+                    email = await prisma.entity_email.findUnique({ where: { id: params.entity_email_id } });
 
                     if(!email) {
-                        errors.set('id_entity_email', params.name + ' not found!');
+                        errors.set('entity_email_id', params.name + ' not found!');
                     }
                 } else {
                     email = await prisma.entity_email.findUnique({ where: { email: params.email.trim().toLowerCase() } });
                 }
 
-                if(params.id_entity && !entity) {
-                    errors.set('id_entity', params.name + ' entity not found!');
+                if(params.entity_id && !entity) {
+                    errors.set('entity_id', params.name + ' entity not found!');
                 }
 
                 if(!user) {
@@ -116,14 +116,14 @@ export class EntityEmailService {
 
                 if(user && entity && email && (params.order ?? null) !== null && params.order == 1) {
                     const exisingEmailByEntity = await this.getBelongingSystem({
-                        id_entity: entity.id,
-                        id_system_subscription: user.id_system_subscription,
-                        id_entity_email: email.id,
+                        entity_id: Number(entity.id),
+                        system_subscription_id: Number(user.system_subscription_id),
+                        entity_email_id: Number(email.id),
                         NotEqualEntityID: true
                     }, prisma);
 
                     if(exisingEmailByEntity) {
-                        errors.set('id_entity_email', params.name + ' already exists for another entity as principal!');
+                        errors.set('entity_email_id', params.name + ' already exists for another entity as principal!');
                     }
                 }
 
@@ -134,9 +134,9 @@ export class EntityEmailService {
                 /* if(entity && email) {
                     email_by_entity = await prisma.entity_email_by_entity.findUnique({
                         where: {
-                            id_entity_id_entity_email: {
-                                id_entity: entity.id,
-                                id_entity_email: email.id
+                            entity_email_id_entity_id: {
+                                entity_id: entity.id,
+                                entity_email_id: email.id
                             }
                         }
                     });
@@ -166,10 +166,10 @@ export class EntityEmailService {
                             created_by: user?.id ?? 0
                         }
                     });
-                } else if(existingEmail) { // Solo pasa por aquí si email es el registro encontrado por la variable params.id_entity_email y existe un registro que tiene el correo electrónico buscado y es diferente del correo a editar.
+                } else if(existingEmail) { // Solo pasa por aquí si email es el registro encontrado por la variable params.entity_email_id y existe un registro que tiene el correo electrónico buscado y es diferente del correo a editar.
                     oldEmail = email;
                     email = existingEmail;
-                } else if(params.id_entity_email) {
+                } else if(params.entity_email_id) {
                     email = await prisma.entity_email.update({
                         where: {
                             id: email.id
@@ -183,9 +183,9 @@ export class EntityEmailService {
                 if(entity) {
                     email_by_entity = await prisma.entity_email_by_entity.findUnique({
                         where: {
-                            id_entity_id_entity_email: {
-                                id_entity: entity.id,
-                                id_entity_email: email.id
+                            entity_id_entity_email_id: {
+                                entity_id: entity.id,
+                                entity_email_id: email.id
                             }
                         }
                     });
@@ -193,8 +193,8 @@ export class EntityEmailService {
                     if(!email_by_entity) {
                         email_by_entity = await prisma.entity_email_by_entity.create({
                             data: {
-                                id_entity: entity.id,
-                                id_entity_email: email.id,
+                                entity_id: entity.id,
+                                entity_email_id: email.id,
                                 created_by: user?.id ?? 0,
                                 order: params.order ?? 0
                             }
@@ -202,9 +202,9 @@ export class EntityEmailService {
                     } else {
                         email_by_entity = await prisma.entity_email_by_entity.update({
                             where: {
-                                id_entity_id_entity_email: {
-                                    id_entity: entity.id,
-                                    id_entity_email: email.id
+                                entity_id_entity_email_id: {
+                                    entity_id: entity.id,
+                                    entity_email_id: email.id
                                 }
                             },
                             data: {
@@ -228,9 +228,9 @@ export class EntityEmailService {
                     if(oldEmail) {
                         const email_by_entity2 = await prisma.entity_email_by_entity.findUnique({
                             where: {
-                                id_entity_id_entity_email: {
-                                    id_entity: entity.id,
-                                    id_entity_email: oldEmail.id
+                                entity_id_entity_email_id: {
+                                    entity_id: entity.id,
+                                    entity_email_id: oldEmail.id
                                 }
                             }
                         });
@@ -238,9 +238,9 @@ export class EntityEmailService {
                         if(email_by_entity2 && !email_by_entity2.annulled_at) {
                             await prisma.entity_email_by_entity.update({
                                 where: {
-                                    id_entity_id_entity_email: {
-                                        id_entity: entity.id,
-                                        id_entity_email: oldEmail.id
+                                    entity_id_entity_email_id: {
+                                        entity_id: entity.id,
+                                        entity_email_id: oldEmail.id
                                     }
                                 },
                                 data: {
@@ -254,8 +254,8 @@ export class EntityEmailService {
 
                     if(entity) {
                         const changedEmailOrder = await this.changeEmailOrder({
-                            id_entity: entity.id,
-                            id_entity_email: email.id,
+                            entity_id: entity.id,
+                            entity_email_id: email.id,
                             order: params.order ?? 0,
                             name: params.name
                         }, prisma);
@@ -311,7 +311,7 @@ export class EntityEmailService {
         } else {
             params.name ??= 'emails';
 
-            errors.set('id_entity', validateId(params.id_entity, params.name + ' entity ID'));
+            errors.set('entity_id', validateId(params.entity_id, params.name + ' entity ID'));
             errors.set('created_by', validateId(params.created_by, params.name + ' processing user ID', true));
 
             if(!Array.isArray(params.emails)) {
@@ -332,11 +332,11 @@ export class EntityEmailService {
             prisma ??= await this.prisma.beginTransaction();
 
             try {
-                const entity = (params.id_entity ?? null) === null ? null : await prisma.entity.findUnique({ where: { id: params.id_entity } }),
+                const entity = (params.entity_id ?? null) === null ? null : await prisma.entity.findUnique({ where: { id: params.entity_id } }),
                     user = (params.created_by ?? null) === null ? null : await prisma.system_subscription_user.findUnique({ where: { id: params.created_by } });
 
-                if(params.id_entity && !entity) {
-                    errors.set('id_entity', params.name + ' entity not found!');
+                if(params.entity_id && !entity) {
+                    errors.set('entity_id', params.name + ' entity not found!');
                 }
 
                 if(!user) {
@@ -346,7 +346,7 @@ export class EntityEmailService {
                 if(!errors.existsErrors()) {
                     for(let i = 0; i < params.emails.length; i++) {
                         const emailResult = await this.processEmail({
-                            id_entity: params.id_entity,
+                            entity_id: params.entity_id,
                             email: params.emails[i],
                             created_by: params.created_by,
                             order: i + 1,
@@ -371,9 +371,9 @@ export class EntityEmailService {
                                 annulled_at: new Date()
                             },
                             where: {
-                                id_entity: entity?.id,
+                                entity_id: entity?.id,
                                 NOT: {
-                                    id_entity_email: {
+                                    entity_email_id: {
                                         in: emails.map(el => el.id)
                                     }
                                 }
@@ -381,8 +381,8 @@ export class EntityEmailService {
                         });
 
                         const changedEmailOrder = await this.changeEmailOrder({
-                            id_entity: entity?.id,
-                            id_entity_email: emails[0].id,
+                            entity_id: entity?.id,
+                            entity_email_id: emails[0].id,
                             order: 1,
                             name: params.name + '.0'
                         }, prisma);
@@ -440,8 +440,8 @@ export class EntityEmailService {
         } else {
             params.name ??= 'email';
 
-            errors.set('id_entity', validateId(params.id_entity, params.name + ' entity ID', true));
-            errors.set('id_entity_email', validateId(params.id_entity_email, params.name + ' ID', true));
+            errors.set('entity_id', validateId(params.entity_id, params.name + ' entity ID', true));
+            errors.set('entity_email_id', validateId(params.entity_email_id, params.name + ' ID', true));
 
             if(!errors.existsErrors()) {
                 errors.set('order', validateCuantity({
@@ -465,21 +465,21 @@ export class EntityEmailService {
             prisma ??= await this.prisma.beginTransaction();
 
             try {
-                const entity: entity | null = await prisma.entity.findUnique({ where: { id: params.id_entity } }),
-                    email_by_entity: entity_email_by_entity | null = !entity ? null : await prisma.entity_email_by_entity.findFirst({ where: { id_entity: entity.id, id_entity_email: params.id_entity_email } });
+                const entity: entity | null = await prisma.entity.findUnique({ where: { id: params.entity_id } }),
+                    email_by_entity: entity_email_by_entity | null = !entity ? null : await prisma.entity_email_by_entity.findFirst({ where: { entity_id: entity.id, entity_email_id: params.entity_email_id } });
 
-                email = await prisma.entity_email.findUnique({ where: { id: params.id_entity_email } });
+                email = await prisma.entity_email.findUnique({ where: { id: params.entity_email_id } });
 
                 if(!email) {
-                    errors.set('id_entity_email', params.name + ' not found!');
+                    errors.set('entity_email_id', params.name + ' not found!');
                 }
 
                 if(!entity) {
-                    errors.set('id_entity', params.name + ' entity not found!');
+                    errors.set('entity_id', params.name + ' entity not found!');
                 }
 
                 if(entity && email && !email_by_entity) {
-                    errors.set('id_entity_email', params.name + ' does not belong to the entity!');
+                    errors.set('entity_email_id', params.name + ' does not belong to the entity!');
                 }
 
                 if(errors.existsErrors()) {
@@ -491,9 +491,9 @@ export class EntityEmailService {
                         order: params.order
                     },
                     where: {
-                        id_entity_id_entity_email: {
-                            id_entity: entity?.id ?? 0,
-                            id_entity_email: email?.id ?? 0
+                        entity_id_entity_email_id: {
+                            entity_id: entity?.id ?? 0,
+                            entity_email_id: email?.id ?? 0
                         }
                     }
                 });
@@ -501,17 +501,17 @@ export class EntityEmailService {
                 await prisma.$queryRawUnsafe(`UPDATE entity_email_by_entity ee
                 INNER JOIN (
                     SELECT
-                        ee.id_entity,
-                        ee.id_entity_email,
-                        ROW_NUMBER() OVER(PARTITION BY ee.id_entity ORDER BY CONVERT(CONCAT(IF(ee.id_entity = ${entity?.id} AND ee.id_entity_email = ${email?.id}, ${params.order}, ee.order), '.', CONCAT(IF(ee.id_entity = ${entity?.id} AND ee.id_entity_email = ${email?.id}, 0, 1))), DECIMAL(18, 1)) ASC) AS real_order
+                        ee.entity_id,
+                        ee.entity_email_id,
+                        ROW_NUMBER() OVER(PARTITION BY ee.entity_id ORDER BY CONVERT(CONCAT(IF(ee.entity_id = ${entity?.id} AND ee.entity_email_id = ${email?.id}, ${params.order}, ee.order), '.', CONCAT(IF(ee.entity_id = ${entity?.id} AND ee.entity_email_id = ${email?.id}, 0, 1))), DECIMAL(18, 1)) ASC) AS real_order
                     FROM entity_email_by_entity ee
                     WHERE ee.annulled_at IS NULL
-                        AND ee.id_entity = 1
+                        AND ee.entity_id = 1
                 ) email
-                    ON email.id_entity_email = ee.id_entity_email
-                    AND email.id_entity = ee.id_entity
+                    ON email.entity_email_id = ee.entity_email_id
+                    AND email.entity_id = ee.entity_id
                 SET
-                    \`order\` = email.real_order`);
+                    "order" = email.real_order`);
 
                 const maxNotNullOrder = await prisma.entity_email_by_entity.aggregate({
                     _max: {
@@ -519,7 +519,7 @@ export class EntityEmailService {
                     },
 
                     where: {
-                        id_entity: entity?.id,
+                        entity_id: entity?.id,
                         NOT: {
                             annulled_at: null
                         }
@@ -529,17 +529,17 @@ export class EntityEmailService {
                 await prisma.$queryRawUnsafe(`UPDATE entity_email_by_entity ee
                 INNER JOIN (
                     SELECT
-                        ee.id_entity,
-                        ee.id_entity_email,
-                        ROW_NUMBER() OVER(PARTITION BY ee.id_entity ORDER BY CONVERT(CONCAT(IF(ee.id_entity = ${entity?.id} AND ee.id_entity_email = ${email?.id}, ${params.order}, ee.order), '.', CONCAT(IF(ee.id_entity = ${entity?.id} AND ee.id_entity_email = ${email?.id}, 0, 1))), DECIMAL(18, 1)) ASC) AS real_order
+                        ee.entity_id,
+                        ee.entity_email_id,
+                        ROW_NUMBER() OVER(PARTITION BY ee.entity_id ORDER BY CONVERT(CONCAT(IF(ee.entity_id = ${entity?.id} AND ee.entity_email_id = ${email?.id}, ${params.order}, ee.order), '.', CONCAT(IF(ee.entity_id = ${entity?.id} AND ee.entity_email_id = ${email?.id}, 0, 1))), DECIMAL(18, 1)) ASC) AS real_order
                     FROM entity_email_by_entity ee
                     WHERE ee.annulled_at IS NOT NULL
-                        AND ee.id_entity = 1
+                        AND ee.entity_id = 1
                 ) email
-                    ON email.id_entity_email = ee.id_entity_email
-                    AND email.id_entity = ee.id_entity
+                    ON email.entity_email_id = ee.entity_email_id
+                    AND email.entity_id = ee.entity_id
                 SET
-                    \`order\` = (email.real_order + ${maxNotNullOrder._max.order ?? 0})`);
+                    "order" = (email.real_order + ${maxNotNullOrder._max.order ?? 0})`);
 
                 if(isPosibleTransaction && 'commit' in prisma) {
                     await prisma.commit();
@@ -569,16 +569,16 @@ export class EntityEmailService {
     async getBelongingSystem(params: GetBelongingSystemType, prisma: Prisma.TransactionClient | PrismaClient | TransactionPrisma = this.prisma) {
         let AND: string[] | string = [];
 
-        if('id_entity' in params) {
-            AND.push(`ent.id ${params.NotEqualEntityID === true ? '<>' : '='} ${params.id_entity}`);
+        if('entity_id' in params) {
+            AND.push(`ent.id ${params.NotEqualEntityID === true ? '<>' : '='} ${params.entity_id}`);
         }
 
-        if('id_entity_email' in params) {
-            AND.push(`ee.id = ${params.id_entity_email}`);
+        if('entity_email_id' in params) {
+            AND.push(`ee.id = ${params.entity_email_id}`);
         }
 
-        if('id_system_subscription' in params) {
-            AND.push(`ssu.id_system_subscription = ${params.id_system_subscription}`);
+        if('system_subscription_id' in params) {
+            AND.push(`ssu.system_subscription_id = ${params.system_subscription_id}`);
         }
 
         AND = AND.length < 1 ? '' : `AND ${AND.join("\nAND ")}`;
@@ -587,18 +587,18 @@ export class EntityEmailService {
             ee.*
         FROM entity_email ee
         INNER JOIN entity_email_by_entity eee
-            ON eee.id_entity_email = ee.id
+            ON eee.entity_email_id = ee.id
         INNER JOIN entity ent
-            ON ent.id = eee.id_entity
+            ON ent.id = eee.entity_id
         INNER JOIN system_subscription_user_complete_info ssu
             ON (
                 (
                     ent.created_by IS NOT NULL
-                    AND ssu.id_system_subscription_user = ent.created_by
+                    AND ssu.system_subscription_user_id = ent.created_by
                 )
                 OR (
                     ent.created_by IS NULL
-                    AND ssu.id_entity = ent.id
+                    AND ssu.entity_id = ent.id
                 )
             )
         WHERE COALESCE(ent.annulled_at, eee.annulled_at) IS NULL

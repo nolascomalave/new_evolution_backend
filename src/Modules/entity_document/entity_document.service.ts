@@ -18,24 +18,24 @@ export type EntityDocumentCompleteInfo = {
     category: string;
     document: string;
     id: number;
-    id_city: number | null;
-    id_country: number | null;
-    id_entity: number;
-    id_entity_document: number;
-    id_entity_document_category: number;
-    id_state: number | null;
+    city_id: number | null;
+    country_id: number | null;
+    entity_id: number;
+    entity_document_id: number;
+    entity_document_category_id: number;
+    state_id: number | null;
     order: number;
     symbol: string;
 };
 
 type ValidateEntityDocumentType = {
     document: string;
-    id_entity: number;
-    id_entity_document_category: number;
-    id_entity_document?: number;
-    id_country?: number;
-    id_state?: number;
-    id_city?: number;
+    entity_id: number;
+    entity_document_category_id: number;
+    entity_document_id?: number;
+    country_id?: number;
+    state_id?: number;
+    city_id?: number;
     order: number;
     name?: string;
     validatorFn?: Function;
@@ -48,11 +48,11 @@ type ValidateEntityDocumentType = {
 
 type ProcessMultipleDocumentsType = {
     documents: string[];
-    id_entity: number;
-    id_entity_document_category: number;
-    id_country?: number;
-    id_state?: number;
-    id_city?: number;
+    entity_id: number;
+    entity_document_category_id: number;
+    country_id?: number;
+    state_id?: number;
+    city_id?: number;
     name?: string;
     validatorConfig?: {
         fn: (document: any, name: string, order: number, ...params: any) => any | null;
@@ -62,18 +62,18 @@ type ProcessMultipleDocumentsType = {
 } | any;
 
 type ChangeDocumentOrderType = {
-    id_entity_document: number;
+    entity_document_id: number;
     order: number;
     name?: string;
 }
 
 type GetBelongingSystemType = {
     NotEqualDocumentID?: boolean;
-    id_entity_document?: number;
+    entity_document_id?: number;
     document?: string;
-    id_entity?: number;
-    id_entity_document_category?: number;
-    id_system_subscription?: number;
+    entity_id?: number;
+    entity_document_category_id?: number;
+    system_subscription_id?: number;
 }
 
 export class EntityDocumentService {
@@ -110,19 +110,19 @@ export class EntityDocumentService {
                 errors.set(params.name, validateSimpleText(params.document, 'document', 2, 250, true));
             } */
 
-            const cityError = validateId(params.id_city, params.name + ' city ID'),
-                stateError = validateId(params.id_state, params.name + ' state ID', !errors.exists('id_city') && (params.id_city ?? null) !== null);
+            const cityError = validateId(params.city_id, params.name + ' city ID'),
+                stateError = validateId(params.state_id, params.name + ' state ID', !errors.exists('city_id') && (params.city_id ?? null) !== null);
 
-            errors.set('id_entity_document', validateId(params.id_entity_document, params.name + ' ID'));
-            errors.set('id_entity_document_category', validateId(params.id_entity_document_category, params.name + ' document type ID', true));
+            errors.set('entity_document_id', validateId(params.entity_document_id, params.name + ' ID'));
+            errors.set('entity_document_category_id', validateId(params.entity_document_category_id, params.name + ' document type ID', true));
             /* if(params.entity_document_category ??) {
 
             }
-            errors.set('id_entity_document_category', validateId(params.id_entity_document_category, 'Document Type ID')); */
+            errors.set('entity_document_category_id', validateId(params.entity_document_category_id, 'Document Type ID')); */
 
-            errors.set('id_country', validateId(params.id_country,  params.name + ' country ID', !errors.existsSome('id_city', 'id_state') && (params.id_city ?? params.id_state ?? null) !== null));
-            errors.set('id_state', stateError);
-            errors.set('id_city', cityError);
+            errors.set('country_id', validateId(params.country_id,  params.name + ' country ID', !errors.existsSome('city_id', 'state_id') && (params.city_id ?? params.state_id ?? null) !== null));
+            errors.set('state_id', stateError);
+            errors.set('city_id', cityError);
 
             errors.set('order', validateCuantity({
                 num: params.order,
@@ -148,16 +148,16 @@ export class EntityDocumentService {
             prisma ??= await this.prisma.beginTransaction();
 
             try {
-                const validatedEntityResult = await this.getValidatedEntity(params.id_entity, prisma),
+                const validatedEntityResult = await this.getValidatedEntity(params.entity_id, prisma),
                     entity: entity | null = validatedEntityResult.data,
-                    document_category: entity_document_category | null = await prisma.entity_document_category.findFirst({ where: { id: params.id_entity_document_category } }),
-                    /* country: country | null = await prisma.country.findUnique({ where: { id: params.id_country } }),
-                    state: state | null = await prisma.state.findUnique({ where: { id: params.id_state } }),
-                    city: city | null = await prisma.city.findUnique({ where: { id: params.id_city } }) */
+                    document_category: entity_document_category | null = await prisma.entity_document_category.findFirst({ where: { id: params.entity_document_category_id } }),
+                    /* country: country | null = await prisma.country.findUnique({ where: { id: params.country_id } }),
+                    state: state | null = await prisma.state.findUnique({ where: { id: params.state_id } }),
+                    city: city | null = await prisma.city.findUnique({ where: { id: params.city_id } }) */
                     users: User[] = await prisma.$queryRawUnsafe(`SELECT
                         *
                     FROM system_subscription_user_complete_info
-                    WHERE id_system_subscription_user = ${params.created_by}`) ?? [],
+                    WHERE system_subscription_user_id = ${params.created_by}`) ?? [],
                     user: User | null = users.length > 0 ? users[0] : null;
 
                 if(!user) {
@@ -166,49 +166,49 @@ export class EntityDocumentService {
                     errors.set('moderator', params.name + ' moderator user is currently disabled!');
                 }
 
-                document = !params.id_entity_document ? null : await prisma.entity_document.findFirst({ where: { id: params.id_entity_document } });
+                document = !params.entity_document_id ? null : await prisma.entity_document.findFirst({ where: { id: params.entity_document_id } });
 
-                if(!document && (params.id_entity_document ?? null) !== null) {
-                    errors.set('id_entity_document', params.name + ' not found!');
+                if(!document && (params.entity_document_id ?? null) !== null) {
+                    errors.set('entity_document_id', params.name + ' not found!');
                 }
 
                 if(!document_category) {
-                    errors.set('id_entity_document_category', params.name + ' document Type not found!');
+                    errors.set('entity_document_category_id', params.name + ' document Type not found!');
                 }
 
-                if(!entity && (params.id_entity ?? null) !== null) {
-                    errors.set('id_entity', params.name + ' entity not found!');
+                if(!entity && (params.entity_id ?? null) !== null) {
+                    errors.set('entity_id', params.name + ' entity not found!');
                 }
 
                 if(entity && user && document_category) {
                     const existingEntityWithDocument = await this.getBelongingSystem({
-                        id_entity_document: document ? document.id : undefined,
-                        id_entity: document? undefined : entity.id,
+                        entity_document_id: document ? Number(document.id) : undefined,
+                        entity_id: document? undefined : Number(entity.id),
                         NotEqualDocumentID: true,
-                        id_system_subscription: user.id_system_subscription,
+                        system_subscription_id: user.system_subscription_id,
                         document: params.document.trim().toUpperCase(),
-                        id_entity_document_category: document_category.id
+                        entity_document_category_id: Number(document_category.id)
                     }, prisma);
 
                     if(existingEntityWithDocument) {
-                        if(existingEntityWithDocument.id_entity === entity.id) {
-                            errors.set('id_entity_document', params.name + ' already exists for this entity!');
+                        if(existingEntityWithDocument.entity_id === entity.id) {
+                            errors.set('entity_document_id', params.name + ' already exists for this entity!');
                         } else {
-                            errors.set('id_entity_document', params.name + ' already exists for another entity!');
+                            errors.set('entity_document_id', params.name + ' already exists for another entity!');
                         }
                     }
                 }
 
-                /* if(!country && (params.id_country ?? null) !== null) {
-                    errors.set('id_country', 'Country not found!');
+                /* if(!country && (params.country_id ?? null) !== null) {
+                    errors.set('country_id', 'Country not found!');
                 }
 
-                if(!state && (params.id_state ?? null) !== null) {
-                    errors.set('id_state', 'State not found!');
+                if(!state && (params.state_id ?? null) !== null) {
+                    errors.set('state_id', 'State not found!');
                 }
 
-                if(!city && (params.id_city ?? null) !== null) {
-                    errors.set('id_city', 'City not found!');
+                if(!city && (params.city_id ?? null) !== null) {
+                    errors.set('city_id', 'City not found!');
                 } */
 
                 errors.merege(validatedEntityResult.errors);
@@ -216,10 +216,10 @@ export class EntityDocumentService {
                 if(!errors.existsErrors()) {
                     if(document) {
                         document = await prisma.entity_document.update({
-                            where: { id: params.id_entity_document },
+                            where: { id: params.entity_document_id },
                             data: {
                                 document: params.document.trim().toUpperCase(),
-                                id_entity_document_category: !document_category ? document.id_entity_document_category : document_category.id,
+                                entity_document_category_id: !document_category ? document.entity_document_category_id : document_category.id,
                                 order: params.order ?? 0
                             }
                         });
@@ -227,8 +227,8 @@ export class EntityDocumentService {
                         document = await prisma.entity_document.create({
                             data: {
                                 document: params.document.trim().toUpperCase(),
-                                id_entity_document_category: document_category?.id,
-                                id_entity: entity?.id,
+                                entity_document_category_id: document_category?.id,
+                                entity_id: entity?.id,
                                 created_by: user?.id ?? 0,
                                 order: params.order
                             }
@@ -236,7 +236,7 @@ export class EntityDocumentService {
                     }
 
                     const changeDocumentOrderResult = await this.changeDocumentOrder({
-                        id_entity_document: document.id,
+                        entity_document_id: Number(document.id),
                         order: params.order,
                         name: params.name
                     }, prisma);
@@ -282,18 +282,18 @@ export class EntityDocumentService {
             };
         } else {
             params.name ??= 'documents';
-            const cityError = validateId(params.id_city, params.name + ' city ID'),
-                stateError = validateId(params.id_state, params.name + ' state ID', !errors.exists('id_city') && (params.id_city ?? null) !== null);
+            const cityError = validateId(params.city_id, params.name + ' city ID'),
+                stateError = validateId(params.state_id, params.name + ' state ID', !errors.exists('city_id') && (params.city_id ?? null) !== null);
 
             if(!Array.isArray(params.documents)) {
                 errors.set(params.name, params.name + ' must be defined as an array!');
             }
 
-            errors.set('id_entity_document_category', validateId(params.id_entity_document_category, params.name + ' document type ID', (params.id_entity_document ?? null) === null));
+            errors.set('entity_document_category_id', validateId(params.entity_document_category_id, params.name + ' document type ID', (params.entity_document_id ?? null) === null));
 
-            errors.set('id_country', validateId(params.id_country, params.name + ' country ID', !errors.existsSome('id_city', 'id_state') && (params.id_city ?? params.id_state ?? null) !== null));
-            errors.set('id_state', stateError);
-            errors.set('id_city', cityError);
+            errors.set('country_id', validateId(params.country_id, params.name + ' country ID', !errors.existsSome('city_id', 'state_id') && (params.city_id ?? params.state_id ?? null) !== null));
+            errors.set('state_id', stateError);
+            errors.set('city_id', cityError);
         }
 
         if(errors.existsErrors()) {
@@ -316,16 +316,16 @@ export class EntityDocumentService {
             prisma ??= await this.prisma.beginTransaction();
 
             try {
-                const validatedEntityResult = await this.getValidatedEntity(params.id_entity, prisma),
+                const validatedEntityResult = await this.getValidatedEntity(params.entity_id, prisma),
                     entity: entity | null = validatedEntityResult.data,
-                    document_category: entity_document_category | null = !params.id_entity_document_category ? null : await prisma.entity_document_category.findFirst({ where: { id: params.id_entity_document_category } }),
-                    /* country: country | null = await prisma.country.findUnique({ where: { id: params.id_country } }),
-                    state: state | null = await prisma.state.findUnique({ where: { id: params.id_state } }),
-                    city: city | null = await prisma.city.findUnique({ where: { id: params.id_city } }) */
+                    document_category: entity_document_category | null = !params.entity_document_category_id ? null : await prisma.entity_document_category.findFirst({ where: { id: params.entity_document_category_id } }),
+                    /* country: country | null = await prisma.country.findUnique({ where: { id: params.country_id } }),
+                    state: state | null = await prisma.state.findUnique({ where: { id: params.state_id } }),
+                    city: city | null = await prisma.city.findUnique({ where: { id: params.city_id } }) */
                     users: User[] = await prisma.$queryRawUnsafe(`SELECT
                         *
                     FROM system_subscription_user_complete_info
-                    WHERE id_system_subscription_user = ${params.created_by}`) ?? [],
+                    WHERE system_subscription_user_id = ${params.created_by}`) ?? [],
                     user: User | null = users.length > 0 ? users[0] : null;
 
                 if(users.length < 1) {
@@ -334,26 +334,26 @@ export class EntityDocumentService {
                     errors.set('moderator', params.name + ' moderator user is currently disabled!');
                 }
 
-                if(!document_category && (params.id_entity_document_category ?? null) !== null) {
-                    errors.set('id_entity_document_category', params.name + ' document Type not found!');
-                } else if((params.id_entity_document_category ?? null) === null && (params.id_entity_document ?? null) === null) {
-                    errors.set('id_entity_document_category', params.name + ' document Type ID is required!');
+                if(!document_category && (params.entity_document_category_id ?? null) !== null) {
+                    errors.set('entity_document_category_id', params.name + ' document Type not found!');
+                } else if((params.entity_document_category_id ?? null) === null && (params.entity_document_id ?? null) === null) {
+                    errors.set('entity_document_category_id', params.name + ' document Type ID is required!');
                 }
 
-                if(!entity && (params.id_entity ?? null) !== null) {
-                    errors.set('id_entity', params.name + ' entity not found!');
+                if(!entity && (params.entity_id ?? null) !== null) {
+                    errors.set('entity_id', params.name + ' entity not found!');
                 }
 
-                /* if(!country && (params.id_country ?? null) !== null) {
-                    errors.set('id_country', 'Country not found!');
+                /* if(!country && (params.country_id ?? null) !== null) {
+                    errors.set('country_id', 'Country not found!');
                 }
 
-                if(!state && (params.id_state ?? null) !== null) {
-                    errors.set('id_state', 'State not found!');
+                if(!state && (params.state_id ?? null) !== null) {
+                    errors.set('state_id', 'State not found!');
                 }
 
-                if(!city && (params.id_city ?? null) !== null) {
-                    errors.set('id_city', 'City not found!');
+                if(!city && (params.city_id ?? null) !== null) {
+                    errors.set('city_id', 'City not found!');
                 } */
 
                 errors.merege(validatedEntityResult.errors);
@@ -361,12 +361,12 @@ export class EntityDocumentService {
                 if(!errors.existsErrors()) {
                     for(let i = 0; i < params.documents.length; i++) {
                         const document = await this.processDocument({
-                            id_entity: entity?.id,
+                            entity_id: entity?.id,
                             document: params.documents[i],
-                            id_entity_document_category: document_category?.id,
-                            /* id_country: params.id_country,
-                            id_state: params.id_state,
-                            id_city: params.id_city, */
+                            entity_document_category_id: document_category?.id,
+                            /* country_id: params.country_id,
+                            state_id: params.state_id,
+                            city_id: params.city_id, */
                             validatorConfig: params.validatorConfig,
                             order: i + 1,
                             created_by: user?.id ?? 0,
@@ -391,7 +391,7 @@ export class EntityDocumentService {
                                 annulled_at: new Date()
                             },
                             where: {
-                                id_entity: entity?.id,
+                                entity_id: entity?.id,
                                 NOT: {
                                     id: {
                                         in: documents.map(el => el.id)
@@ -401,7 +401,7 @@ export class EntityDocumentService {
                         });
 
                         const changeDocumentOrderResult = await this.changeDocumentOrder({
-                            id_entity_document: documents[0].id,
+                            entity_document_id: Number(documents[0].id),
                             order: 1,
                             name: params.name + '.' + 0
                         }, prisma);
@@ -439,23 +439,23 @@ export class EntityDocumentService {
         };
     }
 
-    async getValidatedEntity(id_entity: any, prisma: Prisma.TransactionClient | PrismaClient | TransactionPrisma = this.prisma) {
+    async getValidatedEntity(entity_id: any, prisma: Prisma.TransactionClient | PrismaClient | TransactionPrisma = this.prisma) {
         const errors = new HandlerErrors();
 
         let entity: entity | null = null;
 
         try {
-            errors.set('id_entity', validateId(id_entity, 'Entity ID', true));
+            errors.set('entity_id', validateId(entity_id, 'Entity ID', true));
 
-            if(!errors.exists('id_entity')) {
+            if(!errors.exists('entity_id')) {
                 entity = await prisma.entity.findUnique({
                     where: {
-                        id: id_entity
+                        id: entity_id
                     }
                 });
 
                 if(!entity) {
-                    errors.set('id_entity', 'Entity not found!');
+                    errors.set('entity_id', 'Entity not found!');
                 }
             }
         } catch(e: any) {
@@ -501,26 +501,26 @@ export class EntityDocumentService {
             try {
                 document = await prisma.entity_document.findUnique({
                     where: {
-                        id: params.id_entity_document
+                        id: params.entity_document_id
                     }
                 });
 
                 if(!document) {
-                    errors.set('id_document', params.name + ' not found!');
+                    errors.set('document_id', params.name + ' not found!');
                 } else {
                     await prisma.$queryRawUnsafe(`UPDATE entity_document ed
                     inner join (
                         select
                             id,
-                            id_entity,
-                            ROW_NUMBER() OVER(PARTITION by id_entity ORDER BY CONVERT(CONCAT(IF(id = ${document.id}, ${params.order}, ed.order), '.', CONCAT(IF(id = ${document.id}, 0, 1))), DECIMAL(18, 1)) asc, id ASC) AS real_order
+                            entity_id,
+                            ROW_NUMBER() OVER(PARTITION by entity_id ORDER BY CONVERT(CONCAT(IF(id = ${document.id}, ${params.order}, ed.order), '.', CONCAT(IF(id = ${document.id}, 0, 1))), DECIMAL(18, 1)) asc, id ASC) AS real_order
                         from entity_document ed
                         where annulled_at is null
-                            and id_entity = ${document.id_entity}
+                            and entity_id = ${document.entity_id}
                     ) dor
                         on dor.id = ed.id
                     set
-                        \`order\` = dor.real_order`);
+                        "order" = dor.real_order`);
 
                     const maxNotNullOrder = await prisma.entity_document.aggregate({
                         _max: {
@@ -528,7 +528,7 @@ export class EntityDocumentService {
                         },
 
                         where: {
-                            id_entity: document.id_entity,
+                            entity_id: document.entity_id,
                             NOT: {
                                 annulled_at: null
                             }
@@ -539,15 +539,15 @@ export class EntityDocumentService {
                     inner join (
                         select
                             id,
-                            id_entity,
-                            ROW_NUMBER() OVER(PARTITION by id_entity ORDER BY CONVERT(CONCAT(IF(id = ${document.id}, ${params.order}, ed.order), '.', CONCAT(IF(id = ${document.id}, 0, 1))), DECIMAL(18, 1)) asc, id ASC) AS real_order
+                            entity_id,
+                            ROW_NUMBER() OVER(PARTITION by entity_id ORDER BY CONVERT(CONCAT(IF(id = ${document.id}, ${params.order}, ed.order), '.', CONCAT(IF(id = ${document.id}, 0, 1))), DECIMAL(18, 1)) asc, id ASC) AS real_order
                         from entity_document ed
                         where annulled_at is not null
-                            and id_entity = ${document.id_entity}
+                            and entity_id = ${document.entity_id}
                     ) dor
                         on dor.id = ed.id
                     set
-                        \`order\` = (dor.real_order + ${maxNotNullOrder._max.order ?? 0})`);
+                        "order" = (dor.real_order + ${maxNotNullOrder._max.order ?? 0})`);
                 }
 
                 if(errors.existsErrors()) {
@@ -582,24 +582,24 @@ export class EntityDocumentService {
     async getBelongingSystem(params: GetBelongingSystemType, prisma: Prisma.TransactionClient | PrismaClient | TransactionPrisma = this.prisma) {
         let AND: string[] | string = [];
 
-        if(('id_entity' in params) && (params.id_entity ?? null) !== null) {
-            AND.push(`doc.id_entity <> ${params.id_entity}`);
+        if(('entity_id' in params) && (params.entity_id ?? null) !== null) {
+            AND.push(`doc.entity_id <> ${params.entity_id}`);
         }
 
-        if(('id_entity_document' in params) && (params.id_entity_document ?? null) !== null) {
-            AND.push(`doc.id ${params.NotEqualDocumentID === true ? '<>' : '='} ${params.id_entity_document}`);
+        if(('entity_document_id' in params) && (params.entity_document_id ?? null) !== null) {
+            AND.push(`doc.id ${params.NotEqualDocumentID === true ? '<>' : '='} ${params.entity_document_id}`);
         }
 
         if(('document' in params) && (params.document ?? null) !== null) {
             AND.push(`UPPER(doc.document) = UPPER(${escape(params.document ?? '')})`);
         }
 
-        if(('id_entity_document_category' in params) && (params.id_entity_document_category ?? null) !== null) {
-            AND.push(`doc.id_entity_document_category = ${params.id_entity_document_category}`);
+        if(('entity_document_category_id' in params) && (params.entity_document_category_id ?? null) !== null) {
+            AND.push(`doc.entity_document_category_id = ${params.entity_document_category_id}`);
         }
 
-        if(('id_system_subscription' in params) && (params.id_system_subscription ?? null) !== null) {
-            AND.push(`ssu.id_system_subscription = ${params.id_system_subscription}`);
+        if(('system_subscription_id' in params) && (params.system_subscription_id ?? null) !== null) {
+            AND.push(`ssu.system_subscription_id = ${params.system_subscription_id}`);
         }
 
         AND = AND.length < 1 ? '' : `AND ${AND.join("\nAND ")}`;
@@ -608,16 +608,16 @@ export class EntityDocumentService {
             doc.*
         FROM entity_document doc
         INNER JOIN entity ent
-            ON ent.id = doc.id_entity
+            ON ent.id = doc.entity_id
         INNER JOIN system_subscription_user_complete_info ssu
             ON (
                 (
                     ent.created_by IS NOT NULL
-                    AND ssu.id_system_subscription_user = ent.created_by
+                    AND ssu.system_subscription_user_id = ent.created_by
                 )
                 OR (
                     ent.created_by IS NULL
-                    AND ssu.id_entity = ent.id
+                    AND ssu.entity_id = ent.id
                 )
             )
         WHERE COALESCE(doc.annulled_at, ent.annulled_at) IS NULL

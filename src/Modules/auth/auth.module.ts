@@ -1,9 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { Module, /* MiddlewareConsumer, NestModule, RequestMethod */ } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { PrismaService } from 'src/prisma.service';
 import { JwtService } from '@nestjs/jwt';
-import { VerifyTokenMiddleware } from './middlewares/auth.middleware';
+// import { VerifyTokenMiddleware } from './middlewares/auth.middleware';
 import { SystemSubscriptionUserModule } from '../system_subscription_user/system_subscription_user.module';
 
 @Module({

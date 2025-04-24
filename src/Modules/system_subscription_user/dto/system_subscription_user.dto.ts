@@ -20,7 +20,7 @@ class NameDto {
 
     @IsNumber()
     @IsInt()
-    id_entity_name_type: number
+    entity_name_type_id: number
 }
 
 class DocumentDto {
@@ -36,7 +36,7 @@ class DocumentDto {
 
     @IsNumber()
     @IsInt()
-    id_entity_document_category: number
+    entity_document_category_id: number
 }
 
 class PhoneDto {
@@ -74,7 +74,7 @@ const transformJSON = ({ value }) => {
 export class AddOrUpdateDto {
     @IsOptional()
     @IsInt()
-    id_system_subscription_user?: number;
+    system_subscription_user_id?: number;
 
     @Transform(transformJSON)
     @IsArray()
@@ -126,7 +126,7 @@ export class GetByIdQueryDto {
 
 export class ChangeStatusDto {
     @IsInt()
-    id_system_subscription_user: number;
+    system_subscription_user_id: number;
 
     @IsEnum(['ACTIVE', 'INACTIVE'])
     type: GenderEnum;
@@ -135,7 +135,7 @@ export class ChangeStatusDto {
 export class ResetPasswordDto {
     @Transform(({value}) => Number(value))
     @IsInt()
-    id_system_subscription_user: number;
+    system_subscription_user_id: number;
 }
 
 export class ChangePasswordDto {

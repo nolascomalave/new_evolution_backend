@@ -6,10 +6,11 @@ import { EntityModule } from '../entity/entity.module';
 // import { EntityDocumentModule } from '../entity_document/entity_document.module';
 // import { ResendModule } from 'nestjs-resend';
 import { MailerModule } from 'src/mailer/mailer.module';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
     controllers: [SystemSubscriptionUserController],
-    providers: [PrismaService, SystemSubscriptionUserService],
+    providers: [PrismaService, SystemSubscriptionUserService, JwtService],
     imports: [
         EntityModule,
         MailerModule,
