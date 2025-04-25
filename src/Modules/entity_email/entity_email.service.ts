@@ -3,42 +3,43 @@ import { PrismaService, TransactionPrisma } from '../../prisma.service';
 
 // utils:
 import {
-    validateId,
+    validateUniqueIdString,
     validateEmail,
     validateCuantity
 } from '../../util/validators';
 // import { extractNumberInText, destilde } from "../util/formats";
 import HandlerErrors from "../../util/HandlerErrors";
+import { escape } from "querystring";
 
 type ProcessEmailType = {
-    entity_id?: number;
-    entity_email_id: number;
+    entity_id?: string;
+    entity_email_id: string;
     email: any;
-    created_by: number;
+    created_by: string;
     order?: number;
     name?: string;
 } | any;
 
 type ProcessMultipleEmailsType = {
-    entity_id?: number;
+    entity_id?: string;
     emails: string[];
     order: number;
-    created_by: number;
+    created_by: string;
     name?: string;
 } | any;
 
 export type ChangeEmailOrderType = {
-    entity_email_id: number;
-    entity_id: number;
+    entity_email_id: string;
+    entity_id: string;
     order: number;
     name?: string;
 } | any;
 
 type GetBelongingSystemType = {
     NotEqualEntityID?: boolean;
-    entity_id?: number;
-    entity_email_id?: number;
-    system_subscription_id?: number;
+    entity_id?: string;
+    entity_email_id?: string;
+    system_subscription_id?: string;
 }
 
 export class EntityEmailService {
@@ -65,9 +66,9 @@ export class EntityEmailService {
         } else {
             params.name ??= 'email';
 
-            errors.set('entity_id', validateId(params.entity_id, params.name + ' entity ID'));
-            errors.set('created_by', validateId(params.created_by, params.name + ' processing user ID', true));
-            errors.set('entity_email_id', validateId(params.entity_email_id, params.name + ' ID'));
+            errors.set('entity_id', validateUniqueIdString(params.entity_id, params.name + ' entity ID'));
+            errors.set('created_by', validateUniqueIdString(params.created_by, params.name + ' processing user ID', true));
+            errors.set('entity_email_id', validateUniqueIdString(params.entity_email_id, params.name + ' ID'));
             errors.set(params.name, validateEmail(params.email, params.name, true));
 
             if(!errors.exists('entity_id') && (params.entity_id ?? null) !== null) {
@@ -116,9 +117,9 @@ export class EntityEmailService {
 
                 if(user && entity && email && (params.order ?? null) !== null && params.order == 1) {
                     const exisingEmailByEntity = await this.getBelongingSystem({
-                        entity_id: Number(entity.id),
-                        system_subscription_id: Number(user.system_subscription_id),
-                        entity_email_id: Number(email.id),
+                        entity_id: entity.id,
+                        system_subscription_id: user.system_subscription_id,
+                        entity_email_id: email.id,
                         NotEqualEntityID: true
                     }, prisma);
 
@@ -163,7 +164,7 @@ export class EntityEmailService {
                     email = await prisma.entity_email.create({
                         data: {
                             email: params.email,
-                            created_by: user?.id ?? 0
+                            created_by: user?.id ?? ""
                         }
                     });
                 } else if(existingEmail) { // Solo pasa por aquí si email es el registro encontrado por la variable params.entity_email_id y existe un registro que tiene el correo electrónico buscado y es diferente del correo a editar.
@@ -195,7 +196,7 @@ export class EntityEmailService {
                             data: {
                                 entity_id: entity.id,
                                 entity_email_id: email.id,
-                                created_by: user?.id ?? 0,
+                                created_by: user?.id ?? "",
                                 order: params.order ?? 0
                             }
                         });
@@ -244,7 +245,7 @@ export class EntityEmailService {
                                     }
                                 },
                                 data: {
-                                    annulled_by: user?.id ?? 0,
+                                    annulled_by: user?.id ?? "",
                                     annulled_at: new Date(),
                                     order: params.order ?? 0
                                 }
@@ -311,8 +312,8 @@ export class EntityEmailService {
         } else {
             params.name ??= 'emails';
 
-            errors.set('entity_id', validateId(params.entity_id, params.name + ' entity ID'));
-            errors.set('created_by', validateId(params.created_by, params.name + ' processing user ID', true));
+            errors.set('entity_id', validateUniqueIdString(params.entity_id, params.name + ' entity ID'));
+            errors.set('created_by', validateUniqueIdString(params.created_by, params.name + ' processing user ID', true));
 
             if(!Array.isArray(params.emails)) {
                 errors.set(params.name, params.name + ' must be an array!');
@@ -440,8 +441,8 @@ export class EntityEmailService {
         } else {
             params.name ??= 'email';
 
-            errors.set('entity_id', validateId(params.entity_id, params.name + ' entity ID', true));
-            errors.set('entity_email_id', validateId(params.entity_email_id, params.name + ' ID', true));
+            errors.set('entity_id', validateUniqueIdString(params.entity_id, params.name + ' entity ID', true));
+            errors.set('entity_email_id', validateUniqueIdString(params.entity_email_id, params.name + ' ID', true));
 
             if(!errors.existsErrors()) {
                 errors.set('order', validateCuantity({
@@ -492,26 +493,26 @@ export class EntityEmailService {
                     },
                     where: {
                         entity_id_entity_email_id: {
-                            entity_id: entity?.id ?? 0,
-                            entity_email_id: email?.id ?? 0
+                            entity_id: entity?.id ?? "",
+                            entity_email_id: email?.id ?? ""
                         }
                     }
                 });
 
-                await prisma.$queryRawUnsafe(`UPDATE entity_email_by_entity ee
+                await prisma.$queryRawUnsafe(`UPDATE entity_email_by_entity SET
+                    "order" = email.real_order
+                FROM entity_email_by_entity ee
                 INNER JOIN (
                     SELECT
                         ee.entity_id,
                         ee.entity_email_id,
-                        ROW_NUMBER() OVER(PARTITION BY ee.entity_id ORDER BY CONVERT(CONCAT(IF(ee.entity_id = ${entity?.id} AND ee.entity_email_id = ${email?.id}, ${params.order}, ee.order), '.', CONCAT(IF(ee.entity_id = ${entity?.id} AND ee.entity_email_id = ${email?.id}, 0, 1))), DECIMAL(18, 1)) ASC) AS real_order
+                        ROW_NUMBER() OVER(PARTITION BY ee.entity_id ORDER BY CONCAT(iif(ee.entity_id = '${escape(entity?.id)}' AND ee.entity_email_id = '${escape(email?.id)}', ${params.order}, ee.order), '.', CONCAT(iif(ee.entity_id = '${escape(entity?.id)}' AND ee.entity_email_id = '${escape(email?.id)}', 0, 1)))::decimal(18, 1) ASC) AS real_order
                     FROM entity_email_by_entity ee
                     WHERE ee.annulled_at IS NULL
-                        AND ee.entity_id = 1
+                        AND ee.entity_id = '${escape(entity?.id)}'
                 ) email
                     ON email.entity_email_id = ee.entity_email_id
-                    AND email.entity_id = ee.entity_id
-                SET
-                    "order" = email.real_order`);
+                    AND email.entity_id = ee.entity_id`);
 
                 const maxNotNullOrder = await prisma.entity_email_by_entity.aggregate({
                     _max: {
@@ -526,20 +527,20 @@ export class EntityEmailService {
                     }
                 });
 
-                await prisma.$queryRawUnsafe(`UPDATE entity_email_by_entity ee
+                await prisma.$queryRawUnsafe(`UPDATE entity_email_by_entity SET
+                    "order" = (email.real_order + ${maxNotNullOrder._max.order ?? 0})
+                FROM entity_email_by_entity ee
                 INNER JOIN (
                     SELECT
                         ee.entity_id,
                         ee.entity_email_id,
-                        ROW_NUMBER() OVER(PARTITION BY ee.entity_id ORDER BY CONVERT(CONCAT(IF(ee.entity_id = ${entity?.id} AND ee.entity_email_id = ${email?.id}, ${params.order}, ee.order), '.', CONCAT(IF(ee.entity_id = ${entity?.id} AND ee.entity_email_id = ${email?.id}, 0, 1))), DECIMAL(18, 1)) ASC) AS real_order
+                        ROW_NUMBER() OVER(PARTITION BY ee.entity_id ORDER BY CONCAT(iif(ee.entity_id = '${escape(entity?.id)}' AND ee.entity_email_id = '${escape(email?.id)}', ${params.order}, ee.order), '.', CONCAT(iif(ee.entity_id = '${escape(entity?.id)}' AND ee.entity_email_id = '${escape(email?.id)}', 0, 1)))::decimal(18, 1) ASC) AS real_order
                     FROM entity_email_by_entity ee
                     WHERE ee.annulled_at IS NOT NULL
-                        AND ee.entity_id = 1
+                        AND ee.entity_id = '${escape(entity?.id)}'
                 ) email
                     ON email.entity_email_id = ee.entity_email_id
-                    AND email.entity_id = ee.entity_id
-                SET
-                    "order" = (email.real_order + ${maxNotNullOrder._max.order ?? 0})`);
+                    AND email.entity_id = ee.entity_id`);
 
                 if(isPosibleTransaction && 'commit' in prisma) {
                     await prisma.commit();
@@ -570,15 +571,15 @@ export class EntityEmailService {
         let AND: string[] | string = [];
 
         if('entity_id' in params) {
-            AND.push(`ent.id ${params.NotEqualEntityID === true ? '<>' : '='} ${params.entity_id}`);
+            AND.push(`ent.id ${params.NotEqualEntityID === true ? '<>' : '='} '${escape(params.entity_id)}'`);
         }
 
         if('entity_email_id' in params) {
-            AND.push(`ee.id = ${params.entity_email_id}`);
+            AND.push(`ee.id = '${escape(params.entity_email_id)}'`);
         }
 
         if('system_subscription_id' in params) {
-            AND.push(`ssu.system_subscription_id = ${params.system_subscription_id}`);
+            AND.push(`ssu.system_subscription_id = '${escape(params.system_subscription_id)}'`);
         }
 
         AND = AND.length < 1 ? '' : `AND ${AND.join("\nAND ")}`;

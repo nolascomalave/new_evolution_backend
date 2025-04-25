@@ -11,43 +11,44 @@ import { resolve } from "path";
 // import resendInstance from "src/lib/resendInstance";
 import { renderString } from "src/Util/functionals";
 import { MailerService } from "src/mailer/mailer.service";
+import { escape } from "querystring";
 // import { ResendService } from "nestjs-resend";
 
 export type AddOrUpdateParams = AddOrUpdateDto & {
     is_natural: boolean;
     photo?: Express.Multer.File;
-    system_subscription_user_moderator_id: number
+    system_subscription_user_moderator_id: string
 };
 
 export type FullUser = {
-    id: number;
-    system_id: number;
-    system_subscription_id: number;
-    entity_id: number;
-    system_subscription_user_id: number;
+    id: string;
+    system_id: string;
+    system_subscription_id: string;
+    entity_id: string;
+    system_subscription_user_id: string;
     username: string;
     password: string;
     name: string;
     names_obj: string | {
         type: string,
         names: string[],
-        entity_name_type_id: number
+        entity_name_type_id: string
     }[];
     complete_name: string;
     names: string | null;
     surnames: string | null;
     documents: null | {
-        id: number,
+        id: string,
         order: number,
         symbol: string,
         city_id: null | number,
         category: string,
         document: string,
         state_id: null | number,
-        entity_id: number,
+        entity_id: string,
         country_id: null | number,
-        entity_document_id: number,
-        entity_document_category_id: number
+        entity_document_id: string,
+        entity_document_category_id: string
     };
     phones: null | string[];
     emails: null | string[];
@@ -59,45 +60,45 @@ export type FullUser = {
     inactivated_by_system_subscription: Date | null;
     inactivated_by_system_subscription_user: Date | null;
     inactivated_at: Date | null;
-    inactivated_by: number | null;
+    inactivated_by: string | null;
     annulled_at_system: Date | null;
     annulled_at_system_subscription: Date | null;
     annulled_at_system_subscription_user: Date | null;
     annulled_by_system_subscription: Date | null;
     annulled_by_system_subscription_user: Date | null;
     annulled_at: Date | null;
-    annulled_by: number | null;
+    annulled_by: string | null;
 }
 
 export type CompleteEntityUser = {
-    id: number;
-    system_id: number;
-    system_subscription_id: number;
-    entity_id: number;
-    system_subscription_user_id: number;
+    id: string;
+    system_id: string;
+    system_subscription_id: string;
+    entity_id: string;
+    system_subscription_user_id: string;
     username: string;
     password: string;
     name: string;
     names_obj: string | {
         type: string,
         names: string[],
-        entity_name_type_id: number
+        entity_name_type_id: string
     }[];
     complete_name: string;
     names: string | null;
     surnames: string | null;
     documents: null | {
-        id: number,
+        id: string,
         order: number,
         symbol: string,
         city_id: null | number,
         category: string,
         document: string,
         state_id: null | number,
-        entity_id: number,
+        entity_id: string,
         country_id: null | number,
-        entity_document_id: number,
-        entity_document_category_id: number
+        entity_document_id: string,
+        entity_document_category_id: string
     };
     phones: null | string[];
     emails: null | string[];
@@ -108,25 +109,25 @@ export type CompleteEntityUser = {
     inactivated_by_system_subscription: Date | null;
     inactivated_by_system_subscription_user: Date | null;
     inactivated_at: Date | null;
-    inactivated_by: number | null;
+    inactivated_by: string | null;
     annulled_at_system: Date | null;
     annulled_at_system_subscription: Date | null;
     annulled_at_system_subscription_user: Date | null;
     annulled_by_system_subscription: Date | null;
     annulled_by_system_subscription_user: Date | null;
     annulled_at: Date | null;
-    annulled_by: number | null;
-    entity_parent_id: number;
-    document_id: number;
+    annulled_by: string | null;
+    entity_parent_id: string;
+    document_id: string;
     is_natural: 1 | 0;
     gender: null | $Enums.entity_gender_enum;
     date_birth: null | string | Date;
     address: null | string;
     photo: null | string;
     created_at: number;
-    created_by: number;
+    created_by: string;
     updated_at: number;
-    updated_by: number;
+    updated_by: string;
     legal_name: null | string;
     business_name: null | string;
     comercial_designation: null | string;
@@ -246,13 +247,13 @@ export class SystemSubscriptionUserService {
         return users;
     }
 
-    async getById({ id, system_subscription_id }: GetByIdDto & { system_subscription_id?: number }) {
+    async getById({ id, system_subscription_id }: GetByIdDto & { system_subscription_id?: string }) {
         let AND: string[] | string = [
             `annulled_at IS NULL`
         ];
 
         if(system_subscription_id !== undefined) {
-            AND.push(`system_subscription_id = ${system_subscription_id}`);
+            AND.push(`system_subscription_id = '${escape(system_subscription_id)}'`);
         }
 
         AND = AND.length < 1 ? '' : ('AND '.concat(AND.join("\nAND ")));
@@ -260,7 +261,7 @@ export class SystemSubscriptionUserService {
         const sql = `SELECT
             *
         FROM system_subscription_user_complete_info ssu
-        WHERE system_subscription_user_id = ${id}
+        WHERE system_subscription_user_id = '${escape(id)}'
             ${AND}`;
 
         let user: FullUser | null = await this.prisma.findOneUnsafe(sql);
@@ -293,13 +294,13 @@ export class SystemSubscriptionUserService {
         return user;
     }
 
-    async getUserEntityById({ id, system_subscription_id }: GetByIdDto & { system_subscription_id?: number }) {
+    async getUserEntityById({ id, system_subscription_id }: GetByIdDto & { system_subscription_id?: string }) {
         let AND: string[] | string = [
             `ssu.annulled_at IS NULL`
         ];
 
         if(system_subscription_id !== undefined) {
-            AND.push(`ssu.system_subscription_id = ${system_subscription_id}`);
+            AND.push(`ssu.system_subscription_id = '${escape(system_subscription_id)}'`);
         }
 
         AND = AND.length < 1 ? '' : ('AND '.concat(AND.join("\nAND ")));
@@ -323,7 +324,7 @@ export class SystemSubscriptionUserService {
         FROM system_subscription_user_complete_info ssu
         INNER JOIN entity_complete_info ent
             ON ent.id = ssu.entity_id
-        WHERE ssu.system_subscription_user_id = ${id}
+        WHERE ssu.system_subscription_user_id = '${escape(id)}'
             ${AND}`;
 
         let user: CompleteEntityUser | null = await this.prisma.findOneUnsafe(sql);
@@ -366,10 +367,8 @@ export class SystemSubscriptionUserService {
             prisma = await this.prisma.beginTransaction();
         }
 
-        console.log(addData);
-
         try {
-            user = ('system_subscription_user_id' in addData) ? await prisma.system_subscription_user.findUnique({where: {id: Number(addData.system_subscription_user_id)}}) : null;
+            user = ('system_subscription_user_id' in addData) ? await prisma.system_subscription_user.findUnique({where: {id: addData.system_subscription_user_id}}) : null;
 
             if(!user && ('system_subscription_user_id' in addData)) {
                 errors.set('system_subscription_user_id', 404);
@@ -380,7 +379,7 @@ export class SystemSubscriptionUserService {
                 data,
                 errors: entityErrors
             } = await this.entityService.addOrUpdate({
-                entity_id: !user ? undefined : Number(user.entity_id),
+                entity_id: !user ? undefined : user.entity_id,
                 names: addData.names,
                 documents: addData.documents,
                 emails: addData.emails,
@@ -393,17 +392,17 @@ export class SystemSubscriptionUserService {
                 is_natural: addData.is_natural
             }, prisma);
 
-            const moderator_user: CompleteEntity | null = !data ? null : await this.prisma.findOneUnsafe(`SELECT
+            const moderator_user: CompleteEntityUser | null = !data ? null : await this.prisma.findOneUnsafe(`SELECT
                 *
-            FROM entity_complete_info eci
-            WHERE id = ${addData.system_subscription_user_moderator_id}`, prisma);
+            FROM system_subscription_user_complete_info eci
+            WHERE id = '${escape(addData.system_subscription_user_moderator_id)}'`, prisma);
 
             const usernames: string[] = (!!user || !moderator_user) ? null : (await this.prisma.queryUnsafe<{username: string}>(`SELECT
                 ssu.username
             FROM entity_complete_info eci
             INNER JOIN system_subscription_user ssu
                 ON ssu.entity_id = eci.id
-            WHERE eci.system_subscription_id = ${moderator_user.system_subscription_id}`, prisma) ?? [])
+            WHERE eci.system_subscription_id = '${escape(moderator_user.system_subscription_id)}'`, prisma) ?? [])
                 .map(el => (el.username));
 
             const username: string | null = (!data || !moderator_user || !usernames || !data.fullEntity.names) ? null : usernameGenerator(data.fullEntity.names.split(' ')[0], data.fullEntity.surnames === null ? 'user' : data.fullEntity.surnames.split(' ')[0], usernames);
@@ -448,7 +447,7 @@ export class SystemSubscriptionUserService {
             FROM system_subscription_user_complete_info ssu
             INNER JOIN entity_complete_info ent
                 ON ent.id = ssu.entity_id
-            WHERE ssu.system_subscription_user_id = ${user.id}`, prisma);
+            WHERE ssu.system_subscription_user_id = '${escape(user.id)}'`, prisma);
 
             if(!data) {
                 errors = entityErrors;
@@ -486,7 +485,7 @@ export class SystemSubscriptionUserService {
         };
     }
 
-    async changeStatus(data: ChangeStatusDto & { system_subscription_user_moderator_id: number }, prisma?: TransactionPrisma, user?: system_subscription_user) {
+    async changeStatus(data: ChangeStatusDto & { system_subscription_user_moderator_id: string }, prisma?: TransactionPrisma, user?: system_subscription_user) {
         const isPosibleTransaction = !prisma,
             errors = new HandlerErrors(),
             system_subscription_user_field_id = 'system_subscription_id';
@@ -550,7 +549,7 @@ export class SystemSubscriptionUserService {
         }
     }
 
-    async changeUserPassword({ system_subscription_user_id, current_password, new_password }: {system_subscription_user_id: number} & ChangePasswordDto, prisma?: TransactionPrisma) {
+    async changeUserPassword({ system_subscription_user_id, current_password, new_password }: {system_subscription_user_id: string} & ChangePasswordDto, prisma?: TransactionPrisma) {
         const isPosibleTransaction = !prisma;
         let warning: string | undefined = undefined;
 
@@ -578,8 +577,8 @@ export class SystemSubscriptionUserService {
                 }
             });
 
-            const emails = await this.entityService.getEntityEmails(Number(user.entity_id)),
-                completeUser = await this.getUserEntityById({ id: Number(user.id) });
+            const emails = await this.entityService.getEntityEmails(user.entity_id),
+                completeUser = await this.getUserEntityById({ id: user.id });
 
             if(emails.length < 1) {
                 warning = 'The user does not have a registered email to notify them that their password has been reset.';
@@ -609,7 +608,7 @@ export class SystemSubscriptionUserService {
         }
     }
 
-    async resetUserPassword({ id, sendEmail = false }: { id: number, sendEmail?: boolean }, prisma?: TransactionPrisma) {
+    async resetUserPassword({ id, sendEmail = false }: { id: string, sendEmail?: boolean }, prisma?: TransactionPrisma) {
         const isPosibleTransaction = !prisma;
         let warning: string | undefined = undefined;
 
@@ -640,8 +639,8 @@ export class SystemSubscriptionUserService {
             });
 
             if(!!sendEmail) {
-                const emails = await this.entityService.getEntityEmails(Number(user.entity_id)),
-                    completeUser = await this.getUserEntityById({ id: Number(user.id) });
+                const emails = await this.entityService.getEntityEmails(user.entity_id),
+                    completeUser = await this.getUserEntityById({ id: user.id });
 
                 if(emails.length < 1) {
                     warning = 'The user does not have a registered email to notify them that their password has been reset.';

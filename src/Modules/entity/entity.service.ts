@@ -12,16 +12,17 @@ import path from 'path';
 import { validateSSN } from 'src/util/validators';
 import { booleanFormat } from 'src/util/formats';
 import { GetByIdDto } from './dto/entity.dto';
+import { escape } from 'querystring';
 
 export type AddOrUpdateParams = AddOrUpdateDto & {
     photo?: Express.Multer.File;
-    system_subscription_user_moderator_id: number
+    system_subscription_user_moderator_id: string;
 };
 
 export type CompleteEntity = {
     id: number;
-    entity_parent_id: number;
-    document_id: number;
+    entity_parent_id: string;
+    document_id: string;
     is_natural: 1 | 0;
     name: string;
     gender: null | $Enums.entity_gender_enum;
@@ -29,16 +30,16 @@ export type CompleteEntity = {
     address: null | number;
     photo: null | string;
     created_at: number;
-    created_by: number;
+    created_by: string;
     updated_at: number;
-    updated_by: number;
+    updated_by: string;
     annulled_at: number;
-    annulled_by: number;
+    annulled_by: string;
     complete_name: string;
     names_obj: string | {
         type: string,
         names: string[],
-        entity_name_type_id: number
+        entity_name_type_id: string
     }[];
     names: null | string;
     surnames: null | string;
@@ -53,29 +54,29 @@ export type CompleteEntity = {
         category: string,
         document: string,
         state_id: null | number,
-        entity_id: number,
+        entity_id: string,
         country_id: null | number,
-        entity_document_id: number,
-        entity_document_category_id: number
+        entity_document_id: string,
+        entity_document_category_id: string
     };
     phones: null | string[];
     emails: null | string[];
-    system_id: number;
-    system_subscription_id: number;
-    system_subscription_user_id: number;
+    system_id: string;
+    system_subscription_id: string;
+    system_subscription_user_id: string;
 }
 
 /* type NamesTypes = {
     type: string;
-    entity_name_type_id: number;
+    entity_name_type_id: string;
     names: string[]
 };
 
 type EntityDocumentType = {
     id: number;
-    entity_id: number;
-    entity_document_category_id: number;
-    entity_document_id: number;
+    entity_id: string;
+    entity_document_category_id: string;
+    entity_document_id: string;
     country_id: null | number;
     state_id: null | number;
     city_id: null | number;
@@ -87,19 +88,19 @@ type EntityDocumentType = {
 
 type EntityFullInfo = {
     id: number;
-    entity_parent_id: number;
-    document_id: number;
+    entity_parent_id: string;
+    document_id: string;
     is_natural: boolean | 1 | 0;
-    system_id: number;
-    system_subscription_id: number;
-    system_subscription_user_id: number;
+    system_id: string;
+    system_subscription_id: string;
+    system_subscription_user_id: string;
     name: 'string';
     gender: null | 'Male' | 'Female';
     date_birth: null | string | Date;
     address: null | string;
     photo: null | string;
     created_at: string | Date;
-    created_by: number;
+    created_by: string;
     updated_at: null | string | Date;
     updated_by: null | number;
     annulled_at: null | string | Date;
@@ -223,13 +224,13 @@ export class EntityService {
         return users;
     }
 
-    async getById({ id, system_subscription_id }: GetByIdDto & { system_subscription_id?: number }) {
+    async getById({ id, system_subscription_id }: GetByIdDto & { system_subscription_id?: string }) {
         let AND: string[] | string = [
             `annulled_at IS NULL`
         ];
 
         if(system_subscription_id !== undefined) {
-            AND.push(`system_subscription_id = ${system_subscription_id}`);
+            AND.push(`system_subscription_id = '${escape(system_subscription_id)}'`);
         }
 
         AND = AND.length < 1 ? '' : ('AND '.concat(AND.join("\nAND ")));
@@ -237,7 +238,7 @@ export class EntityService {
         const sql = `SELECT
             *
         FROM entity_complete_info eci
-        WHERE id = ${id}
+        WHERE id = '${escape(id)}'
             ${AND}`;
 
         let entity: CompleteEntity | null = await this.prisma.findOneUnsafe(sql);
@@ -314,7 +315,7 @@ export class EntityService {
                     },
                     data: {
                         ...proccessingData,
-                        updated_by: Number(addData.system_subscription_user_moderator_id),
+                        updated_by: addData.system_subscription_user_moderator_id,
                         updated_at: new Date
                     }
                 });
@@ -322,7 +323,7 @@ export class EntityService {
                 entity = await prisma.entity.create({
                     data: {
                         ...proccessingData,
-                        created_by: Number(addData.system_subscription_user_moderator_id)
+                        created_by: addData.system_subscription_user_moderator_id
                     }
                 });
             }
@@ -392,8 +393,8 @@ export class EntityService {
                 const namesResult = await this.nameService.processMultipleNames({
                     names: names[names_types[i]].names,
                     entity_id: entity.id,
-                    entity_name_type_id: Number(names_types[i]),
-                    created_by: Number(addData.system_subscription_user_moderator_id),
+                    entity_name_type_id: names_types[i],
+                    created_by: addData.system_subscription_user_moderator_id,
                     initialIndex: currentNameIndex,
                     name_type: 'names'
                 }, prisma);
@@ -415,7 +416,7 @@ export class EntityService {
             if(!errorsInNamesProcessing) {
                 /* const voidedNames = */ await prisma.entity_name_by_entity.updateMany({
                     data: {
-                        annulled_by: Number(addData.system_subscription_user_moderator_id),
+                        annulled_by: addData.system_subscription_user_moderator_id,
                         annulled_at: new Date()
                     },
                     where: {
@@ -437,7 +438,7 @@ export class EntityService {
             const emailsResult = await this.emailService.processMultipleEmails({
                 emails: addData.emails,
                 entity_id: entity.id,
-                created_by: Number(addData.system_subscription_user_moderator_id),
+                created_by: addData.system_subscription_user_moderator_id,
                 name: 'emails'
             }, prisma);
 
@@ -455,7 +456,7 @@ export class EntityService {
             const phonesResult = await this.phoneService.processMultiplePhones({
                 phones: addData.phones,
                 entity_id: entity.id,
-                created_by: Number(addData.system_subscription_user_moderator_id)
+                created_by: addData.system_subscription_user_moderator_id
             }, prisma);
 
             if(phonesResult.errors.existsErrors()) {
@@ -500,9 +501,9 @@ export class EntityService {
                 for(let docs in documentsByType) {
                     const documentsResult = await this.documentService.processMultipleDocuments({
                         documents: documentsByType[docs],
-                        entity_document_category_id: Number(docs),
+                        entity_document_category_id: docs,
                         entity_id: entity.id,
-                        created_by: Number(addData.system_subscription_user_moderator_id),
+                        created_by: addData.system_subscription_user_moderator_id,
                         validatorFn: (doc: string, name: string, order: number) => validateSSN(doc, name, order === 1),
                         name: 'documents'
                     }, prisma);
@@ -522,7 +523,7 @@ export class EntityService {
                 if(!errorsInDocumentsProcessing) {
                     /* const voidedDocuments = */ await prisma.entity_document.updateMany({
                         data: {
-                            annulled_by: Number(addData.system_subscription_user_moderator_id),
+                            annulled_by: addData.system_subscription_user_moderator_id,
                             annulled_at: new Date()
                         },
                         where: {
@@ -563,7 +564,7 @@ export class EntityService {
             fullEntity = await this.prisma.findOneUnsafe(`SELECT
                 *
             FROM entity_complete_info eci
-            WHERE id = ${entity.id}`, prisma);
+            WHERE id = '${escape(entity.id)}'`, prisma);
 
             if(!fullEntity) {
                 errors.set('entity', 'Entity not found.');
@@ -615,7 +616,7 @@ export class EntityService {
         };
     }
 
-    async getEntityEmails(id: number, prisma?: PrismaTransactionOrService) {
+    async getEntityEmails(id: string, prisma?: PrismaTransactionOrService) {
         return await this.prisma.queryUnsafe(`SELECT
             ee.*
         FROM entity_email_by_entity eebe
@@ -624,7 +625,7 @@ export class EntityService {
         INNER JOIN entity ent
             ON ent.id = eebe.entity_id
         WHERE COALESCE(eebe.annulled_at, ee.annulled_at) IS NULL
-            AND ent.id = ${id}
+            AND ent.id = '${escape(id)}'
         ORDER BY eebe.order ASC`, prisma);
     }
 }

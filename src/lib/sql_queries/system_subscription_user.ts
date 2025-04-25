@@ -1,17 +1,19 @@
+import { escape } from "querystring";
+
 type GetAllUsersParams = {
-    user_id?: number | string | null,
-    system_id?: number | string | null,
-    system_subscription_id?: number | string | null,
-    system_subscription_user_id?: number | string | null,
+    user_id?: string | string | null,
+    system_id?: string | string | null,
+    system_subscription_id?: string | string | null,
+    system_subscription_user_id?: string | string | null,
     annulled?: boolean | null,
 }
 
 export type User = {
-    id: number;
-    system_id: number;
-    system_subscription_id: number;
-    entity_id: number;
-    system_subscription_user_id: number;
+    id: string;
+    system_id: string;
+    system_subscription_id: string;
+    entity_id: string;
+    system_subscription_user_id: string;
     username: string;
     password: string;
     name?: string | null;
@@ -24,8 +26,8 @@ export type User = {
     annulled_at_system?: string | null;
     annulled_at_system_subscription?: string | null;
     annulled_at_system_subscription_user?: string | null;
-    annulled_by_system_subscription?: number | null;
-    annulled_by_system_subscription_user?: number | null;
+    annulled_by_system_subscription?: string | null;
+    annulled_by_system_subscription_user?: string | null;
     annulled_at?: string | null;
     annulled_by?: number | null;
 }
@@ -41,15 +43,15 @@ export function getAllUsers({params = {}, __limit, __page}: {params?: GetAllUser
     }
 
     if((params.user_id ?? params.system_subscription_user_id ?? null) !== null) {
-        where.push(`ssu.id = ${params.user_id ?? params.system_subscription_user_id}`);
+        where.push(`ssu.id = '${escape(params.user_id ?? params.system_subscription_user_id)}'`);
     }
 
     if((params.system_id ?? null) !== null) {
-        where.push(`sys.id = ${params.system_id}`);
+        where.push(`sys.id = '${escape(params.system_id)}'`);
     }
 
     if((params.system_subscription_id ?? null) !== null) {
-        where.push(`ss.id = ${params.system_subscription_id}`);
+        where.push(`ss.id = '${escape(params.system_subscription_id)}'`);
     }
 
     if((params.annulled ?? null) !== null) {

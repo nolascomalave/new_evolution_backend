@@ -48,7 +48,7 @@ export class EntityController {
     async getById(@Req() { user: { system_subscription_id } }: RequestSession, @Param() { id }: GetByIdDto) {
         const result = await this.service.getById({
             id,
-            system_subscription_id: Number(system_subscription_id)
+            system_subscription_id: system_subscription_id
         });
 
         return JSONParser(result);
@@ -82,7 +82,7 @@ export class EntityController {
             const entityResult = await this.service.addOrUpdate({
                 ...data,
                 photo,
-                system_subscription_user_moderator_id: Number(req.user.id)
+                system_subscription_user_moderator_id: req.user.id
             }, prisma);
 
             if(entityResult.errors.existsErrors()) {
@@ -142,7 +142,7 @@ export class EntityController {
                 ...data,
                 photo,
                 entity_id: id,
-                system_subscription_user_moderator_id: Number(req.user.id)
+                system_subscription_user_moderator_id: req.user.id
             }, prisma);
 
             if(entityResult.errors.existsErrors()) {

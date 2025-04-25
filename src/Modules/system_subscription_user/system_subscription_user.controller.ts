@@ -49,7 +49,7 @@ export class SystemSubscriptionUserController {
     async getById(@Req() { user: { system_subscription_id } }: RequestSession, @Param() { id }: GetByIdDto, @Query() { allEntityInfo = false }: GetByIdQueryDto) {
         const result = await this.service[allEntityInfo === true ? 'getUserEntityById' : 'getById']({
             id,
-            system_subscription_id: Number(system_subscription_id)
+            system_subscription_id: system_subscription_id
         });
 
         if(result !== null) {
@@ -91,7 +91,7 @@ export class SystemSubscriptionUserController {
             const user = await this.service.addOrUpdate({
                 ...data,
                 photo,
-                system_subscription_user_moderator_id: Number(req.user.id),
+                system_subscription_user_moderator_id: req.user.id,
                 is_natural: true
             }, prisma);
 
@@ -155,7 +155,7 @@ export class SystemSubscriptionUserController {
                 ...data,
                 photo,
                 system_subscription_user_id: id,
-                system_subscription_user_moderator_id: Number(req.user.id),
+                system_subscription_user_moderator_id: req.user.id,
                 is_natural: true
             }, prisma);
 
@@ -203,7 +203,7 @@ export class SystemSubscriptionUserController {
         try {
             const result = await this.service.changeStatus({
                 ...data,
-                system_subscription_user_moderator_id: Number(moderator.id)
+                system_subscription_user_moderator_id: moderator.id
             }, prisma);
 
             if(result.errors.existsErrors()) {
@@ -262,7 +262,7 @@ export class SystemSubscriptionUserController {
         const prisma = await this.prisma.beginTransaction();
 
         try {
-            const { warning } = await this.service.changeUserPassword({system_subscription_user_id: Number(moderator.id), ...data}, prisma);
+            const { warning } = await this.service.changeUserPassword({system_subscription_user_id: moderator.id, ...data}, prisma);
 
             await prisma.commit();
 

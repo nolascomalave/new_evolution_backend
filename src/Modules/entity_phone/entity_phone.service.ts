@@ -3,41 +3,42 @@ import { PrismaService, TransactionPrisma } from '../../prisma.service';
 
 // utils:
 import {
-    validateId,
+    validateUniqueIdString,
     validatePhoneNumber,
     validateCuantity
 } from '../../util/validators';
 // import { extractNumberInText, destilde } from "../util/formats";
 import HandlerErrors from "../../util/HandlerErrors";
+import { escape } from "querystring";
 
 type ProcessPhoneType = {
-    entity_id?: number;
-    entity_phone_id: number;
+    entity_id?: string;
+    entity_phone_id: string;
     phone: any;
-    created_by: number;
+    created_by: string;
     order?: number;
     name?: string;
 } | any;
 
 type ProcessMultiplePhonesType = {
-    entity_id?: number;
+    entity_id?: string;
     phones: string[];
-    created_by: number;
+    created_by: string;
     name?: string;
 } | any;
 
 export type ChangePhoneOrderType = {
-    entity_phone_id: number;
-    entity_id: number;
+    entity_phone_id: string;
+    entity_id: string;
     order: number;
     name?: string;
 } | any;
 
 type GetBelongingSystemType = {
     NotEqualEntityID?: boolean;
-    entity_id?: number;
-    entity_phone_id?: number;
-    system_subscription_id?: number;
+    entity_id?: string;
+    entity_phone_id?: string;
+    system_subscription_id?: string;
 }
 
 export class EntityPhoneService {
@@ -64,9 +65,9 @@ export class EntityPhoneService {
         } else {
             params.name ??= 'phone';
 
-            errors.set('entity_id', validateId(params.entity_id, params.name + ' entity ID'));
-            errors.set('created_by', validateId(params.created_by, params.name + ' processing user ID', true));
-            errors.set('entity_phone_id', validateId(params.entity_phone_id, params.name + ' ID'));
+            errors.set('entity_id', validateUniqueIdString(params.entity_id, params.name + ' entity ID'));
+            errors.set('created_by', validateUniqueIdString(params.created_by, params.name + ' processing user ID', true));
+            errors.set('entity_phone_id', validateUniqueIdString(params.entity_phone_id, params.name + ' ID'));
             errors.set(params.name, validatePhoneNumber(params.phone, params.name, true));
 
             if(!errors.exists('entity_id') && (params.entity_id ?? null) !== null) {
@@ -115,9 +116,9 @@ export class EntityPhoneService {
 
                 if(user && entity && phone && (params.order ?? null) !== null && params.order == 1) {
                     const exisingPhoneByEntity = await this.getBelongingSystem({
-                        entity_id: Number(entity.id),
-                        system_subscription_id: Number(user.system_subscription_id),
-                        entity_phone_id: Number(phone.id),
+                        entity_id: entity.id,
+                        system_subscription_id: user.system_subscription_id,
+                        entity_phone_id: phone.id,
                         NotEqualEntityID: true
                     }, prisma);
 
@@ -162,7 +163,7 @@ export class EntityPhoneService {
                     phone = await prisma.entity_phone.create({
                         data: {
                             phone: params.phone,
-                            created_by: user?.id ?? 0
+                            created_by: user?.id ?? ""
                         }
                     });
                 } else if(existingPhone) { // Solo pasa por aquí si phone es el registro encontrado por la variable params.entity_phone_id y existe un teléfono que tiene el número buscado y es diferente del teléfono a editar.
@@ -194,7 +195,7 @@ export class EntityPhoneService {
                             data: {
                                 entity_id: entity.id,
                                 entity_phone_id: phone.id,
-                                created_by: user?.id ?? 0,
+                                created_by: user?.id ?? "",
                                 order: params.order ?? 0
                             }
                         });
@@ -243,7 +244,7 @@ export class EntityPhoneService {
                                     }
                                 },
                                 data: {
-                                    annulled_by: user?.id ?? 0,
+                                    annulled_by: user?.id ?? "",
                                     annulled_at: new Date(),
                                     order: params.order ?? 0
                                 }
@@ -310,8 +311,8 @@ export class EntityPhoneService {
         } else {
             params.name ??= 'phones';
 
-            errors.set('entity_id', validateId(params.entity_id, params.name + ' entity ID'));
-            errors.set('created_by', validateId(params.created_by, params.name + ' processing user ID', true));
+            errors.set('entity_id', validateUniqueIdString(params.entity_id, params.name + ' entity ID'));
+            errors.set('created_by', validateUniqueIdString(params.created_by, params.name + ' processing user ID', true));
 
             if(!Array.isArray(params.phones)) {
                 errors.set(params.name, params.name + ' must be an array!');
@@ -439,8 +440,8 @@ export class EntityPhoneService {
         } else {
             params.name ??= 'phone';
 
-            errors.set('entity_id', validateId(params.entity_id, params.name + ' entity ID', true));
-            errors.set('entity_phone_id', validateId(params.entity_phone_id, params.name + ' phone ID', true));
+            errors.set('entity_id', validateUniqueIdString(params.entity_id, params.name + ' entity ID', true));
+            errors.set('entity_phone_id', validateUniqueIdString(params.entity_phone_id, params.name + ' phone ID', true));
 
             if(!errors.existsErrors()) {
                 errors.set('order', validateCuantity({
@@ -491,26 +492,26 @@ export class EntityPhoneService {
                     },
                     where: {
                         entity_id_entity_phone_id: {
-                            entity_id: entity?.id ?? 0,
-                            entity_phone_id: phone?.id ?? 0
+                            entity_id: entity?.id ?? "",
+                            entity_phone_id: phone?.id ?? ""
                         }
                     }
                 });
 
-                await prisma.$queryRawUnsafe(`UPDATE entity_phone_by_entity ee
+                await prisma.$queryRawUnsafe(`UPDATE entity_phone_by_entity SET
+                    "order" = phone.real_order
+                FROM entity_phone_by_entity ee
                 INNER JOIN (
                     SELECT
                         ee.entity_id,
                         ee.entity_phone_id,
-                        ROW_NUMBER() OVER(PARTITION BY ee.entity_id ORDER BY CONVERT(CONCAT(IF(ee.entity_id = ${entity?.id} AND ee.entity_phone_id = ${phone?.id}, ${params.order}, ee.order), '.', CONCAT(IF(ee.entity_id = ${entity?.id} AND ee.entity_phone_id = ${phone?.id}, 0, 1))), DECIMAL(18, 1)) ASC) AS real_order
+                        ROW_NUMBER() OVER(PARTITION BY ee.entity_id ORDER BY CONCAT(iif(ee.entity_id = '${escape(entity?.id)}' AND ee.entity_phone_id = '${escape(phone?.id)}', ${params.order}, ee.order), '.', CONCAT(iif(ee.entity_id = '${escape(entity?.id)}' AND ee.entity_phone_id = '${escape(phone?.id)}', 0, 1)))::decimal(18, 1) ASC) AS real_order
                     FROM entity_phone_by_entity ee
                     WHERE ee.annulled_at IS NULL
-                        AND ee.entity_id = 1
+                        AND ee.entity_id = '${escape(entity?.id)}'
                 ) phone
                     ON phone.entity_phone_id = ee.entity_phone_id
-                    AND phone.entity_id = ee.entity_id
-                SET
-                    "order" = phone.real_order`);
+                    AND phone.entity_id = ee.entity_id`);
 
                 const maxNotNullOrder = await prisma.entity_phone_by_entity.aggregate({
                     _max: {
@@ -525,20 +526,20 @@ export class EntityPhoneService {
                     }
                 });
 
-                await prisma.$queryRawUnsafe(`UPDATE entity_phone_by_entity ee
+                await prisma.$queryRawUnsafe(`UPDATE entity_phone_by_entity SET
+                    "order" = (phone.real_order + ${maxNotNullOrder._max.order ?? 0})
+                FROM entity_phone_by_entity ee
                 INNER JOIN (
                     SELECT
                         ee.entity_id,
                         ee.entity_phone_id,
-                        ROW_NUMBER() OVER(PARTITION BY ee.entity_id ORDER BY CONVERT(CONCAT(IF(ee.entity_id = ${entity?.id} AND ee.entity_phone_id = ${phone?.id}, ${params.order}, ee.order), '.', CONCAT(IF(ee.entity_id = ${entity?.id} AND ee.entity_phone_id = ${phone?.id}, 0, 1))), DECIMAL(18, 1)) ASC) AS real_order
+                        ROW_NUMBER() OVER(PARTITION BY ee.entity_id ORDER BY CONCAT(iif(ee.entity_id = '${escape(entity?.id)}' AND ee.entity_phone_id = '${escape(phone?.id)}', ${params.order}, ee.order), '.', CONCAT(iif(ee.entity_id = '${escape(entity?.id)}' AND ee.entity_phone_id = '${escape(phone?.id)}', 0, 1)))::decimal(18, 1) ASC) AS real_order
                     FROM entity_phone_by_entity ee
                     WHERE ee.annulled_at IS NOT NULL
-                        AND ee.entity_id = 1
+                        AND ee.entity_id = '${escape(entity?.id)}'
                 ) phone
                     ON phone.entity_phone_id = ee.entity_phone_id
-                    AND phone.entity_id = ee.entity_id
-                SET
-                    "order" = (phone.real_order + ${maxNotNullOrder._max.order ?? 0})`);
+                    AND phone.entity_id = ee.entity_id`);
 
                 if(isPosibleTransaction && 'commit' in prisma) {
                     await prisma.commit();
@@ -569,15 +570,15 @@ export class EntityPhoneService {
         let AND: string[] | string = [];
 
         if('entity_id' in params) {
-            AND.push(`ent.id ${params.NotEqualEntityID === true ? '<>' : '='} ${params.entity_id}`);
+            AND.push(`ent.id ${params.NotEqualEntityID === true ? '<>' : '='} '${escape(params.entity_id)}'`);
         }
 
         if('entity_phone_id' in params) {
-            AND.push(`ef.id = ${params.entity_phone_id}`);
+            AND.push(`ef.id = '${escape(params.entity_phone_id)}'`);
         }
 
         if('system_subscription_id' in params) {
-            AND.push(`ssu.system_subscription_id = ${params.system_subscription_id}`);
+            AND.push(`ssu.system_subscription_id = '${escape(params.system_subscription_id)}'`);
         }
 
         AND = AND.length < 1 ? '' : `AND ${AND.join("\nAND ")}`;

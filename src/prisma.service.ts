@@ -17,11 +17,65 @@ export type TransactionPrisma = Prisma.TransactionClient & {
 
 export type PrismaTransactionOrService = PrismaService | TransactionPrisma;
 
+
+type QueryEvent = {
+    timestamp: Date;
+    query: string;      // La consulta SQL
+    params: string;     // Los parámetros de la consulta
+    duration: number;   // Duración en ms
+    target: string;
+  };
+  
+  type ErrorEvent = {
+    timestamp: Date;
+    message: string;    // Mensaje de error
+    target: string;
+    meta?: {
+      code?: string;
+      query?: string;
+      params?: string;
+      [key: string]: unknown;
+    };
+  };
+  
+
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
-    async onModuleInit() {
+    constructor() {
+        super({
+          log: [
+            { emit: 'event', level: 'query' },
+            { emit: 'event', level: 'error' },
+            { emit: 'event', level: 'warn' },
+          ],
+        });
+      }
+
+      async onModuleInit() {
         await this.$connect();
-    }
+        // this.setupLogging();
+      }
+
+      private setupLogging() {
+        // Para el evento de query
+        /* (this.$on as any)('query', (e: QueryEvent) => {
+          console.log('\n--- PRISMA QUERY ---');
+          console.log('Query:', e.query);
+          console.log('Params:', e.params);
+          console.log('Duration:', e.duration, 'ms');
+          console.log('-------------------\n');
+        }); */
+
+        // Para el evento de error
+        (this.$on as any)('error', (e: ErrorEvent) => {
+          console.error('\n--- PRISMA ERROR ---');
+          console.error('Message:', e.message);
+          console.error('Code:', e.meta?.code);
+          console.error('Query:', e.meta?.query);
+          console.error('Params:', e.meta?.params);
+          console.error('-------------------\n');
+        });
+      }
 
     public isTransaction(): boolean {
         return false;

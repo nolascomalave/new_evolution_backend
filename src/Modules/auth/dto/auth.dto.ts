@@ -1,15 +1,16 @@
 import { Transform } from 'class-transformer';
-import { IsBoolean, IsInt, IsNumber, IsOptional, IsString, MaxLength, MinLength} from 'class-validator';
+import { IsBoolean, IsOptional, IsString, MaxLength, MinLength} from 'class-validator';
 import { booleanFormat } from 'src/util/formats';
 
 export class LoginDto {
-    @IsNumber()
-    @IsInt()
-    system_id: number;
+    // @Transform(({value}) => (() => {console.log(value); return value})())
+    @IsString()
+    @MaxLength(250)
+    system_id: string;
 
-    @IsNumber()
-    @IsInt()
-    system_subscription_id: number;
+    @IsString()
+    @MaxLength(250)
+    system_subscription_id: string;
 
     @IsString()
     @MinLength(5)

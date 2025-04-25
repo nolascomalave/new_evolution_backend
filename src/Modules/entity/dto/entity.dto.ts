@@ -18,9 +18,9 @@ class NameDto {
     @Min(0)
     order: number
 
-    @IsNumber()
-    @IsInt()
-    entity_name_type_id: number
+    @IsString()
+    @MaxLength(250)
+    entity_name_type_id: string
 }
 
 class DocumentDto {
@@ -34,16 +34,16 @@ class DocumentDto {
     @Min(0)
     order: number
 
-    @IsNumber()
-    @IsInt()
-    entity_document_category_id: number
+    @IsString()
+    @MaxLength(250)
+    entity_document_category_id: string;
 }
 
 
 export class GetByIdDto {
-    @Transform(({ value }) => (isNaN(value) ? value : Number(value)))
-    @IsInt()
-    id: number;
+    @IsString()
+    @MaxLength(250)
+    id: string;
 }
 
 const transformJSON = ({ value }) => {
@@ -56,8 +56,9 @@ const transformJSON = ({ value }) => {
 
 export class AddOrUpdateDto {
     @IsOptional()
-    @IsInt()
-    entity_id?: number;
+    @IsString()
+    @MaxLength(250)
+    entity_id?: string;
 
     @Transform(({value}) => booleanFormat(value))
     @IsBoolean()

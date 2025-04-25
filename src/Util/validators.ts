@@ -4,13 +4,26 @@ import { addDots, dateToString, stringToDate, extractNumberInText, cleanSpaces }
 // Type:
 type ReturnValidator<Type> = Type | null;
 
-export function validateId(id: any, type: string, required?: boolean): ReturnValidator<string> {
+export function validateNumberId(id: any, type: string, required?: boolean): ReturnValidator<string> {
 	if(!id && !required) return null;
 	if(!id) return `${type} id is required!`;
 
 	if((typeof id !== 'string') && typeof id !== 'number' && typeof id !== 'bigint') return (type+' must be defined in text or number format!');
 
 	if(!(/^[1-9]([0-9]+)?$/.test(id.toString()))) return (type+' id must be a natural number in text or number format greater than 0!');
+
+	return null;
+}
+
+export function validateUniqueIdString(id: any, type: string, required?: boolean): ReturnValidator<string> {
+	if(!id && !required) return null;
+	if(!id) return `${type} id is required!`;
+
+	if(typeof id !== 'string') {
+		return (type + ' must be defined in text!');
+	}
+
+	if(id.length > 250) return (type + ' id must not contain more than 250 characters!');
 
 	return null;
 }
@@ -196,7 +209,7 @@ export function validatePhoneNumber(phone: any, name: string = 'Phone', required
 	return null;
 }
 
-export function validateIdDocument(doc: any, min: null | number, max: null | number, required?: boolean): ReturnValidator<string>{
+export function validateUniqueIdStringDocument(doc: any, min: null | number, max: null | number, required?: boolean): ReturnValidator<string>{
 	if((doc === undefined || doc === null || doc === '') && !required) return null;
 
 	if(typeof doc !== 'string' && typeof doc !== 'number') return 'The identity document must be defined in text or numeric format!';

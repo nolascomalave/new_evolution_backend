@@ -35,15 +35,32 @@ export class AuthService {
                     ON sys.id = ss.system_id
                 WHERE ss.id = ssu.system_subscription_id
                     AND COALESCE(sys.annulled_at, ss.annulled_at, sys.inactivated_at, ss.inactivated_at) IS NULL
-                    AND ss.id = ${credentials.system_subscription_id}
-                    AND sys.id = ${credentials.system_id}
+                    AND ss.id = '${escape(credentials.system_subscription_id)}'
+                    AND sys.id = '${escape(credentials.system_id)}'
             )`);
+
+        console.log(`SELECT
+        ssu.*
+    FROM system_subscription_user ssu
+    WHERE COALESCE(ssu.annulled_at, ssu.inactivated_at) IS NULL
+        AND ssu.username = '${escape(credentials.username)}'
+        AND EXISTS(
+            SELECT
+                *
+            FROM system_subscription ss
+            INNER JOIN "system" sys
+                ON sys.id = ss.system_id
+            WHERE ss.id = ssu.system_subscription_id
+                AND COALESCE(sys.annulled_at, ss.annulled_at, sys.inactivated_at, ss.inactivated_at) IS NULL
+                AND ss.id = '${escape(credentials.system_subscription_id)}'
+                AND sys.id = '${escape(credentials.system_id)}'
+        )`);
 
         if(!user || !compareSync(credentials.password, user.password)) {
             throw new UnauthorizedException();
         }
 
-        const userData = await this.systemSubscriptionUserService.getUserEntityById({id: Number(user.id)});
+        const userData = await this.systemSubscriptionUserService.getUserEntityById({id: user.id});
 
         if(!userData) {
             throw new InternalServerErrorException();

@@ -18,19 +18,19 @@ model TEMP_unit_measurement {
   symbol                       String? @db.VarChar(250)
   value                        String? @db.VarChar(250)
   numericValue                 String? @db.VarChar(250)
-  category_id                  Int?
-  type_id                      Int?
-  subtype_id                   Int?
-  unit_measurement_category_id Int?
+  category_id                  String?  @db.Uuid
+  type_id                      String?  @db.Uuid
+  subtype_id                   String?  @db.Uuid
+  unit_measurement_category_id String?  @db.Uuid
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model TEMP_unit_measurement_category {
   id                           Int                     @id @default(autoincrement())
-  unit_measurement_category_id Int?
+  unit_measurement_category_id String?  @db.Uuid
   category                     String                     @db.VarChar(100)
   annulled_at                  DateTime?                  @db.Timestamp(6)
-  annulled_by                  Int?
+  annulled_by                  String? @db.Uuid
   unit_measurement_category    unit_measurement_category? @relation(fields: [unit_measurement_category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "TEMP_unit_measurement_categor_unit_measurement_category_id_fkey")
   system_subscription_user     system_subscription_user?  @relation(fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
@@ -38,9 +38,9 @@ model TEMP_unit_measurement_category {
 }
 
 model entity {
-  id                                                                       Int                      @id @default(autoincrement())
-  entity_parent_id                                                         Int?
-  document_id                                                              Int?
+  id                                                                       String  @id @default(uuid()) @db.Uuid
+  entity_parent_id                                                         String?  @db.Uuid
+  document_id                                                              String?  @db.Uuid
   is_natural                                                               String                      @default("1") @db.Bit(1)
   name                                                                     String                      @db.VarChar(2000)
   gender                                                                   entity_gender_enum?
@@ -48,13 +48,13 @@ model entity {
   address                                                                  String?                     @db.VarChar(2000)
   photo                                                                    String?                     @db.VarChar(2000)
   created_at                                                               DateTime                    @default(now()) @db.Timestamp(6)
-  created_by                                                               Int?
+  created_by                                                               String? @db.Uuid
   inactivated_at                                                           DateTime?                   @db.Timestamp(6)
-  inactivated_by                                                           Int?
+  inactivated_by                                                           String? @db.Uuid
   updated_at                                                               DateTime?                   @db.Timestamp(6)
-  updated_by                                                               Int?
+  updated_by                                                               String? @db.Uuid
   annulled_at                                                              DateTime?                   @db.Timestamp(6)
-  annulled_by                                                              Int?
+  annulled_by                                                              String? @db.Uuid
   annullator_user                                                          system_subscription_user?   @relation("entity_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   creator_user                                                             system_subscription_user?   @relation("entity_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entity                                                                   entity?                     @relation("entityToentity", fields: [entity_parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -71,15 +71,15 @@ model entity {
 }
 
 model entity_document {
-  id                                                                             Int                      @id @default(autoincrement())
-  entity_document_category_id                                                    Int?
-  entity_id                                                                      Int?
+  id                                                                             String  @id @default(uuid()) @db.Uuid
+  entity_document_category_id                                                    String?  @db.Uuid
+  entity_id                                                                      String?  @db.Uuid
   document                                                                       String?                     @db.VarChar(250)
   order                                                                          Int                         @default(0)
   created_at                                                                     DateTime                    @default(now()) @db.Timestamp(6)
-  created_by                                                                     Int
+  created_by                                                                     String @db.Uuid
   annulled_at                                                                    DateTime?                   @db.Timestamp(6)
-  annulled_by                                                                    Int?
+  annulled_by                                                                    String? @db.Uuid
   annullator_user                                                                 system_subscription_user?   @relation("entity_document_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   creator_user                                                                   system_subscription_user    @relation("entity_document_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entity_document_category                                                       entity_document_category?   @relation(fields: [entity_document_category_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -88,33 +88,34 @@ model entity_document {
 }
 
 model entity_document_by_entity {
-  entity_id                                                                                Int
-  entity_document_id                                                                       Int
+  id                                                                                       String  @id @default(uuid()) @db.Uuid
+  entity_id                                                                                String  @db.Uuid
+  entity_document_id                                                                       String  @db.Uuid
   order                                                                                    Int                       @default(0)
   created_at                                                                               DateTime                  @default(now()) @db.Timestamp(6)
-  created_by                                                                               Int
+  created_by                                                                               String @db.Uuid
   annulled_at                                                                              DateTime?                 @db.Timestamp(6)
-  annulled_by                                                                              Int?
+  annulled_by                                                                              String? @db.Uuid
   annullator_user                                                                           system_subscription_user? @relation("entity_document_by_entity_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   creator_user                                                                             system_subscription_user  @relation("entity_document_by_entity_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entity_document                                                                          entity_document           @relation(fields: [entity_document_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entity                                                                                   entity                    @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([entity_id, entity_document_id])
+  @@unique([entity_id, entity_document_id])
 }
 
 model entity_document_category {
-  id                                                                                      Int                     @id @default(autoincrement())
-  parent_id                                                                               Int?
-  city_id                                                                                 Int?
-  state_id                                                                                Int?
-  country_id                                                                              Int?
+  id                                                                                      String  @id @default(uuid()) @db.Uuid
+  parent_id                                                                               String?  @db.Uuid
+  city_id                                                                                 String?  @db.Uuid
+  state_id                                                                                String?  @db.Uuid
+  country_id                                                                              String?  @db.Uuid
   category                                                                                String                     @db.VarChar(250)
   symbol                                                                                  String?                    @db.VarChar(50)
   created_at                                                                              DateTime                   @default(now()) @db.Timestamp(6)
-  created_by                                                                              Int
+  created_by                                                                              String @db.Uuid
   annulled_at                                                                             DateTime?                  @db.Timestamp(6)
-  annulled_by                                                                             Int?
+  annulled_by                                                                             String? @db.Uuid
   entity_document                                                                         entity_document[]
   annullator_user                                                                          system_subscription_user?  @relation("entity_document_category_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   creator_user                                                                            system_subscription_user   @relation("entity_document_category_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -123,14 +124,14 @@ model entity_document_category {
 }
 
 model entity_email {
-  id                                                                          Int                    @id @default(autoincrement())
+  id                                                                          String  @id @default(uuid()) @db.Uuid
   email                                                                       String                    @unique(map: "email") @db.VarChar(250)
   created_at                                                                  DateTime                  @default(now()) @db.Timestamp(6)
-  created_by                                                                  Int
+  created_by                                                                  String @db.Uuid
   updated_at                                                                  DateTime?                 @db.Timestamp(6)
-  updated_by                                                                  Int?
+  updated_by                                                                  String? @db.Uuid
   annulled_at                                                                 DateTime?                 @db.Timestamp(6)
-  annulled_by                                                                 Int?
+  annulled_by                                                                 String? @db.Uuid
   annullator_user                                                              system_subscription_user? @relation("entity_email_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   creator_user                                                                system_subscription_user  @relation("entity_email_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   updater_user                                                                system_subscription_user? @relation("entity_email_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -138,30 +139,31 @@ model entity_email {
 }
 
 model entity_email_by_entity {
-  entity_id                                                                             Int
-  entity_email_id                                                                       Int
+  id                                                                                    String  @id @default(uuid()) @db.Uuid
+  entity_id                                                                             String  @db.Uuid
+  entity_email_id                                                                       String  @db.Uuid
   order                                                                                 Int                       @default(0)
   created_at                                                                            DateTime                  @default(now()) @db.Timestamp(6)
-  created_by                                                                            Int
+  created_by                                                                            String @db.Uuid
   annulled_at                                                                           DateTime?                 @db.Timestamp(6)
-  annulled_by                                                                           Int?
+  annulled_by                                                                           String? @db.Uuid
   annullator_user                                                                        system_subscription_user? @relation("entity_email_by_entity_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   creator_user                                                                          system_subscription_user  @relation("entity_email_by_entity_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entity_email                                                                          entity_email              @relation(fields: [entity_email_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entity                                                                                entity                    @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([entity_id, entity_email_id])
+  @@unique([entity_id, entity_email_id])
 }
 
 model entity_name {
-  id                                                                         Int                    @id @default(autoincrement())
+  id                                                                         String  @id @default(uuid()) @db.Uuid
   name                                                                       String                    @unique(map: "name") @db.VarChar(250)
   created_at                                                                 DateTime                  @default(now()) @db.Timestamp(6)
-  created_by                                                                 Int
+  created_by                                                                 String @db.Uuid
   updated_at                                                                 DateTime?                 @db.Timestamp(6)
-  updated_by                                                                 Int?
+  updated_by                                                                 String? @db.Uuid
   annulled_at                                                                DateTime?                 @db.Timestamp(6)
-  annulled_by                                                                Int?
+  annulled_by                                                                String? @db.Uuid
   annullator_user                                                             system_subscription_user? @relation("entity_name_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   creator_user                                                               system_subscription_user  @relation("entity_name_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   updater_user                                                               system_subscription_user? @relation("entity_name_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -169,35 +171,36 @@ model entity_name {
 }
 
 model entity_name_by_entity {
-  entity_id                                                                            Int
-  entity_name_id                                                                       Int
-  entity_name_type_id                                                                  Int
+  id                                                                                   String  @id @default(uuid()) @db.Uuid
+  entity_id                                                                            String  @db.Uuid
+  entity_name_id                                                                       String  @db.Uuid
+  entity_name_type_id                                                                  String  @db.Uuid
   order_type                                                                           Int                       @default(0)
   order                                                                                Int                       @default(0)
   created_at                                                                           DateTime                  @default(now()) @db.Timestamp(6)
-  created_by                                                                           Int
+  created_by                                                                           String @db.Uuid
   annulled_at                                                                          DateTime?                 @db.Timestamp(6)
-  annulled_by                                                                          Int?
+  annulled_by                                                                          String? @db.Uuid
   annullator_user                                                                       system_subscription_user? @relation("entity_name_by_entity_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   creator_user                                                                         system_subscription_user  @relation("entity_name_by_entity_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entity                                                                               entity                    @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entity_name                                                                          entity_name               @relation(fields: [entity_name_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entity_name_type                                                                     entity_name_type          @relation(fields: [entity_name_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([entity_id, entity_name_id, entity_name_type_id])
+  @@unique([entity_id, entity_name_id, entity_name_type_id])
 }
 
 model entity_name_type {
-  id                                                                              Int                      @id @default(autoincrement())
+  id                                                                              String  @id @default(uuid()) @db.Uuid
   type                                                                            entity_name_type_type_enum? @unique(map: "type")
   apply_to_natural                                                                Int                         @default(0)
   apply_to_legal                                                                  Int                         @default(0)
   created_at                                                                      DateTime                    @default(now()) @db.Timestamp(6)
-  created_by                                                                      Int?
+  created_by                                                                      String? @db.Uuid
   updated_at                                                                      DateTime?                   @db.Timestamp(6)
-  updated_by                                                                      Int?
+  updated_by                                                                      String? @db.Uuid
   annulled_at                                                                     DateTime?                   @db.Timestamp(6)
-  annulled_by                                                                     Int?
+  annulled_by                                                                     String? @db.Uuid
   entity_name_by_entity                                                           entity_name_by_entity[]
   annullator_user                                                                  system_subscription_user?   @relation("entity_name_type_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   creator_user                                                                    system_subscription_user?   @relation("entity_name_type_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -205,14 +208,14 @@ model entity_name_type {
 }
 
 model entity_phone {
-  id                                                                          Int                    @id @default(autoincrement())
+  id                                                                          String  @id @default(uuid()) @db.Uuid
   phone                                                                       String                    @unique(map: "phone") @db.VarChar(250)
   created_at                                                                  DateTime                  @default(now()) @db.Timestamp(6)
-  created_by                                                                  Int
+  created_by                                                                  String @db.Uuid
   updated_at                                                                  DateTime?                 @db.Timestamp(6)
-  updated_by                                                                  Int?
+  updated_by                                                                  String? @db.Uuid
   annulled_at                                                                 DateTime?                 @db.Timestamp(6)
-  annulled_by                                                                 Int?
+  annulled_by                                                                 String? @db.Uuid
   annullator_user                                                              system_subscription_user? @relation("entity_phone_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   creator_user                                                                system_subscription_user  @relation("entity_phone_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   updater_user                                                                system_subscription_user? @relation("entity_phone_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -220,29 +223,30 @@ model entity_phone {
 }
 
 model entity_phone_by_entity {
-  entity_id                                                                             Int
-  entity_phone_id                                                                       Int
+  id                                                                                    String  @id @default(uuid()) @db.Uuid
+  entity_id                                                                             String  @db.Uuid
+  entity_phone_id                                                                       String  @db.Uuid
   order                                                                                 Int                       @default(0)
   created_at                                                                            DateTime                  @default(now()) @db.Timestamp(6)
-  created_by                                                                            Int
+  created_by                                                                            String @db.Uuid
   annulled_at                                                                           DateTime?                 @db.Timestamp(6)
-  annulled_by                                                                           Int?
+  annulled_by                                                                           String? @db.Uuid
   annullator_user                                                                        system_subscription_user? @relation("entity_phone_by_entity_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   creator_user                                                                          system_subscription_user  @relation("entity_phone_by_entity_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entity                                                                                entity                    @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entity_phone                                                                          entity_phone              @relation(fields: [entity_phone_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([entity_id, entity_phone_id])
+  @@unique([entity_id, entity_phone_id])
 }
 
 model system {
-  id                       Int                    @id @default(autoincrement())
+  id                       String  @id @default(uuid()) @db.Uuid
   key_name                 String                    @unique(map: "key_name") @db.VarChar(250)
   name                     String                    @db.VarChar(250)
   logo                     String?                   @db.VarChar(2000)
   created_at               DateTime                  @default(now()) @db.Timestamp(6)
   inactivated_at           DateTime?                 @db.Timestamp(6)
-  inactivated_by           Int?
+  inactivated_by           String? @db.Uuid
   updated_at               DateTime?                 @db.Timestamp(6)
   annulled_at              DateTime?                 @db.Timestamp(6)
   system_subscription_user system_subscription_user? @relation(fields: [inactivated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -250,17 +254,17 @@ model system {
 }
 
 model system_subscription {
-  id                                                                                            Int                      @id @default(autoincrement())
-  system_id                                                                                     Int
-  entity_id                                                                                     Int
+  id                                                                                            String  @id @default(uuid()) @db.Uuid
+  system_id                                                                                     String  @db.Uuid
+  entity_id                                                                                     String  @db.Uuid
   created_at                                                                                    DateTime                    @default(now()) @db.Timestamp(6)
-  created_by                                                                                    Int?
+  created_by                                                                                    String? @db.Uuid
   inactivated_at                                                                                DateTime?                   @db.Timestamp(6)
-  inactivated_by                                                                                Int?
+  inactivated_by                                                                                String? @db.Uuid
   updated_at                                                                                    DateTime?                   @db.Timestamp(6)
-  updated_by                                                                                    Int?
+  updated_by                                                                                    String? @db.Uuid
   annulled_at                                                                                   DateTime?                   @db.Timestamp(6)
-  annulled_by                                                                                   Int?
+  annulled_by                                                                                   String? @db.Uuid
   annullator_user                                                                                system_subscription_user?   @relation("system_subscription_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   creator_user                                                                                  system_subscription_user?   @relation("system_subscription_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entity                                                                                        entity                      @relation(fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -274,17 +278,17 @@ model system_subscription {
 }
 
 model system_subscription_user {
-  id                                                                                               Int                           @id @default(autoincrement())
-  system_subscription_id                                                                           Int
-  entity_id                                                                                        Int
+  id                                                                                               String  @id @default(uuid()) @db.Uuid
+  system_subscription_id                                                                           String  @db.Uuid
+  entity_id                                                                                        String  @db.Uuid
   username                                                                                         String?                          @db.VarChar(255)
   password                                                                                         String                           @db.VarChar(2500)
   created_at                                                                                       DateTime                         @default(now()) @db.Timestamp(6)
-  created_by                                                                                       Int?
+  created_by                                                                                       String? @db.Uuid
   inactivated_at                                                                                   DateTime?                        @db.Timestamp(6)
-  inactivated_by                                                                                   Int?
+  inactivated_by                                                                                   String? @db.Uuid
   annulled_at                                                                                      DateTime?                        @db.Timestamp(6)
-  annulled_by                                                                                      Int?
+  annulled_by                                                                                      String? @db.Uuid
 
   TEMP_unit_measurement_category                                                                   TEMP_unit_measurement_category[]
   annulled_entity                                                                                  entity[]                         @relation("entity_annulled_byTosystem_subscription_user")
@@ -340,19 +344,19 @@ model system_subscription_user {
 }
 
 model unit_measurement {
-  id                                                                              Int                    @id @default(autoincrement())
-  unit_measurement_category_id                                                    Int
-  unit_measurement_base_id                                                        Int?
+  id                                                                              String  @id @default(uuid()) @db.Uuid
+  unit_measurement_category_id                                                    String  @db.Uuid
+  unit_measurement_base_id                                                        String?  @db.Uuid
   unit_measurement                                                                String                    @db.VarChar(250)
   symbol                                                                          String?                   @db.VarChar(50)
   value                                                                           String                    @db.VarChar(250)
   numeric_value                                                                   String?                   @db.VarChar(250)
   created_at                                                                      DateTime                  @default(now()) @db.Timestamp(6)
-  created_by                                                                      Int?
+  created_by                                                                      String? @db.Uuid
   updated_at                                                                      DateTime?                 @db.Timestamp(6)
-  updated_by                                                                      Int?
+  updated_by                                                                      String? @db.Uuid
   annulled_at                                                                     DateTime?                 @db.Timestamp(6)
-  annulled_by                                                                     Int?
+  annulled_by                                                                     String? @db.Uuid
   annullator_user                                                                  system_subscription_user? @relation("unit_measurement_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   creator_user                                                                    system_subscription_user? @relation("unit_measurement_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   unit_measurement_base                                                           unit_measurement?         @relation("unit_measurementTounit_measurement", fields: [unit_measurement_base_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -365,18 +369,18 @@ model unit_measurement {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model unit_measurement_category {
-  id                                                                                       Int                           @id @default(autoincrement())
-  system_subscription_id                                                                   Int?
-  parent_id                                                                                Int?
+  id                                                                                       String  @id @default(uuid()) @db.Uuid
+  system_subscription_id                                                                   String?  @db.Uuid
+  parent_id                                                                                String?  @db.Uuid
   category                                                                                 String                           @db.VarChar(250)
   created_at                                                                               DateTime                         @default(now()) @db.Timestamp(6)
-  created_by                                                                               Int?
+  created_by                                                                               String? @db.Uuid
   updated_at                                                                               DateTime?                        @db.Timestamp(6)
-  updated_by                                                                               Int?
+  updated_by                                                                               String? @db.Uuid
   annulled_at                                                                              DateTime?                        @db.Timestamp(6)
-  annulled_by                                                                              Int?
-  old_parent_id                                                                            Int?
-  old_id                                                                                   Int
+  annulled_by                                                                              String? @db.Uuid
+  old_parent_id                                                                            String?  @db.Uuid
+  old_id                                                                                   String  @db.Uuid
   TEMP_unit_measurement_category                                                           TEMP_unit_measurement_category[]
   unit_measurement                                                                         unit_measurement[]
   annullator_user                                                                          system_subscription_user?        @relation("unit_measurement_category_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)

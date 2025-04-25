@@ -6,7 +6,7 @@ import  { User } from '../../lib/sql_queries/system_subscription_user';
 
 // utils:
 import {
-    validateId,
+    validateUniqueIdString,
     validateSimpleText,
     validateCuantity
 } from '../../util/validators';
@@ -18,24 +18,24 @@ export type EntityDocumentCompleteInfo = {
     category: string;
     document: string;
     id: number;
-    city_id: number | null;
-    country_id: number | null;
-    entity_id: number;
-    entity_document_id: number;
-    entity_document_category_id: number;
-    state_id: number | null;
+    city_id: string | null;
+    country_id: string | null;
+    entity_id: string;
+    entity_document_id: string;
+    entity_document_category_id: string;
+    state_id: string | null;
     order: number;
     symbol: string;
 };
 
 type ValidateEntityDocumentType = {
     document: string;
-    entity_id: number;
-    entity_document_category_id: number;
-    entity_document_id?: number;
-    country_id?: number;
-    state_id?: number;
-    city_id?: number;
+    entity_id: string;
+    entity_document_category_id: string;
+    entity_document_id?: string;
+    country_id?: string;
+    state_id?: string;
+    city_id?: string;
     order: number;
     name?: string;
     validatorFn?: Function;
@@ -43,37 +43,37 @@ type ValidateEntityDocumentType = {
         fn: (document: any, ...params: any) => any | null;
         params?: any[];
     }; */
-    created_by: number;
+    created_by: string;
 } | any;
 
 type ProcessMultipleDocumentsType = {
     documents: string[];
-    entity_id: number;
-    entity_document_category_id: number;
-    country_id?: number;
-    state_id?: number;
-    city_id?: number;
+    entity_id: string;
+    entity_document_category_id: string;
+    country_id?: string;
+    state_id?: string;
+    city_id?: string;
     name?: string;
     validatorConfig?: {
         fn: (document: any, name: string, order: number, ...params: any) => any | null;
         params?: any[];
     };
-    created_by: number;
+    created_by: string;
 } | any;
 
 type ChangeDocumentOrderType = {
-    entity_document_id: number;
+    entity_document_id: string;
     order: number;
     name?: string;
 }
 
 type GetBelongingSystemType = {
     NotEqualDocumentID?: boolean;
-    entity_document_id?: number;
+    entity_document_id?: string;
     document?: string;
-    entity_id?: number;
-    entity_document_category_id?: number;
-    system_subscription_id?: number;
+    entity_id?: string;
+    entity_document_category_id?: string;
+    system_subscription_id?: string;
 }
 
 export class EntityDocumentService {
@@ -110,17 +110,17 @@ export class EntityDocumentService {
                 errors.set(params.name, validateSimpleText(params.document, 'document', 2, 250, true));
             } */
 
-            const cityError = validateId(params.city_id, params.name + ' city ID'),
-                stateError = validateId(params.state_id, params.name + ' state ID', !errors.exists('city_id') && (params.city_id ?? null) !== null);
+            const cityError = validateUniqueIdString(params.city_id, params.name + ' city ID'),
+                stateError = validateUniqueIdString(params.state_id, params.name + ' state ID', !errors.exists('city_id') && (params.city_id ?? null) !== null);
 
-            errors.set('entity_document_id', validateId(params.entity_document_id, params.name + ' ID'));
-            errors.set('entity_document_category_id', validateId(params.entity_document_category_id, params.name + ' document type ID', true));
+            errors.set('entity_document_id', validateUniqueIdString(params.entity_document_id, params.name + ' ID'));
+            errors.set('entity_document_category_id', validateUniqueIdString(params.entity_document_category_id, params.name + ' document type ID', true));
             /* if(params.entity_document_category ??) {
 
             }
-            errors.set('entity_document_category_id', validateId(params.entity_document_category_id, 'Document Type ID')); */
+            errors.set('entity_document_category_id', validateUniqueIdString(params.entity_document_category_id, 'Document Type ID')); */
 
-            errors.set('country_id', validateId(params.country_id,  params.name + ' country ID', !errors.existsSome('city_id', 'state_id') && (params.city_id ?? params.state_id ?? null) !== null));
+            errors.set('country_id', validateUniqueIdString(params.country_id,  params.name + ' country ID', !errors.existsSome('city_id', 'state_id') && (params.city_id ?? params.state_id ?? null) !== null));
             errors.set('state_id', stateError);
             errors.set('city_id', cityError);
 
@@ -157,7 +157,7 @@ export class EntityDocumentService {
                     users: User[] = await prisma.$queryRawUnsafe(`SELECT
                         *
                     FROM system_subscription_user_complete_info
-                    WHERE system_subscription_user_id = ${params.created_by}`) ?? [],
+                    WHERE system_subscription_user_id = '${escape(params.created_by)}'`) ?? [],
                     user: User | null = users.length > 0 ? users[0] : null;
 
                 if(!user) {
@@ -182,12 +182,12 @@ export class EntityDocumentService {
 
                 if(entity && user && document_category) {
                     const existingEntityWithDocument = await this.getBelongingSystem({
-                        entity_document_id: document ? Number(document.id) : undefined,
-                        entity_id: document? undefined : Number(entity.id),
+                        entity_document_id: document ? document.id : undefined,
+                        entity_id: document? undefined : entity.id,
                         NotEqualDocumentID: true,
                         system_subscription_id: user.system_subscription_id,
                         document: params.document.trim().toUpperCase(),
-                        entity_document_category_id: Number(document_category.id)
+                        entity_document_category_id: document_category.id
                     }, prisma);
 
                     if(existingEntityWithDocument) {
@@ -229,14 +229,14 @@ export class EntityDocumentService {
                                 document: params.document.trim().toUpperCase(),
                                 entity_document_category_id: document_category?.id,
                                 entity_id: entity?.id,
-                                created_by: user?.id ?? 0,
+                                created_by: user?.id ?? "",
                                 order: params.order
                             }
                         });
                     }
 
                     const changeDocumentOrderResult = await this.changeDocumentOrder({
-                        entity_document_id: Number(document.id),
+                        entity_document_id: document.id,
                         order: params.order,
                         name: params.name
                     }, prisma);
@@ -282,16 +282,16 @@ export class EntityDocumentService {
             };
         } else {
             params.name ??= 'documents';
-            const cityError = validateId(params.city_id, params.name + ' city ID'),
-                stateError = validateId(params.state_id, params.name + ' state ID', !errors.exists('city_id') && (params.city_id ?? null) !== null);
+            const cityError = validateUniqueIdString(params.city_id, params.name + ' city ID'),
+                stateError = validateUniqueIdString(params.state_id, params.name + ' state ID', !errors.exists('city_id') && (params.city_id ?? null) !== null);
 
             if(!Array.isArray(params.documents)) {
                 errors.set(params.name, params.name + ' must be defined as an array!');
             }
 
-            errors.set('entity_document_category_id', validateId(params.entity_document_category_id, params.name + ' document type ID', (params.entity_document_id ?? null) === null));
+            errors.set('entity_document_category_id', validateUniqueIdString(params.entity_document_category_id, params.name + ' document type ID', (params.entity_document_id ?? null) === null));
 
-            errors.set('country_id', validateId(params.country_id, params.name + ' country ID', !errors.existsSome('city_id', 'state_id') && (params.city_id ?? params.state_id ?? null) !== null));
+            errors.set('country_id', validateUniqueIdString(params.country_id, params.name + ' country ID', !errors.existsSome('city_id', 'state_id') && (params.city_id ?? params.state_id ?? null) !== null));
             errors.set('state_id', stateError);
             errors.set('city_id', cityError);
         }
@@ -325,7 +325,7 @@ export class EntityDocumentService {
                     users: User[] = await prisma.$queryRawUnsafe(`SELECT
                         *
                     FROM system_subscription_user_complete_info
-                    WHERE system_subscription_user_id = ${params.created_by}`) ?? [],
+                    WHERE system_subscription_user_id = '${escape(params.created_by)}'`) ?? [],
                     user: User | null = users.length > 0 ? users[0] : null;
 
                 if(users.length < 1) {
@@ -369,7 +369,7 @@ export class EntityDocumentService {
                             city_id: params.city_id, */
                             validatorConfig: params.validatorConfig,
                             order: i + 1,
-                            created_by: user?.id ?? 0,
+                            created_by: user?.id ?? "",
                             name: params.name + '.' + i
                         }, prisma);
 
@@ -401,7 +401,7 @@ export class EntityDocumentService {
                         });
 
                         const changeDocumentOrderResult = await this.changeDocumentOrder({
-                            entity_document_id: Number(documents[0].id),
+                            entity_document_id: documents[0].id,
                             order: 1,
                             name: params.name + '.' + 0
                         }, prisma);
@@ -445,7 +445,7 @@ export class EntityDocumentService {
         let entity: entity | null = null;
 
         try {
-            errors.set('entity_id', validateId(entity_id, 'Entity ID', true));
+            errors.set('entity_id', validateUniqueIdString(entity_id, 'Entity ID', true));
 
             if(!errors.exists('entity_id')) {
                 entity = await prisma.entity.findUnique({
@@ -508,19 +508,20 @@ export class EntityDocumentService {
                 if(!document) {
                     errors.set('document_id', params.name + ' not found!');
                 } else {
-                    await prisma.$queryRawUnsafe(`UPDATE entity_document ed
+                    await prisma.$queryRawUnsafe(`UPDATE entity_document
+                    set
+                        "order" = dor.real_order
+                    from entity_document ed
                     inner join (
                         select
                             id,
                             entity_id,
-                            ROW_NUMBER() OVER(PARTITION by entity_id ORDER BY CONVERT(CONCAT(IF(id = ${document.id}, ${params.order}, ed.order), '.', CONCAT(IF(id = ${document.id}, 0, 1))), DECIMAL(18, 1)) asc, id ASC) AS real_order
+                            ROW_NUMBER() OVER(PARTITION by entity_id ORDER BY CONCAT(iif(id = '${escape(document.id)}', ${params.order}, ed.order), '.', CONCAT(iif(id = '${escape(document.id)}', 0, 1)))::decimal(18, 1) asc, id ASC) AS real_order
                         from entity_document ed
                         where annulled_at is null
-                            and entity_id = ${document.entity_id}
+                            and entity_id = '${escape(document.entity_id)}'
                     ) dor
-                        on dor.id = ed.id
-                    set
-                        "order" = dor.real_order`);
+                        on dor.id = ed.id`);
 
                     const maxNotNullOrder = await prisma.entity_document.aggregate({
                         _max: {
@@ -535,19 +536,19 @@ export class EntityDocumentService {
                         }
                     });
 
-                    await prisma.$queryRawUnsafe(`UPDATE entity_document ed
+                    await prisma.$queryRawUnsafe(`UPDATE entity_document set
+                        "order" = (dor.real_order + ${maxNotNullOrder._max.order ?? 0})
+                    FROM entity_document ed
                     inner join (
                         select
                             id,
                             entity_id,
-                            ROW_NUMBER() OVER(PARTITION by entity_id ORDER BY CONVERT(CONCAT(IF(id = ${document.id}, ${params.order}, ed.order), '.', CONCAT(IF(id = ${document.id}, 0, 1))), DECIMAL(18, 1)) asc, id ASC) AS real_order
+                            ROW_NUMBER() OVER(PARTITION by entity_id ORDER BY CONCAT(iif(id = '${escape(document.id)}', ${params.order}, ed.order), '.', CONCAT(iif(id = '${escape(document.id)}', 0, 1)))::decimal(18, 1) asc, id ASC) AS real_order
                         from entity_document ed
                         where annulled_at is not null
-                            and entity_id = ${document.entity_id}
+                            and entity_id = '${escape(document.entity_id)}'
                     ) dor
-                        on dor.id = ed.id
-                    set
-                        "order" = (dor.real_order + ${maxNotNullOrder._max.order ?? 0})`);
+                        on dor.id = ed.id`);
                 }
 
                 if(errors.existsErrors()) {
@@ -583,23 +584,23 @@ export class EntityDocumentService {
         let AND: string[] | string = [];
 
         if(('entity_id' in params) && (params.entity_id ?? null) !== null) {
-            AND.push(`doc.entity_id <> ${params.entity_id}`);
+            AND.push(`doc.entity_id <> '${escape(params.entity_id)}'`);
         }
 
         if(('entity_document_id' in params) && (params.entity_document_id ?? null) !== null) {
-            AND.push(`doc.id ${params.NotEqualDocumentID === true ? '<>' : '='} ${params.entity_document_id}`);
+            AND.push(`doc.id ${params.NotEqualDocumentID === true ? '<>' : '='} '${escape(params.entity_document_id)}'`);
         }
 
         if(('document' in params) && (params.document ?? null) !== null) {
-            AND.push(`UPPER(doc.document) = UPPER(${escape(params.document ?? '')})`);
+            AND.push(`UPPER(doc.document) = UPPER('${escape(params.document ?? '')}')`);
         }
 
         if(('entity_document_category_id' in params) && (params.entity_document_category_id ?? null) !== null) {
-            AND.push(`doc.entity_document_category_id = ${params.entity_document_category_id}`);
+            AND.push(`doc.entity_document_category_id = '${escape(params.entity_document_category_id)}'`);
         }
 
         if(('system_subscription_id' in params) && (params.system_subscription_id ?? null) !== null) {
-            AND.push(`ssu.system_subscription_id = ${params.system_subscription_id}`);
+            AND.push(`ssu.system_subscription_id = '${escape(params.system_subscription_id)}'`);
         }
 
         AND = AND.length < 1 ? '' : `AND ${AND.join("\nAND ")}`;

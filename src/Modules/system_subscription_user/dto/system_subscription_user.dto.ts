@@ -18,9 +18,9 @@ class NameDto {
     @Min(0)
     order: number
 
-    @IsNumber()
-    @IsInt()
-    entity_name_type_id: number
+    @IsString()
+    @MaxLength(250)
+    entity_name_type_id: string
 }
 
 class DocumentDto {
@@ -34,9 +34,9 @@ class DocumentDto {
     @Min(0)
     order: number
 
-    @IsNumber()
-    @IsInt()
-    entity_document_category_id: number
+    @IsString()
+    @MaxLength(250)
+    entity_document_category_id: string
 }
 
 class PhoneDto {
@@ -73,8 +73,9 @@ const transformJSON = ({ value }) => {
 
 export class AddOrUpdateDto {
     @IsOptional()
-    @IsInt()
-    system_subscription_user_id?: number;
+    @IsString()
+    @MaxLength(250)
+    system_subscription_user_id?: string;
 
     @Transform(transformJSON)
     @IsArray()
@@ -112,9 +113,9 @@ export class AddOrUpdateDto {
 }
 
 export class GetByIdDto {
-    @Transform(({ value }) => (isNaN(value) ? value : Number(value)))
-    @IsInt()
-    id: number;
+    @IsString()
+    @MaxLength(250)
+    id: string;
 }
 
 export class GetByIdQueryDto {
@@ -125,17 +126,18 @@ export class GetByIdQueryDto {
 }
 
 export class ChangeStatusDto {
-    @IsInt()
-    system_subscription_user_id: number;
+    @IsString()
+    @MaxLength(50)
+    system_subscription_user_id: string;
 
     @IsEnum(['ACTIVE', 'INACTIVE'])
     type: GenderEnum;
 }
 
 export class ResetPasswordDto {
-    @Transform(({value}) => Number(value))
-    @IsInt()
-    system_subscription_user_id: number;
+    @IsString()
+    @MaxLength(250)
+    system_subscription_user_id: string;
 }
 
 export class ChangePasswordDto {
