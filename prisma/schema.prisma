@@ -37,9 +37,108 @@ model TEMP_unit_measurement_category {
   @@unique([unit_measurement_category_id, category], map: "unit_measurement_category_pk1")
 }
 
+model entity_type {
+  id                                      String  @id @default(uuid()) @db.Uuid
+  // entity_parent_id                        String?  @db.Uuid
+  is_hierarchical                         Boolean @default(false)
+  applies_to_natural                      Boolean @default(false)
+  applies_to_legal                        Boolean @default(false)
+  type                                    String  @unique(map: "entity_type") @db.VarChar(255)
+  code                                    String  @unique(map: "code") @db.VarChar(255)
+  created_at                              DateTime                    @default(now()) @db.Timestamp(6)
+  created_by                              String @db.Uuid
+  updated_at                              DateTime?                   @db.Timestamp(6)
+  updated_by                              String? @db.Uuid
+  annulled_at                             DateTime?                   @db.Timestamp(6)
+  annulled_by                             String? @db.Uuid
+
+  annullator_user                         system_subscription_user?   @relation("entity_type_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator_user                            system_subscription_user    @relation("entity_type_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  updater_user                            system_subscription_user?   @relation("entity_type_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+
+  relation_as_hierarchy_child             entity_type_hierarchy[]      @relation("entity_type_hierarchyToentity_type")
+  relation_as_hierarchy_parent            entity_type_hierarchy[]      @relation("entity_type_hierarchyToentity_type_parent")
+
+
+  relation                                entity_type_relation[]      @relation("entity_type_relationToentity_type")
+  entity_related                          entity_type_relation[]      @relation("entity_type_relationToentity_type_related")
+
+  entity_type_by_entity                   entity_type_by_entity[]     @relation("entity_type_by_entityToentity_type")
+}
+
+model entity_type_hierarchy {
+  id                                      String  @id @default(uuid()) @db.Uuid
+  // entity_parent_id                                                         String?  @db.Uuid
+  entity_type_id                          String  @db.Uuid
+  entity_type_parent_id                   String  @db.Uuid
+  created_at                              DateTime                    @default(now()) @db.Timestamp(6)
+  created_by                              String @db.Uuid
+  updated_at                              DateTime                    @default(now()) @db.Timestamp(6)
+  updated_by                              String @db.Uuid
+  annulled_at                             DateTime                    @default(now()) @db.Timestamp(6)
+  annulled_by                             String @db.Uuid
+
+  entity_type                             entity_type?                @relation("entity_type_hierarchyToentity_type", fields: [entity_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity_type_parent                      entity_type?                @relation("entity_type_hierarchyToentity_type_parent", fields: [entity_type_parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  annullator_user                         system_subscription_user?   @relation("entity_type_hierarchy_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator_user                            system_subscription_user    @relation("entity_type_hierarchy_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  updater_user                            system_subscription_user?   @relation("entity_type_hierarchy_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([entity_type_id, entity_type_parent_id])
+}
+
+model entity_type_relation {
+  id                                      String  @id @default(uuid()) @db.Uuid
+  entity_type_id                          String  @db.Uuid
+  entity_type_related_id                  String  @db.Uuid
+  is_also                                 Boolean @default(false)
+  is_also_required                        Boolean @default(false)
+  is_parallel                             Boolean @default(false)
+  is_required_parallel                    Boolean @default(false)
+  created_at                              DateTime                    @default(now()) @db.Timestamp(6)
+  created_by                              String @db.Uuid
+  updated_at                              DateTime                    @default(now()) @db.Timestamp(6)
+  updated_by                              String @db.Uuid
+  annulled_at                             DateTime                    @default(now()) @db.Timestamp(6)
+  annulled_by                             String @db.Uuid
+
+  entity_type                             entity_type                @relation("entity_type_relationToentity_type", fields: [entity_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity_type_related                     entity_type                @relation("entity_type_relationToentity_type_related", fields: [entity_type_related_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity_related                          entity_relation[]          @relation("entity_relationToentity_type_relation")
+
+  annullator_user                         system_subscription_user?   @relation("entity_type_relation_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator_user                            system_subscription_user    @relation("entity_type_relation_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  updater_user                            system_subscription_user?   @relation("entity_type_relation_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([entity_type_id, entity_type_related_id])
+}
+
+model entity_type_by_entity {
+  id                                      String  @id @default(uuid()) @db.Uuid
+  entity_id                               String  @db.Uuid
+  entity_type_id                          String  @db.Uuid
+  created_at                              DateTime                    @default(now()) @db.Timestamp(6)
+  created_by                              String @db.Uuid
+  updated_at                              DateTime                    @default(now()) @db.Timestamp(6)
+  updated_by                              String @db.Uuid
+  annulled_at                             DateTime                    @default(now()) @db.Timestamp(6)
+  annulled_by                             String @db.Uuid
+
+  entity                                  entity                      @relation("entity_type_by_entityToentity", fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity_type                             entity_type                 @relation("entity_type_by_entityToentity_type", fields: [entity_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  annullator_user                         system_subscription_user?   @relation("entity_type_by_entity_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator_user                            system_subscription_user    @relation("entity_type_by_entity_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  updater_user                            system_subscription_user?   @relation("entity_type_by_entity_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([entity_id, entity_type_id])
+}
+
 model entity {
   id                                                                       String  @id @default(uuid()) @db.Uuid
-  entity_parent_id                                                         String?  @db.Uuid
+  // entity_parent_id                                                         String?  @db.Uuid
   document_id                                                              String?  @db.Uuid
   is_natural                                                               String                      @default("1") @db.Bit(1)
   name                                                                     String                      @db.VarChar(2000)
@@ -57,10 +156,15 @@ model entity {
   annulled_by                                                              String? @db.Uuid
   annullator_user                                                          system_subscription_user?   @relation("entity_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   creator_user                                                             system_subscription_user?   @relation("entity_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  entity                                                                   entity?                     @relation("entityToentity", fields: [entity_parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  other_entity                                                             entity[]                    @relation("entityToentity")
+  // entity                                                                   entity?                     @relation("entityToentity", fields: [entity_parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  // other_entity                                                             entity[]                    @relation("entityToentity")
   inactivator_user                                                         system_subscription_user?   @relation("entity_inactivated_byTosystem_subscription_user", fields: [inactivated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   updater_user                                                             system_subscription_user?   @relation("entity_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  entity_type_by_entity                                                    entity_type_by_entity[]     @relation("entity_type_by_entityToentity")
+  entity_relation                                                          entity_relation[]     @relation("entity_relationToentity")
+  entity_as_related                                                        entity_relation[]     @relation("entity_relationToentity_related")
+
   entity_document                                                          entity_document[]
   entity_document_by_entity                                                entity_document_by_entity[]
   entity_email_by_entity                                                   entity_email_by_entity[]
@@ -68,6 +172,31 @@ model entity {
   entity_phone_by_entity                                                   entity_phone_by_entity[]
   system_subscription                                                      system_subscription[]
   system_subscription_user                                                 system_subscription_user[]  @relation("system_subscription_user_entity_idToentity")
+}
+
+model entity_relation {
+  id                                      String  @id @default(uuid()) @db.Uuid
+  entity_id                               String  @db.Uuid
+  entity_related_id                       String  @db.Uuid
+  entity_type_relation_id                 String  @db.Uuid
+  is_parent                               Boolean @default(false)
+  is_parallel                             Boolean @default(false)
+  created_at                              DateTime                    @default(now()) @db.Timestamp(6)
+  created_by                              String @db.Uuid
+  updated_at                              DateTime                    @default(now()) @db.Timestamp(6)
+  updated_by                              String @db.Uuid
+  annulled_at                             DateTime                    @default(now()) @db.Timestamp(6)
+  annulled_by                             String @db.Uuid
+
+  entity                                  entity                      @relation("entity_relationToentity", fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity_related                          entity                      @relation("entity_relationToentity_related", fields: [entity_related_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  entity_type_relation                    entity_type_relation        @relation("entity_relationToentity_type_relation", fields: [entity_type_relation_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  annullator_user                         system_subscription_user?   @relation("entity_relation_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator_user                            system_subscription_user    @relation("entity_relation_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  updater_user                            system_subscription_user?   @relation("entity_relation_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([entity_id, entity_related_id])
 }
 
 model entity_document {
@@ -338,6 +467,31 @@ model system_subscription_user {
   annulled_unit_measurement_category                                                               unit_measurement_category[]      @relation("unit_measurement_category_annulled_byTosystem_subscription_user")
   created_unit_measurement_category                                                                unit_measurement_category[]      @relation("unit_measurement_category_created_byTosystem_subscription_user")
   updated_unit_measurement_category                                                                unit_measurement_category[]      @relation("unit_measurement_category_updated_byTosystem_subscription_user")
+
+
+  annulled_entity_type                                                                             entity_type[]      @relation("entity_type_annulled_byTosystem_subscription_user")
+  created_entity_type                                                                              entity_type[]      @relation("entity_type_created_byTosystem_subscription_user")
+  updated_entity_type                                                                              entity_type[]      @relation("entity_type_updated_byTosystem_subscription_user")
+
+
+  annulled_entity_type_hierarchy                                                                             entity_type_hierarchy[]      @relation("entity_type_hierarchy_annulled_byTosystem_subscription_user")
+  created_entity_type_hierarchy                                                                              entity_type_hierarchy[]      @relation("entity_type_hierarchy_created_byTosystem_subscription_user")
+  updated_entity_type_hierarchy                                                                              entity_type_hierarchy[]      @relation("entity_type_hierarchy_updated_byTosystem_subscription_user")
+
+
+  annulled_entity_type_relation                                                                             entity_type_relation[]      @relation("entity_type_relation_annulled_byTosystem_subscription_user")
+  created_entity_type_relation                                                                              entity_type_relation[]      @relation("entity_type_relation_created_byTosystem_subscription_user")
+  updated_entity_type_relation                                                                              entity_type_relation[]      @relation("entity_type_relation_updated_byTosystem_subscription_user")
+
+
+  annulled_entity_type_by_entity                                                                             entity_type_by_entity[]      @relation("entity_type_by_entity_annulled_byTosystem_subscription_user")
+  created_entity_type_by_entity                                                                              entity_type_by_entity[]      @relation("entity_type_by_entity_created_byTosystem_subscription_user")
+  updated_entity_type_by_entity                                                                              entity_type_by_entity[]      @relation("entity_type_by_entity_updated_byTosystem_subscription_user")
+
+
+  annulled_entity_relation                                                                             entity_relation[]      @relation("entity_relation_annulled_byTosystem_subscription_user")
+  created_entity_relation                                                                              entity_relation[]      @relation("entity_relation_created_byTosystem_subscription_user")
+  updated_entity_relation                                                                              entity_relation[]      @relation("entity_relation_updated_byTosystem_subscription_user")
 
   @@unique([system_subscription_id, entity_id], map: "system_subscription_user_index_0")
   @@unique([system_subscription_id, username], map: "system_subscription_user_index_1")

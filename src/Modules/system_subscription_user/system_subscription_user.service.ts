@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PrismaService, PrismaTransactionOrService, TransactionPrisma } from "src/prisma.service";
-import { CompleteEntity, EntityService } from "../entity/entity.service";
+import { EntityService } from "../entity/entity.service";
 import { adaptNumTwo, adaptZerosNum, generateRandomSecurePassword, username as usernameGenerator } from "src/util/formats";
 import { hashSync, compareSync } from 'bcryptjs';
 import { $Enums, system_subscription_user } from "@prisma/client";
@@ -117,7 +117,7 @@ export type CompleteEntityUser = {
     annulled_by_system_subscription_user: Date | null;
     annulled_at: Date | null;
     annulled_by: string | null;
-    entity_parent_id: string;
+    // entity_parent_id: string;
     document_id: string;
     is_natural: 1 | 0;
     gender: null | $Enums.entity_gender_enum;
@@ -307,7 +307,6 @@ export class SystemSubscriptionUserService {
 
         const sql = `SELECT
             ssu.*,
-            ent.entity_parent_id,
             ent.document_id,
             ent.is_natural,
             ent.gender,
@@ -430,7 +429,6 @@ export class SystemSubscriptionUserService {
 
             fullUser = !user ? null : await this.prisma.findOneUnsafe(`SELECT
                 ssu.*,
-                ent.entity_parent_id,
                 ent.document_id,
                 ent.is_natural,
                 ent.gender,

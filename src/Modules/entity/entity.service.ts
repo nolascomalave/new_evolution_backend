@@ -21,7 +21,7 @@ export type AddOrUpdateParams = AddOrUpdateDto & {
 
 export type CompleteEntity = {
     id: number;
-    entity_parent_id: string;
+    // entity_parent_id: string;
     document_id: string;
     is_natural: 1 | 0;
     name: string;
@@ -88,7 +88,7 @@ type EntityDocumentType = {
 
 type EntityFullInfo = {
     id: number;
-    entity_parent_id: string;
+    // entity_parent_id: string;
     document_id: string;
     is_natural: boolean | 1 | 0;
     system_id: string;
