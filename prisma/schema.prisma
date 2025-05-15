@@ -43,6 +43,7 @@ model entity_type {
   is_hierarchical                         Boolean @default(false)
   applies_to_natural                      Boolean @default(false)
   applies_to_legal                        Boolean @default(false)
+  is_required_for_system                  Boolean @default(false)
   type                                    String  @unique(map: "entity_type") @db.VarChar(255)
   code                                    String  @unique(map: "code") @db.VarChar(255)
   description                             String  @db.VarChar(2500)
@@ -74,17 +75,17 @@ model entity_type_hierarchy {
   entity_type_id                          String  @db.Uuid
   entity_type_parent_id                   String  @db.Uuid
   created_at                              DateTime                    @default(now()) @db.Timestamp(6)
-  created_by                              String @db.Uuid
+  created_by                              String? @db.Uuid
   updated_at                              DateTime                    @default(now()) @db.Timestamp(6)
-  updated_by                              String @db.Uuid
+  updated_by                              String? @db.Uuid
   annulled_at                             DateTime                    @default(now()) @db.Timestamp(6)
-  annulled_by                             String @db.Uuid
+  annulled_by                             String? @db.Uuid
 
   entity_type                             entity_type?                @relation("entity_type_hierarchyToentity_type", fields: [entity_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entity_type_parent                      entity_type?                @relation("entity_type_hierarchyToentity_type_parent", fields: [entity_type_parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   annullator_user                         system_subscription_user?   @relation("entity_type_hierarchy_annulled_byTosystem_subscription_user", fields: [annulled_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  creator_user                            system_subscription_user    @relation("entity_type_hierarchy_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator_user                            system_subscription_user?    @relation("entity_type_hierarchy_created_byTosystem_subscription_user", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   updater_user                            system_subscription_user?   @relation("entity_type_hierarchy_updated_byTosystem_subscription_user", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([entity_type_id, entity_type_parent_id])
@@ -101,9 +102,9 @@ model entity_type_relation {
   created_at                              DateTime                    @default(now()) @db.Timestamp(6)
   created_by                              String @db.Uuid
   updated_at                              DateTime                    @default(now()) @db.Timestamp(6)
-  updated_by                              String @db.Uuid
+  updated_by                              String? @db.Uuid
   annulled_at                             DateTime                    @default(now()) @db.Timestamp(6)
-  annulled_by                             String @db.Uuid
+  annulled_by                             String? @db.Uuid
 
   entity_type                             entity_type                @relation("entity_type_relationToentity_type", fields: [entity_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entity_type_related                     entity_type                @relation("entity_type_relationToentity_type_related", fields: [entity_type_related_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -123,9 +124,9 @@ model entity_type_by_entity {
   created_at                              DateTime                    @default(now()) @db.Timestamp(6)
   created_by                              String @db.Uuid
   updated_at                              DateTime                    @default(now()) @db.Timestamp(6)
-  updated_by                              String @db.Uuid
+  updated_by                              String? @db.Uuid
   annulled_at                             DateTime                    @default(now()) @db.Timestamp(6)
-  annulled_by                             String @db.Uuid
+  annulled_by                             String? @db.Uuid
 
   entity                                  entity                      @relation("entity_type_by_entityToentity", fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entity_type                             entity_type                 @relation("entity_type_by_entityToentity_type", fields: [entity_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -185,9 +186,9 @@ model entity_relation {
   created_at                              DateTime                    @default(now()) @db.Timestamp(6)
   created_by                              String @db.Uuid
   updated_at                              DateTime                    @default(now()) @db.Timestamp(6)
-  updated_by                              String @db.Uuid
+  updated_by                              String? @db.Uuid
   annulled_at                             DateTime                    @default(now()) @db.Timestamp(6)
-  annulled_by                             String @db.Uuid
+  annulled_by                             String? @db.Uuid
 
   entity                                  entity                      @relation("entity_relationToentity", fields: [entity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   entity_related                          entity                      @relation("entity_relationToentity_related", fields: [entity_related_id], references: [id], onDelete: NoAction, onUpdate: NoAction)

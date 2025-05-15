@@ -25,7 +25,7 @@ type QueryEvent = {
     duration: number;   // Duración en ms
     target: string;
   };
-  
+
   type ErrorEvent = {
     timestamp: Date;
     message: string;    // Mensaje de error
@@ -37,7 +37,8 @@ type QueryEvent = {
       [key: string]: unknown;
     };
   };
-  
+
+const InactiveTransactionError = 'Inactive transaction!';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
@@ -79,6 +80,14 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
     public isTransaction(): boolean {
         return false;
+    }
+
+    public async rollback() {
+        throw new Error(InactiveTransactionError);
+    }
+
+    public async commit() {
+        throw new Error(InactiveTransactionError);
     }
 
     // return transaction prisma instance:
