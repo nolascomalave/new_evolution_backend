@@ -1,3 +1,5 @@
+import { text } from "stream/consumers";
+
 export function ssre(text: string): string{
 	let chars='\\/-^[]()|\'"`+$?¡¿!*.{}<>';
 
@@ -389,4 +391,8 @@ export function getAllFlatValuesOfDataAsArray(data, ignoreNulls): any[] {
 	}
 
     return results;
+}
+
+export function convertStringToRegExp(text: string, flags?: string | null): RegExp {
+	return new RegExp(text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), flags);
 }

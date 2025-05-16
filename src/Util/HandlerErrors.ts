@@ -42,12 +42,22 @@ class HandlerErrors {
         return (Object.keys(this.errors).length > 0);
     }
 
-    public existsSome(...errors:string[]): boolean {
-        return errors.some(err => !!this.errors[err]);
-    }
+    public exists(...errors: (string | RegExp)[]): boolean {
+        return errors.some(error => {
+            if(typeof error === 'string'){
+                return !!this.errors[error];
+            }
 
-    public exists(error: string): boolean {
-        return !!this.errors[error];
+            if(error instanceof RegExp){
+                for(let key in this.errors){
+                    if(error.test(key)){
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        });
     }
 
     public merege(errors: HandlerErrors | object): void{
@@ -65,7 +75,7 @@ class HandlerErrors {
         this.errors[name].push(error ?? null);
     }
 
-    public deleteError(...names: string[]): void {
+    public remove(...names: string[]): void {
         names.forEach(name => {
             if(name in this.errors) delete this.errors[name];
         });
