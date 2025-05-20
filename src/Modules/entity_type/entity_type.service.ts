@@ -19,7 +19,7 @@ export class EntityTypeService {
         private prisma: PrismaService
     ) {}
 
-    async getEntityTypeRoot(id_entity_type: string, prisma: PrismaTransactionOrService = this.prisma): Promise<string | null> {
+    async getEntityTypeRootID(id_entity_type: string, prisma: PrismaTransactionOrService = this.prisma): Promise<string | null> {
         return (((await prisma.$queryRaw`select distinct
             reth.root_id
         from view_recursive_entity_type_hierarchy reth
@@ -109,8 +109,8 @@ export class EntityTypeService {
                     }
                 });
             } else {
-                const entity_type_root_id: string | null = await this.getEntityTypeRoot(params.entity_type_id, prisma),
-                    entity_type_parent_root_id: string | null = entity_type_root_id === null ? null : await this.getEntityTypeRoot(params.entity_type_parent_id, prisma);
+                const entity_type_root_id: string | null = await this.getEntityTypeRootID(params.entity_type_id, prisma),
+                    entity_type_parent_root_id: string | null = entity_type_root_id === null ? null : await this.getEntityTypeRootID(params.entity_type_parent_id, prisma);
 
                 if(entity_type_root_id !== null && (entity_type_parent_root_id === null || entity_type_root_id !== entity_type_parent_root_id)) {
                     errors.set(`${error_name}.entity_type_parent_id`, `The ${name} parent is descended from a different hierarchy tree type than ${name}!`);
@@ -363,6 +363,22 @@ export class EntityTypeService {
         return toRemoveParent;
     }
 
+    async getExistingDependentEntities(entity_type_id: string, is_natural: boolean, prisma: PrismaTransactionOrService = this.prisma): Promise<{id: string}[]> {
+        return await prisma.$queryRaw`select
+            ent.id
+        from entity ent
+        inner join view_recursive_entity_hierarchy_by_entity_type ehet
+            on ent.id = ehet.entity_id
+            and exists (
+                select
+                    *
+                from jsonb_each_text(ehet.entity_type_hierarchical_route) as et_rel
+                where et_rel.value = ${entity_type_id}
+            )
+            and ent.is_natural = ${is_natural ? 1 : 0}
+        limit 1;` ?? [];
+    }
+
 
     async createOrUpdateEntityType(params: {
         [key: string | number]: any;
@@ -405,19 +421,14 @@ export class EntityTypeService {
             errors.set(`${error_name}.entity_type_parents_id`, `The id parents parameter of ${name} must contain at least one id!`);
         } */
 
-        if(!Array.isArray(params.entity_type_related_id)) {
-            if((params.entity_type_related_id ?? null) !== null) {
-                errors.set(`${error_name}.entity_type_related_id`, `The ${name} related ID parameter must be a string array!`);
+        if(!Array.isArray(params.entity_type_relationships)) {
+            if((params.entity_type_relationships ?? null) !== null) {
+                errors.set(`${error_name}.entity_type_relationships`, `The ${name} related ID parameter must be a string array!`);
             }
-            // errors.set(`${error_name}.entity_type_related_id`, validateUniqueIdString(params.entity_type_id, `${name} relateds ID`));
-
-            /* if(!errors.exists(`${error_name}.entity_type_related_id`) && (params.entity_type_id ?? null) !== null) {
-                errors.set(`${error_name}.entity_type_related_id`, `The ${name} relateds ID parameter must be a string or a string array!`);
-            } */
         } else {
-            params.entity_type_related_id.forEach((id: any, index) => {
+            /* params.entity_type_related_id.forEach((id: any, index) => {
                 errors.set(`${error_name}.entity_type_related_id.${index}`, validateUniqueIdString(id, `${name} related ID No. ${index + 1}`));
-            });
+            }); */
         }
 
         if(!Array.isArray(params.entity_type_child_id)) {
@@ -442,11 +453,22 @@ export class EntityTypeService {
         errors.set(`${error_name}.code`, validateSimpleText(params.code, `${name} code`, 5, 255, is_creating));
         errors.set(`${error_name}.description`, validateSimpleText(params.description, `${name} description`, 5, 2500, is_creating));
 
-        if(is_creating && !errors.exists(`${error_name}.entity_type_parent_id`, existingParentErrorRegExp) && Array.isArray(params.entity_type_parent_id) && params.entity_type_parent_id.length < 1) {
-            errors.set(`${error_name}.is_hierarchical`, validateBoolean(params.is_hierarchical, `${name} is_hierarchical`, is_creating));
-            errors.set(`${error_name}.applies_to_natural`, validateBoolean(params.applies_to_natural, `${name} applies_to_natural`, is_creating));
-            errors.set(`${error_name}.applies_to_legal`, validateBoolean(params.applies_to_legal, `${name} applies_to_legal`, is_creating));
-            errors.set(`${error_name}.is_required_for_system`, validateBoolean(params.is_required_for_system, `${name} is_required_for_system`, is_creating));
+        if(!errors.exists(`${error_name}.entity_type_parent_id`, existingParentErrorRegExp) && Array.isArray(params.entity_type_parent_id)) {
+            if(params.entity_type_parent_id.length < 1) {
+                errors.set(`${error_name}.is_hierarchical`, validateBoolean(params.is_hierarchical, `${name} is_hierarchical`, is_creating));
+                errors.set(`${error_name}.applies_to_natural`, validateBoolean(params.applies_to_natural, `${name} applies_to_natural`, is_creating));
+                errors.set(`${error_name}.applies_to_legal`, validateBoolean(params.applies_to_legal, `${name} applies_to_legal`, is_creating));
+                // errors.set(`${error_name}.is_required_for_system`, validateBoolean(params.is_required_for_system, `${name} is_required_for_system`, is_creating));
+            } else {
+                if(Array.isArray(params.entity_type_relationships)) {
+                    errors.set(`${error_name}.entity_type_relationships`, "Relationships cannot be established to an entity type that is hierarchically dependent on another entity type.");
+                }
+
+                errors.set(`${error_name}.is_hierarchical`, typeof (params.is_hierarchical ?? null) === "boolean" ? "The is_hierarchical parameter only applies to root entity types." : null);
+                errors.set(`${error_name}.applies_to_natural`, typeof (params.applies_to_natural ?? null) === "boolean" ? "The applies_to_natural parameter only applies to root entity types." : null);
+                errors.set(`${error_name}.applies_to_legal`, typeof (params.applies_to_legal ?? null) === "boolean" ? "The applies_to_legal parameter only applies to root entity types." : null);
+                // errors.set(`${error_name}.is_required_for_system`, typeof (params.is_required_for_system ?? null) === "boolean" ? "The is_required_for_system parameter only applies to root entity types." : null);
+            }
         }
 
         if(errors.existsErrors()) {
@@ -458,17 +480,23 @@ export class EntityTypeService {
 
         try {
             let entity_type: entity_type | null = is_creating ? null : await prisma.entity_type.findUnique({where: {id: params.entity_type_id}});
-            const entity_data = {
-                type:                   params.name ?? (!entity_type ? undefined : entity_type.type),
-                code:                   params.code ?? (!entity_type ? undefined : entity_type.code),
-                description:            params.description ?? (!entity_type ? undefined : entity_type.description),
+            const oldEntityConditions = !entity_type ? null : {
+                    is_hierarchical: entity_type.is_hierarchical,
+                    applies_to_natural: entity_type.applies_to_natural,
+                    applies_to_legal: entity_type.applies_to_legal,
+                    // is_required_for_system: entity_type.is_required_for_system
+                },
+                entity_data = {
+                    type:                   params.name ?? (!entity_type ? undefined : entity_type.type),
+                    code:                   params.code ?? (!entity_type ? undefined : entity_type.code),
+                    description:            params.description ?? (!entity_type ? undefined : entity_type.description),
 
-                is_hierarchical:        params.is_hierarchical ?? (!entity_type ? false : entity_type.is_hierarchical),
-                applies_to_natural:     params.applies_to_natural ?? (!entity_type ? false : entity_type.applies_to_natural),
-                applies_to_legal:       params.applies_to_legal ?? (!entity_type ? false : entity_type.applies_to_legal),
-                is_required_for_system: params.is_required_for_system ?? (!entity_type ? false : entity_type.is_required_for_system)
-                // [is_creating ? "created_by" : "updated_by"]: params.moderator_user_id,
-            };
+                    is_hierarchical:        params.is_hierarchical ?? (!entity_type ? false : entity_type.is_hierarchical),
+                    applies_to_natural:     params.applies_to_natural ?? (!entity_type ? false : entity_type.applies_to_natural),
+                    applies_to_legal:       params.applies_to_legal ?? (!entity_type ? false : entity_type.applies_to_legal),
+                    // is_required_for_system: params.is_required_for_system ?? (!entity_type ? false : entity_type.is_required_for_system)
+                    // [is_creating ? "created_by" : "updated_by"]: params.moderator_user_id,
+                };
 
             if(!is_creating && !entity_type) {
                 errors.set(`${error_name}.entity_type_id`, `The ${name} ID does not exist!`);
@@ -530,6 +558,68 @@ export class EntityTypeService {
 
                     if(addParentResult.errors.existsErrors()) {
                         errors.merege(addParentResult.errors);
+                    }
+                }
+
+                if(params.entity_type_parent_id.length > 0) {
+                    const entity_type_root_id = await this.getEntityTypeRootID(entity_type.id, prisma),
+                        entity_type_root = await prisma.entity_type.findUnique({ where: { id: entity_type_root_id } });
+
+                    if(!entity_type_root) {
+                        errors.set(`${error_name}.entity_type_root`, "Root entity type not found!");
+                        // throw errors;
+                    } else {
+                        entity_type = await prisma.entity_type.update({
+                            where: { id: entity_type.id },
+                            data: {
+                                is_hierarchical: entity_type_root.is_hierarchical,
+                                applies_to_natural: entity_type_root.applies_to_natural,
+                                applies_to_legal: entity_type_root.applies_to_legal,
+                                is_required_for_system: entity_type_root.is_required_for_system,
+                                updated_at: new Date()
+                            }
+                        });
+                    }
+                } else {
+                    if(oldEntityConditions != null) {
+                        const areConditionsChanged = (oldEntityConditions.is_hierarchical != entity_type.is_hierarchical || oldEntityConditions.applies_to_natural != entity_type.applies_to_natural || oldEntityConditions.applies_to_legal != entity_type.applies_to_legal);
+
+                        if(oldEntityConditions.is_hierarchical != entity_type.is_hierarchical && oldEntityConditions.is_hierarchical == true) {
+                            const existingEntityTypeChild: {entity_type_id: string}[] = await prisma.$queryRaw`select
+                                eth.entity_type_id
+                            from entity_type_hierarchy eth
+                            where eth.entity_type_parent_id = ${entity_type.id}
+                                and eth.annulled_at is null
+                            limit 1` ?? [];
+
+                            if(existingEntityTypeChild.length > 0) {
+                                errors.set(`${error_name}.is_hierarchical`, `The "hierarchical" attribute cannot be set to false while there are entity types dependent on this entity type.`);
+                            }
+                        }
+
+                        if(oldEntityConditions.applies_to_natural != entity_type.applies_to_natural && oldEntityConditions.applies_to_natural == true) {
+                            const existingDependentEntity = await this.getExistingDependentEntities(entity_type.id, true, prisma);
+
+                            if(existingDependentEntity.length > 0) {
+                                errors.set(`${error_name}.applies_to_natural`, `The "applies to natural" attribute cannot be set to false while there are natural entities dependent on this entity type.`);
+                            }
+                        }
+
+                        if(oldEntityConditions.applies_to_legal != entity_type.applies_to_legal && oldEntityConditions.applies_to_legal == true) {
+                            const existingDependentEntity = await this.getExistingDependentEntities(entity_type.id, false, prisma);
+
+                            if(existingDependentEntity.length > 0) {
+                                errors.set(`${error_name}.applies_to_legal`, `The "applies to legal" attribute cannot be set to false while there are legal entities dependent on this entity type.`);
+                            }
+                        }
+
+                        if(areConditionsChanged && !errors.existsErrors()) {
+
+                        }
+                    }
+
+                    for(const relationship of params.entity_type_relationships) {
+
                     }
                 }
             }
