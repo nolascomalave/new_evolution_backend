@@ -61,9 +61,9 @@ class HandlerErrors {
     }
 
     public merege(errors: HandlerErrors | object): void{
-        let newErrors = (!('existsErrors' in errors)) ? errors : errors.getErrors();
+        let newErrors = (errors instanceof HandlerErrors) ? errors.getErrors() : errors;
 
-        if(!newErrors) return;
+        if(typeof newErrors === 'object' && newErrors != null && !Array.isArray(newErrors)) return;
 
         this.errors = { ...this.errors, ...newErrors };
     }
