@@ -13,21 +13,18 @@ export type ViewRecursiveEntityTypeHierarchy = {
     id: string;
 }
 
+type EntityTypePermitedProcessConditions = {
+    is_also: Boolean;
+    is_also_required: Boolean;
+    is_parallel: Boolean;
+    is_required_parallel: Boolean;
+};
+
 export type EntityTypeRelationValidatedParams = {
     entity_type_id: string;
     entity_type_related_id: string;
-    conditions: {
-        is_also: Boolean;
-        is_also_required: Boolean;
-        is_parallel: Boolean;
-        is_required_parallel: Boolean;
-    };
-    related_conditions: {
-        is_also: Boolean;
-        is_also_required: Boolean;
-        is_parallel: Boolean;
-        is_required_parallel: Boolean;
-    };
+    conditions: EntityTypePermitedProcessConditions;
+    related_conditions: EntityTypePermitedProcessConditions;
 }
 
 @Injectable()
@@ -483,6 +480,182 @@ export class EntityTypeService {
         return (params as EntityTypeRelationValidatedParams);
     }
 
+    async confirmExistsAlsoDependents({
+        entity_type_id,
+        entity_type_related_id,
+        exists_in_related,
+        prisma
+    } : {
+        entity_type_id: string;
+        entity_type_related_id: string;
+        exists_in_related: boolean;
+        prisma?: PrismaTransactionOrService;
+    }) {
+        const $sql = `select
+            ent.id
+        from entity ent
+        where ent.annulled_at is null
+            and exists (
+                select
+                    *
+                from entity_type_by_entity ety
+                where ety.entity_id = ent.id
+                    and ety.annulled_at is null
+                    and ety.entity_type_id = ${entity_type_id}
+            )
+            and ${exists_in_related ? "" : "NOT "}exists (
+                select
+                    *
+                from entity_type_by_entity ety
+                where ety.entity_id = ent.id
+                    and ety.annulled_at is null
+                    and ety.entity_type_id = ${entity_type_related_id}
+            )
+        limit 1`;
+
+        return (((await (prisma ?? this.prisma).$queryRawUnsafe($sql))[0] as {id: string}) ?? {id: null}).id ?? null;
+    }
+
+    async confirmExistsParallelDependents({
+        entity_type_id,
+        entity_type_related_id,
+        exists_in_related,
+        prisma
+    } : {
+        entity_type_id: string;
+        entity_type_related_id: string;
+        exists_in_related: boolean;
+        prisma?: PrismaTransactionOrService;
+    }) {
+        const $sql = `select
+            ent.id
+        from entity ent
+        inner join entity_type_by_entity ete
+            on ete.entity_id = ent.id
+            and ete.annulled_at is null
+        where ent.annulled_at is null
+            and ete.entity_type_id = ${entity_type_id}
+            and ${exists_in_related ? "" : "NOT "}exists (
+                select
+                    er.*
+                from entity ent1
+                inner join entity_relation er
+                    on (
+                        er.entity_id = ent1.id
+                        or er.entity_related_id = ent1.id
+                    )
+                    and (
+                        er.entity_id = ent.id
+                        or er.entity_related_id = ent.id
+                    )
+                    and ent1.id <> ent.id
+                    and er.is_parallel = true
+                    and ent1.annulled_at is null
+                inner join entity_type_by_entity ete1
+                    on ete1.entity_id = ent1.id
+                    and ete1.entity_type_id = ${entity_type_related_id}
+                    and ete1.annulled_at is null
+            )
+        limit 1`;
+
+        return (((await (prisma ?? this.prisma).$queryRawUnsafe($sql))[0] as {id: string}) ?? {id: null}).id ?? null;
+    }
+
+    async validateExistingRelationOrUpdate({
+        relation,
+        entity_type,
+        entity_type_related,
+        conditions,
+        conditions_name,
+        error_name,
+        prisma,
+        system_subscription_user_id
+    }: {
+        relation: entity_type_relation;
+        entity_type: entity_type;
+        entity_type_related: entity_type;
+        conditions: EntityTypePermitedProcessConditions;
+        conditions_name: string;
+        error_name: string;
+        prisma?: PrismaTransactionOrService;
+        system_subscription_user_id: string;
+    }) {
+        prisma ??= this.prisma;
+
+        const errors = new HandlerErrors;
+
+        if(relation.is_also === true && conditions.is_also === false) {
+            const existingDependentEntities: string | null = await this.confirmExistsAlsoDependents({
+                entity_type_id: entity_type.id,
+                entity_type_related_id: entity_type_related.id,
+                prisma,
+                exists_in_related: true
+            });
+
+            if(existingDependentEntities !== null) {
+                errors.set(`${error_name}.${conditions_name}.is_also`, `The is_also attribute of the relationship between the ${entity_type.type} and ${entity_type_related.type} entity types cannot be changed to false while entities belonging to both types exist.`);
+            }
+        }
+
+        if(/* conditions.is_also === true &&  */relation.is_also_required === false && conditions.is_also_required === true) {
+            const existingDependentEntities: string | null = await this.confirmExistsAlsoDependents({
+                entity_type_id: entity_type.id,
+                entity_type_related_id: entity_type_related.id,
+                prisma,
+                exists_in_related: false
+            });
+
+            if(existingDependentEntities !== null) {
+                errors.set(`${error_name}.${conditions_name}.is_also_required`, `The is_also_required attribute of the relationship between the ${entity_type.type} and ${entity_type_related.type} entity types cannot be changed to true until there are entities belonging to both types.`);
+            }
+        }
+
+        if(relation.is_parallel === true && conditions.is_parallel === false) {
+            const existingDependentEntities: string | null = await this.confirmExistsParallelDependents({
+                entity_type_id: entity_type.id,
+                entity_type_related_id: entity_type_related.id,
+                prisma,
+                exists_in_related: true
+            });
+
+            if(existingDependentEntities !== null) {
+                errors.set(`${error_name}.${conditions_name}.is_parallel`, `The is_parallel attribute of the relationship between the ${entity_type.type} and ${entity_type_related.type} entity types cannot be set to false while entities belonging to both types exist.`);
+            }
+        }
+
+        if(/* conditions.is_parallel === true &&  */relation.is_required_parallel === false && conditions.is_required_parallel === true) {
+            const existingDependentEntities: string | null = await this.confirmExistsParallelDependents({
+                entity_type_id: entity_type.id,
+                entity_type_related_id: entity_type_related.id,
+                prisma,
+                exists_in_related: true
+            });
+
+            if(existingDependentEntities !== null) {
+                errors.set(`${error_name}.${conditions_name}.is_required_parallel`, `The is_required_parallel attribute of the relationship between the ${entity_type.type} and ${entity_type_related.type} entity types cannot be changed to true until there are entities belonging to both types.`);
+            }
+        }
+
+        if(errors.existsErrors()) {
+            return errors;
+        } else {
+            return await prisma.entity_type_relation.update({
+                where: { id: relation.id },
+                data: {
+                    is_also: Boolean(conditions.is_also),
+                    is_also_required: Boolean(conditions.is_also_required),
+                    is_parallel: Boolean(conditions.is_parallel),
+                    is_required_parallel: Boolean(conditions.is_required_parallel),
+
+                    updated_by: system_subscription_user_id,
+                    updated_at: new Date,
+                    annulled_at: null,
+                    annulled_by: null
+                }
+            });
+        }
+    }
+
     async addEntityTypeRelationship(params: any, config: {
         name?: string;
         error_name?: string;
@@ -491,7 +664,7 @@ export class EntityTypeService {
         validateInitialParams?: boolean;
         entity_type?: entity_type | null;
         entity_type_related?: entity_type | null;
-    }): Promise<{data: entity_type_relation | null; errors: HandlerErrors;}> {
+    }): Promise<{data: {relation: entity_type_relation, related_relation: entity_type_relation} | null; errors: HandlerErrors;}> {
         let {
             prisma,
             entity_type,
@@ -556,6 +729,10 @@ export class EntityTypeService {
                 errors.set(`${error_name}.entity_type_related_id`, `The ${name} related ID does not found!`);
             }
 
+            if(errors.exists()) {
+                throw errors;
+            }
+
             entity_type_relations.forEach((rel: entity_type_relation) => {
                 if(rel.entity_type_id === entity_type.id) {
                     relation = rel;
@@ -575,136 +752,67 @@ export class EntityTypeService {
                     }
                 });
             } else {
-                if(relation.is_also === true && params.conditions.is_also === false) {
-                    const existingDependentEntities: string | null = ((await prisma.$queryRaw`select
-                        ent.id
-                    from entity ent
-                    where ent.annulled_at is null
-                        and exists (
-                            select
-                                *
-                            from entity_type_by_entity ety
-                            where ety.entity_id = ent.id
-                                and ety.annulled_at is null
-                                and ety.entity_type_id = ${entity_type.id}
-                        )
-                        and exists (
-                            select
-                                *
-                            from entity_type_by_entity ety
-                            where ety.entity_id = ent.id
-                                and ety.annulled_at is null
-                                and ety.entity_type_id = ${entity_type_related.id}
-                        )
-                    limit 1`)[0] ?? {id: null}).id ?? null;
+                const relationValidationResult = await this.validateExistingRelationOrUpdate({
+                    prisma,
+                    relation,
+                    entity_type,
+                    entity_type_related,
+                    error_name,
+                    conditions: params.conditions,
+                    conditions_name: "conditions",
+                    system_subscription_user_id
+                });
 
-                    if(existingDependentEntities !== null) {
-                        errors.set(`${error_name}.entity_type.is_also`, `The is_also attribute of the relationship between the ${entity_type.type} and ${entity_type_related.type} entity types cannot be changed to false while entities belonging to both types exist.`);
-                    }
-                }
-
-                if(/* params.conditions.is_also === true &&  */relation.is_also_required === false && params.conditions.is_also_required === true) {
-                    const existingDependentEntities: string | null = ((await prisma.$queryRaw`select
-                        ent.id
-                    from entity ent
-                    where ent.annulled_at is null
-                        and exists (
-                            select
-                                *
-                            from entity_type_by_entity ety
-                            where ety.entity_id = ent.id
-                                and ety.annulled_at is null
-                                and ety.entity_type_id = ${entity_type.id}
-                        )
-                        and not exists (
-                            select
-                                *
-                            from entity_type_by_entity ety
-                            where ety.entity_id = ent.id
-                                and ety.annulled_at is null
-                                and ety.entity_type_id = ${entity_type_related.id}
-                        )
-                    limit 1`)[0] ?? {id: null}).id ?? null;
-
-                    if(existingDependentEntities !== null) {
-                        errors.set(`${error_name}.entity_type.is_also_required`, `The is_also_required attribute of the relationship between the ${entity_type.type} and ${entity_type_related.type} entity types cannot be changed to true until there are entities belonging to both types.`);
-                    }
-                }
-
-                if(relation.is_parallel === true && params.conditions.is_parallel === false) {
-                    const existingDependentEntities: string | null = ((await prisma.$queryRaw`select
-                        ent.id
-                    from entity ent
-                    inner join entity_type_by_entity ete
-                        on ete.entity_id = ent.id
-                        and ete.annulled_at is null
-                    where ent.annulled_at is null
-                        and ete.entity_type_id = ${entity_type.id}
-                        and exists (
-                            select
-                                er.*
-                            from entity ent1
-                            inner join entity_relation er
-                                on (
-                                    er.entity_id = ent1.id
-                                    or er.entity_related_id = ent1.id
-                                )
-                                and (
-                                    er.entity_id = ent.id
-                                    or er.entity_related_id = ent.id
-                                )
-                                and ent1.id <> ent.id
-                                and er.is_parallel = true
-                                and ent1.annulled_at is null
-                            inner join entity_type_by_entity ete1
-                                on ete1.entity_id = ent1.id
-                                and ete1.entity_type_id = ${entity_type_related.id}
-                                and ete1.annulled_at is null
-                        )
-                    limit 1`)[0] ?? {id: null}).id ?? null;
-
-                    if(existingDependentEntities !== null) {
-                        errors.set(`${error_name}.entity_type.is_parallel`, `The is_parallel attribute of the relationship between the ${entity_type.type} and ${entity_type_related.type} entity types cannot be set to false while entities belonging to both types exist.`);
-                    }
-                }
-
-                if(/* params.conditions.is_parallel === true &&  */relation.is_required_parallel === false && params.conditions.is_required_parallel === true) {
-                    const existingDependentEntities: string | null = ((await prisma.$queryRaw`select
-                        ent.id
-                    from entity ent
-                    inner join entity_type_by_entity ete
-                        on ete.entity_id = ent.id
-                        and ete.annulled_at is null
-                    where ent.annulled_at is null
-                        and ete.entity_type_id = ${entity_type.id}
-                        and not exists (
-                            select
-                                er.*
-                            from entity ent1
-                            inner join entity_relation er
-                                on (
-                                    er.entity_id = ent1.id
-                                    or er.entity_related_id = ent1.id
-                                )
-                                and (
-                                    er.entity_id = ent.id
-                                    or er.entity_related_id = ent.id
-                                )
-                                and ent1.id <> ent.id
-                                and er.is_parallel = true
-                                and ent1.annulled_at is null
-                            inner join entity_type_by_entity ete1
-                                on ete1.entity_id = ent1.id
-                                and ete1.entity_type_id = ${entity_type_related.id}
-                                and ete1.annulled_at is null
-                        )
-                    limit 1`)[0] ?? {id: null}).id ?? null;
-
-                    if(existingDependentEntities !== null) {
-                        errors.set(`${error_name}.entity_type.is_required_parallel`, `The is_required_parallel attribute of the relationship between the ${entity_type.type} and ${entity_type_related.type} entity types cannot be changed to true until there are entities belonging to both types.`);
-                    }
+                if(relationValidationResult instanceof HandlerErrors) {
+                    errors.merege(relationValidationResult);
+                } else {
+                    relation = relationValidationResult;
                 }
             }
+
+            if(!related_relation) {
+                related_relation = await prisma.entity_type_relation.create({
+                    data: {
+                        entity_type_id: entity_type_related.id,
+                        entity_type_related_id: entity_type.id,
+                        ...params.related_conditions,
+                        created_by: system_subscription_user_id
+                    }
+                });
+            } else {
+                const relationValidationResult = await this.validateExistingRelationOrUpdate({
+                    prisma,
+                    relation: related_relation,
+                    entity_type: entity_type_related,
+                    entity_type_related: entity_type,
+                    error_name,
+                    conditions: params.related_conditions,
+                    conditions_name: "related_conditions",
+                    system_subscription_user_id
+                });
+
+                if(relationValidationResult instanceof HandlerErrors) {
+                    errors.merege(relationValidationResult);
+                } else {
+                    related_relation = relationValidationResult;
+                }
+            }
+
+            if(errors.exists()) {
+                throw errors;
+            }
+
+            if(isPosibleTransaction) {
+                await prisma.commit();
+            }
+
+            return {
+                data: {
+                    relation,
+                    related_relation
+                },
+                errors: null
+            };
         } catch(e: any) {
             if(isPosibleTransaction) {
                 await prisma.rollback();
