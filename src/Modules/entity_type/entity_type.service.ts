@@ -27,11 +27,76 @@ export type EntityTypeRelationValidatedParams = {
     related_conditions: EntityTypePermitedProcessConditions;
 }
 
+export type EntityTypeWithRelation = entity_type & {
+    is_root: boolean;
+    parents: {id: string; entity_type_id: string; entity_type_parent_id: string}[] | string | null;
+};
+
 @Injectable()
 export class EntityTypeService {
     constructor(
         private prisma: PrismaService
     ) {}
+
+    public async getWithHierarchyRelation($params: {
+        entity_type_root_code?: null | string;
+    }) {
+        const $where: string[] | string = [];
+
+        if(!!$params.entity_type_root_code) {
+            $where.push(`(
+                (
+                    etp.entity_type_id is null
+                    and et.code = '${escape($params.entity_type_root_code)}'
+                )
+                or (
+                    etp.entity_type_id is not null
+                    and exists (
+                        select
+                            1 as Num
+                        from entity_type etr
+                        where id = etp.entity_type_root_id
+                            and etr.code = '${escape($params.entity_type_root_code)}'
+                    )
+                )
+            )`);
+        }
+
+        let $sql = `select
+            et.*,
+            iif(etp.entity_type_id is null, true, false) as is_root,
+            etp.entity_type_root_id,
+            etp.parents::jsonb
+        from entity_type et
+        left join (
+            select
+                etr.root_id as entity_type_root_id,
+                eth.entity_type_id,
+                json_agg(json_build_object(
+                    'id', eth.id,
+                    'entity_type_id', eth.entity_type_id,
+                    'entity_type_parent_id', eth.entity_type_parent_id
+                ) order by eth.id ASC) as parents
+            from entity_type_hierarchy eth
+            inner join (
+                select distinct
+                    id,
+                    parent_id,
+                    root_id
+                from view_recursive_entity_type_hierarchy
+            ) etr
+                on etr.id = eth.entity_type_id
+                and etr.parent_id = eth.entity_type_parent_id
+            where eth.annulled_at is null
+            group by etr.root_id,
+                eth.entity_type_id
+        ) etp
+            on etp.entity_type_id = et.id
+        where et.annulled_at is null
+            ${$where.length > 0 ? `and ${$where.join(' and ')}` : ''}`;
+
+        return await this.prisma.$queryRawUnsafe<EntityTypeWithRelation>($sql);
+    }
 
     async getEntityTypeRootID(id_entity_type: string, prisma: PrismaTransactionOrService = this.prisma): Promise<string | null> {
         return (((await prisma.$queryRaw`select distinct
@@ -316,7 +381,7 @@ export class EntityTypeService {
 
     async removeAllEntityParent({
         // parent_entity,
-        entity_type_array,
+        entity_type_parent_array,
         entity_type,
         is_parent = false,
         process_id_key,
@@ -325,7 +390,7 @@ export class EntityTypeService {
         system_subscription_user_id,
         prisma
     } : {
-        entity_type_array: string[];
+        entity_type_parent_array: string[];
         entity_type: entity_type;
         is_parent: boolean;
         process_id_key: "entity_type_id" | "entity_type_parent_id";
@@ -345,7 +410,7 @@ export class EntityTypeService {
 
         let counter = 0;
         for(const entity_type_to_process of type_entity_parents) {
-            const existsParentInNewRelation = entity_type_array.some((id: string) => id === entity_type_to_process[process_id_key]);
+            const existsParentInNewRelation = entity_type_parent_array.some((id: string) => id === entity_type_to_process[process_id_key]);
 
             if(!existsParentInNewRelation) {
                 const relationAnnulatedResult = await this.removeEntityTypeParent({
@@ -656,6 +721,158 @@ export class EntityTypeService {
         }
     }
 
+    async removeEntityTypeRelationship(params: {
+        relation?: entity_type_relation | null;
+
+        entity_type?: entity_type | string | null;
+        entity_type_related?: entity_type | string | null;
+
+        name?: string;
+        error_name?: string;
+        system_subscription_user_id: string;
+        prisma?: PrismaTransactionOrService;
+
+        removeRelated?: boolean;
+    }): Promise<{data: entity_type_relation | null; errors: HandlerErrors;}> {
+        let {
+            prisma,
+            entity_type,
+            entity_type_related,
+            relation
+        } = params;
+        const isPosibleTransaction = !prisma,
+            errors = new HandlerErrors,
+            {
+                name = params.name ?? "entity type",
+                error_name = params.error_name ?? "entity_type",
+                removeRelated = params.removeRelated ?? true,
+                system_subscription_user_id,
+            } = params,
+            successCode = Date.now().toString().concat("-SUCCESS");
+
+        if(isPosibleTransaction) {
+            prisma = await this.prisma.beginTransaction();
+        }
+
+        try {
+            entity_type = typeof entity_type === "string" ? await prisma.entity_type.findUnique({where: {id: entity_type}}) : entity_type;
+            entity_type_related = (typeof entity_type_related === "string" ? await prisma.entity_type.findUnique({where: {id: entity_type_related}}) : (entity_type === null ? null : entity_type_related));
+            relation ??= entity_type_related === null ? null : await prisma.entity_type_relation.findFirst({
+                where: {
+                    entity_type_id: entity_type.id,
+                    entity_type_related_id: entity_type_related.id
+                }
+            });
+
+            if(!entity_type) {
+                errors.set(`${error_name}.entity_type`, `The ${name} ID does not found!`);
+            } else if(!entity_type_related) {
+                errors.set(`${error_name}.entity_type_related`, `The ${name} related ID does not found!`);
+            } /* else if(!relation) {
+                errors.set(`${error_name}.relation`, `The ${name} relation does not found!`);
+            } */ else if(!!relation && relation.entity_type_id != entity_type.id || relation.entity_type_related_id != entity_type_related.id) {
+                errors.set(`${error_name}.relation`, `The ${name} relation does not match the provided entity types!`);
+            }
+
+            if(errors.exists()) {
+                throw errors;
+            }
+
+            if(!!relation || relation.annulled_at != null) {
+                throw successCode;
+            }
+
+            if(relation.is_parallel) {
+                const existingParallelDependentEntities: string | null = await this.confirmExistsParallelDependents({
+                    entity_type_id: entity_type.id,
+                    entity_type_related_id: entity_type_related.id,
+                    prisma,
+                    exists_in_related: true
+                });
+
+                if(existingParallelDependentEntities !== null) {
+                    errors.set(`${error_name}.relation.is_parallel`, `The relationship between entity types ${entity_type.type} and ${entity_type_related.type} cannot be deleted because the is_parallel value is set to true and there are entities of one type that are directly related to entities of the other type.`);
+                }
+            }
+
+            if(relation.is_also) {
+                const existingAlsoDependentEntities: string | null = await this.confirmExistsAlsoDependents({
+                    entity_type_id: entity_type.id,
+                    entity_type_related_id: entity_type_related.id,
+                    prisma,
+                    exists_in_related: true
+                });
+
+                if(existingAlsoDependentEntities !== null) {
+                    errors.set(`${error_name}.relation.is_also`, `The relationship between the entity types ${entity_type.type} and ${entity_type_related.type} cannot be deleted because the value is_also is set to true and there are entities that belong to both types.`);
+                }
+            }
+
+            if(errors.exists()) {
+                throw errors;
+            }
+
+            if(removeRelated) {
+                const removeRelatedRelationResult = await this.removeEntityTypeRelationship({
+                    entity_type: entity_type_related,
+                    entity_type_related: entity_type,
+                    // relation: relation,
+                    name: `${name} related relation`,
+                    error_name: `${error_name}.related`,
+                    system_subscription_user_id: system_subscription_user_id,
+                    prisma: prisma,
+                    removeRelated: false
+                });
+
+                if(removeRelatedRelationResult.errors.exists()) {
+                    errors.merege(removeRelatedRelationResult.errors);
+                    throw errors;
+                } else {
+                    relation = removeRelatedRelationResult.data;
+                }
+            }
+
+            relation = await prisma.entity_type_relation.update({
+                where: { id: relation.id },
+                data: {
+                    annulled_at: new Date,
+                    annulled_by: system_subscription_user_id,
+                    updated_at: new Date,
+                    updated_by: system_subscription_user_id
+                }
+            });
+
+            if(isPosibleTransaction) {
+                await prisma.commit();
+            }
+
+            return {
+                data: relation,
+                errors: errors
+            };
+        } catch(e: any) {
+            if(isPosibleTransaction) {
+                await prisma.rollback();
+            }
+
+            if(e === successCode) {
+                return {
+                    errors: null,
+                    data: relation
+                };
+            }
+
+            if(e instanceof HandlerErrors) {
+                return {
+                    errors: e,
+                    data: null
+                };
+            }
+
+            throw e;
+        }
+    };
+
     async addEntityTypeRelationship(params: any, config: {
         name?: string;
         error_name?: string;
@@ -838,6 +1055,7 @@ export class EntityTypeService {
             name = ((typeof params === "object" && !Array.isArray(params) ? params : {}) ?? {}).name ?? "entity type",
             error_name = ((typeof params === "object" && !Array.isArray(params) ? params : {}) ?? {}).error_name ?? "entity_type",
             errors = new HandlerErrors;
+        let entity_type: entity_type | null
 
         if(isPosibleTransaction) {
             prisma = await this.prisma.beginTransaction();
@@ -946,7 +1164,7 @@ export class EntityTypeService {
         }
 
         try {
-            let entity_type: entity_type | null = is_creating ? null : await prisma.entity_type.findUnique({where: {id: params.entity_type_id}});
+            entity_type = is_creating ? null : await prisma.entity_type.findUnique({where: {id: params.entity_type_id}});
             const oldEntityConditions = !entity_type ? null : {
                     is_hierarchical: entity_type.is_hierarchical,
                     applies_to_natural: entity_type.applies_to_natural,
@@ -990,26 +1208,38 @@ export class EntityTypeService {
             });
 
             if(Array.isArray(params.entity_type_parent_id)) {
-                const /* type_entity_parents = await prisma.entity_type_hierarchy.findMany({
-                        where: { entity_type_id: entity_type.id, annulled_at: null },
-                        select: { entity_type_parent_id: true }
-                    }) ?? [],
-                    toRemoveParent: string[] = [], */
-                    removeParents = await this.removeAllEntityParent({
-                        entity_type_array: params.entity_type_parent_id,
-                        entity_type,
-                        is_parent: false,
-                        process_id_key: "entity_type_parent_id",
-                        name: `${name} parent`,
-                        error_name: `${error_name}.parent`,
-                        system_subscription_user_id: params.system_subscription_user_id,
-                        prisma
+                const currentEntityTypeParents = await prisma.entity_type_hierarchy.findMany({
+                    where: {
+                        entity_type_id: entity_type.id,
+                        NOT: {
+                            entity_type_parent_id: params.entity_type_parent_id
+                        },
+                        annulled_at: null
+                    }
+                });
+                let parentToProcess = 0;
+
+                for(const currentParent of currentEntityTypeParents) {
+                    const relationAnnulatedResult = await this.removeEntityTypeParent({
+                        params: {
+                            entity_type_id: currentParent.entity_type_id,
+                            entity_type_parent_id: entity_type.id
+                        },
+                        config: {
+                            name: `${name} current_parent No. ${parentToProcess}`,
+                            error_name: `${error_name}.current_parent.${parentToProcess}`,
+                            system_subscription_user_id: params.system_subscription_user_id
+                        }
                     });
 
-                if(removeParents instanceof HandlerErrors) {
-                    errors.merege(removeParents as HandlerErrors);
+                    if(relationAnnulatedResult.errors.existsErrors()) {
+                        errors.merege(relationAnnulatedResult.errors);
+                    }
+
+                    parentToProcess++;
                 }
 
+                parentToProcess = 0;
                 for(const id of params.entity_type_parent_id) {
                     const addParentResult = await this.addEntityTypeParent({
                         params: {
@@ -1017,8 +1247,8 @@ export class EntityTypeService {
                             entity_type_parent_id: id
                         },
                         config: {
-                            name: `${name} parent`,
-                            error_name: `${error_name}.parent`,
+                            name: `${name} parent No.${parentToProcess}`,
+                            error_name: `${error_name}.parent.${parentToProcess}`,
                             system_subscription_user_id: params.system_subscription_user_id
                         }
                     }, prisma);
@@ -1026,6 +1256,8 @@ export class EntityTypeService {
                     if(addParentResult.errors.existsErrors()) {
                         errors.merege(addParentResult.errors);
                     }
+
+                    parentToProcess++;
                 }
 
                 if(params.entity_type_parent_id.length > 0) {
@@ -1047,98 +1279,162 @@ export class EntityTypeService {
                             }
                         });
                     }
-                } else {
-                    if(oldEntityConditions != null) {
-                        const areConditionsChanged = (oldEntityConditions.is_hierarchical != entity_type.is_hierarchical || oldEntityConditions.applies_to_natural != entity_type.applies_to_natural || oldEntityConditions.applies_to_legal != entity_type.applies_to_legal);
+                }
+            }
 
-                        if(oldEntityConditions.is_hierarchical != entity_type.is_hierarchical && oldEntityConditions.is_hierarchical == true) {
-                            const existingEntityTypeChild: {entity_type_id: string}[] = await prisma.$queryRaw`select
-                                eth.entity_type_id
-                            from entity_type_hierarchy eth
-                            where eth.entity_type_parent_id = ${entity_type.id}
-                                and eth.annulled_at is null
-                            limit 1` ?? [];
+            const isRoot = await this.getEntityTypeRootID(entity_type.id, prisma) === entity_type.id;
 
-                            if(existingEntityTypeChild.length > 0) {
-                                errors.set(`${error_name}.is_hierarchical`, `The "hierarchical" attribute cannot be set to false while there are entity types dependent on this entity type.`);
-                            }
-                        }
+            if(isRoot) {
+                if(oldEntityConditions != null) {
+                    const areConditionsChanged = (oldEntityConditions.is_hierarchical != entity_type.is_hierarchical || oldEntityConditions.applies_to_natural != entity_type.applies_to_natural || oldEntityConditions.applies_to_legal != entity_type.applies_to_legal);
 
-                        if(oldEntityConditions.applies_to_natural != entity_type.applies_to_natural && oldEntityConditions.applies_to_natural == true) {
-                            const existingDependentEntity = await this.getExistingDependentEntities(entity_type.id, true, prisma);
+                    if(oldEntityConditions.is_hierarchical != entity_type.is_hierarchical && oldEntityConditions.is_hierarchical == true) {
+                        const existingEntityTypeChild: {entity_type_id: string}[] = await prisma.$queryRaw`select
+                            eth.entity_type_id
+                        from entity_type_hierarchy eth
+                        where eth.entity_type_parent_id = ${entity_type.id}
+                            and eth.annulled_at is null
+                        limit 1` ?? [];
 
-                            if(existingDependentEntity.length > 0) {
-                                errors.set(`${error_name}.applies_to_natural`, `The "applies to natural" attribute cannot be set to false while there are natural entities dependent on this entity type.`);
-                            }
-                        }
-
-                        if(oldEntityConditions.applies_to_legal != entity_type.applies_to_legal && oldEntityConditions.applies_to_legal == true) {
-                            const existingDependentEntity = await this.getExistingDependentEntities(entity_type.id, false, prisma);
-
-                            if(existingDependentEntity.length > 0) {
-                                errors.set(`${error_name}.applies_to_legal`, `The "applies to legal" attribute cannot be set to false while there are legal entities dependent on this entity type.`);
-                            }
-                        }
-
-                        if(areConditionsChanged && !errors.existsErrors()) {
-                            const dependentEntitiesTypesIDs: string[] = convertJSONStringToJSON((((await prisma.$queryRaw`select
-                                json_agg(et.id) as ids
-                            from entity_type et
-                            inner join (
-                                select
-                                    reth.id,
-                                    reth.root_id
-                                from view_recursive_entity_type_hierarchy reth
-                                group by reth.id,
-                                    reth.root_id
-                            ) reth
-                                on reth.id = et.id
-                                and reth.root_id <> et.id
-                            inner join entity_type etr
-                                on etr.id = reth.root_id
-                            where etr.id = ${entity_type.id}` as [{ids: string}] | [])[0] ?? {ids: null}).ids) ?? null);
-
-                            if(dependentEntitiesTypesIDs !== null && (typeof dependentEntitiesTypesIDs) === "object") {
-                                await prisma.entity_type.updateMany({
-                                    where: { id: { in: dependentEntitiesTypesIDs } },
-                                    data: {
-                                        is_hierarchical: entity_type.is_hierarchical,
-                                        applies_to_natural: entity_type.applies_to_natural,
-                                        applies_to_legal: entity_type.applies_to_legal,
-                                        updated_at: new Date()
-                                    }
-                                });
-                            }
+                        if(existingEntityTypeChild.length > 0) {
+                            errors.set(`${error_name}.is_hierarchical`, `The "hierarchical" attribute cannot be set to false while there are entity types dependent on this entity type.`);
                         }
                     }
 
-                    for(const relationship of params.entity_type_relationships) {
+                    if(oldEntityConditions.applies_to_natural != entity_type.applies_to_natural && oldEntityConditions.applies_to_natural == true) {
+                        const existingDependentEntity = await this.getExistingDependentEntities(entity_type.id, true, prisma);
 
+                        if(existingDependentEntity.length > 0) {
+                            errors.set(`${error_name}.applies_to_natural`, `The "applies to natural" attribute cannot be set to false while there are natural entities dependent on this entity type.`);
+                        }
+                    }
+
+                    if(oldEntityConditions.applies_to_legal != entity_type.applies_to_legal && oldEntityConditions.applies_to_legal == true) {
+                        const existingDependentEntity = await this.getExistingDependentEntities(entity_type.id, false, prisma);
+
+                        if(existingDependentEntity.length > 0) {
+                            errors.set(`${error_name}.applies_to_legal`, `The "applies to legal" attribute cannot be set to false while there are legal entities dependent on this entity type.`);
+                        }
+                    }
+
+                    if(areConditionsChanged && !errors.existsErrors()) {
+                        const dependentEntitiesTypesIDs: string[] = convertJSONStringToJSON((((await prisma.$queryRaw`select
+                            json_agg(et.id) as ids
+                        from entity_type et
+                        inner join (
+                            select
+                                reth.id,
+                                reth.root_id
+                            from view_recursive_entity_type_hierarchy reth
+                            group by reth.id,
+                                reth.root_id
+                        ) reth
+                            on reth.id = et.id
+                            and reth.root_id <> et.id
+                        inner join entity_type etr
+                            on etr.id = reth.root_id
+                        where etr.id = ${entity_type.id}` as [{ids: string}] | [])[0] ?? {ids: null}).ids) ?? null);
+
+                        if(dependentEntitiesTypesIDs !== null && (typeof dependentEntitiesTypesIDs) === "object") {
+                            await prisma.entity_type.updateMany({
+                                where: { id: { in: dependentEntitiesTypesIDs } },
+                                data: {
+                                    is_hierarchical: entity_type.is_hierarchical,
+                                    applies_to_natural: entity_type.applies_to_natural,
+                                    applies_to_legal: entity_type.applies_to_legal,
+                                    updated_at: new Date()
+                                }
+                            });
+                        }
+                    }
+                }
+
+                if(Array.isArray(params.entity_type_relationships)) {
+                    const currentRelationships = await prisma.entity_type_relation.findMany({
+                        where: {
+                            entity_type_id: entity_type.id,
+                            NOT: {
+                                entity_type_related_id: params.entity_type_relationships.filter(rel => ((rel ?? null) !== null && typeof rel === 'object' && !Array.isArray(rel) && "entity_type_related_id" in rel && typeof rel.entity_type_related_id === 'string')).map((rel: any) => rel.entity_type_related_id)
+                            },
+                            annulled_at: null
+                        }
+                    });
+
+                    let relationToProcessCounter = 0;
+                    for(const relationToDelete of currentRelationships) {
+                        const removeRelationResult = await this.removeEntityTypeRelationship({
+                            entity_type: entity_type,
+                            entity_type_related: relationToDelete.entity_type_related_id,
+                            relation: relationToDelete,
+
+                            name: `${name} current relation No. ${relationToProcessCounter}`,
+                            error_name: `${error_name}.current_relation.${relationToProcessCounter}`,
+
+                            system_subscription_user_id: params.system_subscription_user_id,
+                            prisma
+                        });
+
+                        if(removeRelationResult.errors.exists()) {
+                            errors.merege(removeRelationResult.errors);
+                        }
+
+                        relationToProcessCounter++;
+                    }
+
+                    relationToProcessCounter = 0;
+
+                    for(const relationship of params.entity_type_relationships) {
+                        const entityTypeRelationResult = await this.addEntityTypeRelationship(relationship, {
+                            entity_type: entity_type,
+                            name: `${name} relation No. ${relationToProcessCounter}`,
+                            error_name: `${error_name}.relation.${relationToProcessCounter}`,
+                            validateInitialParams: true,
+                            system_subscription_user_id: params.system_subscription_user_id,
+                            prisma
+                        });
+
+                        if(entityTypeRelationResult.errors.exists()) {
+                            errors.merege(entityTypeRelationResult.errors);
+                        }
+
+                        relationToProcessCounter++;
                     }
                 }
             }
 
             if(Array.isArray(params.entity_type_child_id)) {
-                const /* type_entity_parents = await prisma.entity_type_hierarchy.findMany({
-                        where: { entity_type_id: entity_type.id, annulled_at: null },
-                        select: { entity_type_parent_id: true }
-                    }) ?? [],
-                    toRemoveParent: string[] = [], */
-                    removeChildren = await this.removeAllEntityParent({
-                        entity_type_array: params.entity_type_child_id,
-                        entity_type,
-                        is_parent: true,
-                        process_id_key: "entity_type_id",
-                        name: `${name} child`,
-                        error_name: `${error_name}.child`,
-                        system_subscription_user_id: params.system_subscription_user_id,
-                        prisma
+                const currentEntityTypeChildren = await prisma.entity_type_hierarchy.findMany({
+                    where: {
+                        entity_type_parent_id: entity_type.id,
+                        NOT: {
+                            entity_type_id: params.entity_type_child_id
+                        },
+                        annulled_at: null
+                    }
+                });
+                let childrenToProcess = 0;
+
+                for(const currentEntityTypeChild of currentEntityTypeChildren) {
+                    const relationAnnulatedResult = await this.removeEntityTypeParent({
+                        params: {
+                            entity_type_id: currentEntityTypeChild.entity_type_id,
+                            entity_type_parent_id: entity_type.id
+                        },
+                        config: {
+                            name: `${name} current child No. ${childrenToProcess}`,
+                            error_name: `${error_name}.current_child.${childrenToProcess}`,
+                            system_subscription_user_id: params.system_subscription_user_id
+                        }
                     });
 
-                if(removeChildren instanceof HandlerErrors) {
-                    errors.merege(removeChildren as HandlerErrors);
+                    if(relationAnnulatedResult.errors.existsErrors()) {
+                        errors.merege(relationAnnulatedResult.errors);
+                    }
+
+                    childrenToProcess++;
                 }
 
+                childrenToProcess = 0;
                 for(const id of params.entity_type_parent_id) {
                     const addParentResult = await this.addEntityTypeParent({
                         params: {
@@ -1146,8 +1442,8 @@ export class EntityTypeService {
                             entity_type_parent_id: entity_type.id
                         },
                         config: {
-                            name: `${name} child`,
-                            error_name: `${error_name}.child`,
+                            name: `${name} child No. ${childrenToProcess}`,
+                            error_name: `${error_name}.child.${childrenToProcess}`,
                             system_subscription_user_id: params.system_subscription_user_id
                         }
                     }, prisma);
@@ -1157,10 +1453,32 @@ export class EntityTypeService {
                     }
                 }
             }
+
+            if(errors.exists()) {
+                throw errors;
+            }
+
+            if(isPosibleTransaction) {
+                await prisma.commit();
+            }
+
+            return {
+                errors: errors,
+                data: entity_type
+            };
         } catch(e: any) {
             if(isPosibleTransaction) {
                 await prisma.rollback();
             }
+
+            if(e instanceof HandlerErrors) {
+                return {
+                    errors: e,
+                    data: null
+                };
+            }
+
+            throw e;
         }
     }
 }

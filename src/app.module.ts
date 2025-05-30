@@ -6,12 +6,14 @@ import { AuthModule } from './Modules/auth/auth.module';
 // import { MulterModule } from '@nestjs/platform-express';
 import { MailerModule } from './mailer/mailer.module';
 import { ConfigModule } from '@nestjs/config';
+import { EntityTypeModule } from './Modules/entity_type/entity_type.module';
 
 @Module({
   imports: [
     MailerModule,
     /* TestModule,  */
     AuthModule,
+    EntityTypeModule,
     SystemSubscriptionUserModule,
     MailerModule
   ],

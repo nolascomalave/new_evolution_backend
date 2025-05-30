@@ -28,9 +28,9 @@ JSON.stringify = function(object, replacer, space) {
 // ---------------------------------------------------------------------------------------------------------
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, /* {
     cors: true
-  });
+  } */);
 
   app.use(
     session({
@@ -48,10 +48,10 @@ async function bootstrap() {
     }),
   );
 
-  /* app.enableCors({
+  app.enableCors({
     origin: 'http://localhost:5173', // Cambia esto por el origen de tu aplicación cliente
     credentials: true, // Permite el envío de credenciales (cookies)
-  }); */
+  });
 
   app.useGlobalPipes(new ValidationPipe({
     transform: true,

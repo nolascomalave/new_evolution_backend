@@ -43,6 +43,10 @@ class HandlerErrors {
     }
 
     public exists(...errors: (string | RegExp)[]): boolean {
+        if(errors.length === 0) {
+            return (Object.keys(this.errors).length > 0);
+        }
+
         return errors.some(error => {
             if(typeof error === 'string'){
                 return !!this.errors[error];

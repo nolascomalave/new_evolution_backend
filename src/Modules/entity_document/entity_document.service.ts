@@ -120,7 +120,7 @@ export class EntityDocumentService {
             }
             errors.set('entity_document_category_id', validateUniqueIdString(params.entity_document_category_id, 'Document Type ID')); */
 
-            errors.set('country_id', validateUniqueIdString(params.country_id,  params.name + ' country ID', !errors.existsSome('city_id', 'state_id') && (params.city_id ?? params.state_id ?? null) !== null));
+            errors.set('country_id', validateUniqueIdString(params.country_id,  params.name + ' country ID', !errors.exists('city_id', 'state_id') && (params.city_id ?? params.state_id ?? null) !== null));
             errors.set('state_id', stateError);
             errors.set('city_id', cityError);
 
@@ -291,7 +291,7 @@ export class EntityDocumentService {
 
             errors.set('entity_document_category_id', validateUniqueIdString(params.entity_document_category_id, params.name + ' document type ID', (params.entity_document_id ?? null) === null));
 
-            errors.set('country_id', validateUniqueIdString(params.country_id, params.name + ' country ID', !errors.existsSome('city_id', 'state_id') && (params.city_id ?? params.state_id ?? null) !== null));
+            errors.set('country_id', validateUniqueIdString(params.country_id, params.name + ' country ID', !errors.exists('city_id', 'state_id') && (params.city_id ?? params.state_id ?? null) !== null));
             errors.set('state_id', stateError);
             errors.set('city_id', cityError);
         }
